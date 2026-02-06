@@ -8,7 +8,7 @@ public final class FabricEventsImpl {
     public static void register(CommonEvents events) {
         ServerPlayConnectionEvents.JOIN.register(
                 (handler, sender, server) ->
-                        events.onPlayerJoin(handler.player)
+                        ModEventBus.post(new PlayerJoinEvent(player));
         );
     }
 }
