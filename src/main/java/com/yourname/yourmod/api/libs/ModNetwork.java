@@ -1,26 +1,21 @@
 package com.yourname.yourmod.api.libs;
 
+import com.yourname.yourmod.loader.Platform;
 import net.minecraft.server.level.ServerPlayer;
 
-/**
- * MOD共通ネットワークAPI
- */
 public final class ModNetwork {
 
     private ModNetwork() {}
 
-    /** 初期化（MOD起動時に1回） */
     public static void init() {
-        // TODO: Forge SimpleChannel / Fabric Networking 初期化
+        Platform.get().initNetwork();
     }
 
-    /** サーバーへ送信 */
     public static void sendToServer(Object packet) {
-        // TODO
+        Platform.get().sendToServer(packet);
     }
 
-    /** クライアントへ送信 */
     public static void sendToClient(ServerPlayer player, Object packet) {
-        // TODO
+        Platform.get().sendToClient(player, packet);
     }
 }
