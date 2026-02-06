@@ -1,52 +1,40 @@
 package com.yourname.yourmod.loader.fabric;
 
 import com.yourname.yourmod.loader.LoaderExpectPlatform;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 
-public class FabricPlatform implements LoaderExpectPlatform {
+public final class FabricPlatform implements LoaderExpectPlatform {
+
+    private final Registries registries = new FabricRegistriesImpl();
+    private final Network network = new FabricNetworkImpl();
+    private final Events events = new FabricEventsImpl();
+
+    private static final String MOD_ID = "yourmodid";
 
     @Override
     public ResourceLocation id(String path) {
-        return new ResourceLocation("yourmod", path);
+        return new ResourceLocation(MOD_ID, path);
     }
 
     @Override
-    public void registerItem(String name, Object item) {
-        FabricRegistriesImpl.registerItem(name, item);
+    public boolean isClient() {
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
     @Override
-    public void registerBlock(String name, Object block) {
-        FabricRegistriesImpl.registerBlock(name, block);
+    public Registries registries() {
+        return registries;
     }
 
     @Override
-    public void registerEntity(String name, Object entity) {
-        FabricRegistriesImpl.registerEntity(name, entity);
+    public Network network() {
+        return network;
     }
 
     @Override
-    public void registerBlockEntity(String name, Object blockEntity) {
-        FabricRegistriesImpl.registerBlockEntity(name, blockEntity);
-    }
-
-    @Override
-    public void initNetwork() {
-        FabricNetworkImpl.init();
-    }
-
-    @Override
-    public void sendToServer(Object packet) {
-        FabricNetworkImpl.sendToServer(packet);
-    }
-
-    @Override
-    public void sendToClient(Object player, Object packet) {
-        FabricNetworkImpl.sendToClient(player, packet);
-    }
-
-    @Override
-    public void registerEvents() {
-        FabricEventsImpl.register();
+    public Events events() {
+        return events;
     }
 }
