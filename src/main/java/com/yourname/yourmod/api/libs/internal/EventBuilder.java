@@ -1,7 +1,6 @@
 package com.yourname.yourmod.api.libs.event;
 
 import com.yourname.yourmod.api.event.*;
-
 import java.util.function.Consumer;
 
 /**
