@@ -1,4 +1,4 @@
-package com.yourname.yourmod.api.libs.event;
+package com.yourname.yourmod.api.libs.internal;
 
 import com.yourname.yourmod.api.event.*;
 import java.util.function.Consumer;
