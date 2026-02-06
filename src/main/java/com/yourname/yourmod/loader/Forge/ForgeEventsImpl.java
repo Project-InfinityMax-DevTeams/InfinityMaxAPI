@@ -9,7 +9,7 @@ public final class ForgeEventsImpl {
     public static void register(CommonEvents events) {
         MinecraftForge.EVENT_BUS.addListener(
                 (PlayerEvent.PlayerLoggedInEvent e) ->
-                        events.onPlayerJoin(e.getEntity())
+                        ModEventBus.post(new PlayerJoinEvent(player));
         );
     }
 }
