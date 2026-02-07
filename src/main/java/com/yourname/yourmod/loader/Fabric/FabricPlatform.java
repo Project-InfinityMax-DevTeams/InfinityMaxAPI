@@ -6,6 +6,8 @@ import com.yourname.yourmod.api.datagen.DataGen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
+import com.yourname.yourmod.api.lifecycle.LifecycleRegistry;
+import com.yourname.yourmod.api.lifecycle.ModLifecycle;
 
 public final class FabricPlatform implements LoaderExpectPlatform {
 
@@ -45,6 +47,11 @@ public final class FabricPlatform implements LoaderExpectPlatform {
     @Override
     public Events events() {
         return events;
+    }
+
+    @Override
+    public void fireLifecycle(ModLifecycle stage) {
+        LifecycleRegistry.fire(stage);
     }
 
     @Override
