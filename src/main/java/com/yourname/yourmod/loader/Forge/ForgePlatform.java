@@ -6,6 +6,8 @@ import com.yourname.yourmod.api.datagen.DataGen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import com.yourname.yourmod.api.lifecycle.LifecycleRegistry;
+import com.yourname.yourmod.api.lifecycle.ModLifecycle;
 
 public final class ForgePlatform implements LoaderExpectPlatform {
 
@@ -48,6 +50,11 @@ public final class ForgePlatform implements LoaderExpectPlatform {
     @Override
     public Events events() {
         return events;
+    }
+
+    @Override
+    public void fireLifecycle(ModLifecycle stage) {
+        LifecycleRegistry.fire(stage);
     }
 
     @Override
