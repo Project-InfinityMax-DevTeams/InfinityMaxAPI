@@ -16,8 +16,6 @@
 * **記述場所を間違えると動かない**
 * Client DSL は **Client 環境限定**
 
----
-
 ## 1. Block DSL（BlockBuilder）
 
 ### 概要
@@ -30,8 +28,6 @@
 | 記述ディレクトリ | `src/main/java/**/content/blocks/` |
 | 登録確定     | `build()`                          |
 
----
-
 ### 対応コマンド表
 
 | メソッド                 | 型          | 意味      | デフォルト            |
@@ -41,9 +37,7 @@
 | `noOcclusion()`      | -          | 遮蔽しない   | false            |
 | `build()`            | -          | 登録確定    | -                |
 
----
-
-### 記述例（2 ブロック登録）
+### 記述例
 
 ```java
 package com.example.mymod.content.blocks;
@@ -66,8 +60,6 @@ public final class ModBlocks {
 }
 ```
 
----
-
 ## 2. Item DSL（ItemBuilder）
 
 ### 概要
@@ -79,8 +71,6 @@ public final class ModBlocks {
 | 記述ディレクトリ | `src/main/java/**/content/items/` |
 | 登録確定     | `build()`                         |
 
----
-
 ### 対応コマンド表
 
 | メソッド                   | 型           | 意味        | デフォルト |
@@ -89,8 +79,6 @@ public final class ModBlocks {
 | `tab(CreativeModeTab)` | CreativeTab | クリエイティブタブ | null  |
 | `durability(int)`      | int         | 耐久値       | 無し    |
 | `build()`              | -           | 登録確定      | -     |
-
----
 
 ### 記述例
 
@@ -114,8 +102,6 @@ public final class ModItems {
 }
 ```
 
----
-
 ## 3. Entity DSL（EntityBuilder）
 
 ### 概要
@@ -127,8 +113,6 @@ public final class ModItems {
 | 記述ディレクトリ | `src/main/java/**/content/entities/` |
 | 登録確定     | `build()`                            |
 
----
-
 ### 対応コマンド表
 
 | メソッド                    | 型            | 意味       | デフォルト     |
@@ -136,8 +120,6 @@ public final class ModItems {
 | `category(MobCategory)` | MobCategory  | エンティティ分類 | `MISC`    |
 | `size(float,float)`     | width,height | 当たり判定    | 0.6 / 1.8 |
 | `build()`               | -            | 登録確定     | -         |
-
----
 
 ### 記述例
 
@@ -163,8 +145,6 @@ public final class ModEntities {
 }
 ```
 
----
-
 ## 4. BlockEntity DSL（BlockEntityBuilder）
 
 ### 概要
@@ -176,16 +156,12 @@ public final class ModEntities {
 | 記述ディレクトリ | `src/main/java/**/content/blockentities/` |
 | 登録確定     | `build()`                                 |
 
----
-
 ### 対応コマンド表
 
 | メソッド               | 型       | 意味      |
 | ------------------ | ------- | ------- |
 | `blocks(Block...)` | Block[] | 紐づくブロック |
 | `build()`          | -       | 登録確定    |
-
----
 
 ### 記述例
 
@@ -204,8 +180,6 @@ public final class ModBlockEntities {
 }
 ```
 
----
-
 ## 5. Event DSL（EventBuilder）
 
 ### 概要
@@ -217,8 +191,6 @@ public final class ModBlockEntities {
 | 記述ディレクトリ | `src/main/java/**/logic/events/`   |
 | 登録確定     | `handle()`                         |
 
----
-
 ### 対応コマンド表
 
 | メソッド                      | 意味    | デフォルト  |
@@ -227,8 +199,6 @@ public final class ModBlockEntities {
 | `async()`                 | 非同期実行 | false  |
 | `sync()`                  | 同期実行  | true   |
 | `handle(Consumer<T>)`     | 処理登録  | -      |
-
----
 
 ### 記述例
 
@@ -251,8 +221,6 @@ public final class ModEvents {
 }
 ```
 
----
-
 ## 6. Client DSL（ClientBuilder）
 
 ### 概要（※特殊）
@@ -264,8 +232,6 @@ public final class ModEvents {
 | 記述ディレクトリ | `src/main/java/**/client/` |
 | 登録確定     | `registerAll()`            |
 
----
-
 ### Client DSL 構成
 
 | DSL          | 役割          |
@@ -274,8 +240,6 @@ public final class ModEvents {
 | `keybinds()` | KeyBind     |
 | `screens()`  | Screen      |
 | `hud()`      | HUD Overlay |
-
----
 
 ### 記述例（完全形）
 
@@ -311,8 +275,6 @@ public final class ModClient {
 }
 ```
 
----
-
 ## 7. DataGen DSL（BlockGen / ItemGen / EntityGen）
 
 ### 概要
@@ -324,8 +286,6 @@ public final class ModClient {
 | 記述ディレクトリ | `src/main/java/**/datagen/`      |
 | 登録確定     | `end()`                          |
 
----
-
 ### 対応表（共通）
 
 | メソッド      | 意味      |
@@ -335,8 +295,6 @@ public final class ModClient {
 | `tag()`   | タグ      |
 | `lang()`  | 表示名     |
 | `end()`   | 出力確定    |
-
----
 
 ### 記述例
 
@@ -359,8 +317,6 @@ public final class ModDataGen {
     }
 }
 ```
-
----
 
 ## 最終確認チェックリスト
 
