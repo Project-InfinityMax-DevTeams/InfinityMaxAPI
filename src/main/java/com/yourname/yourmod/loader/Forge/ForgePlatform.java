@@ -1,6 +1,7 @@
 package com.yourname.yourmod.loader.forge;
 
 import com.yourname.yourmod.loader.LoaderExpectPlatform;
+import com.yourname.yourmod.loader.LoaderExpectPlatform.Client;
 import com.yourname.yourmod.api.datagen.DataGen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -10,12 +11,18 @@ public final class ForgePlatform implements LoaderExpectPlatform {
 
     private static final String MOD_ID = "yourmodid";
 
-    // ランタイム機能
+    // ランタイム
     private final Registries registries = new ForgeRegistriesImpl();
     private final Network network = new ForgeNetworkImpl();
     private final Events events = new ForgeEventsImpl();
 
-    // ★ ビルド時機能（DataGen）
+    // Client（Dist判定で切替）
+    private final Client client =
+            FMLEnvironment.dist == Dist.CLIENT
+                    ? new ForgeClientImpl()
+                    : Client.noop();
+
+    // DataGen
     private final DataGen dataGen = new ForgeDataGenImpl();
 
     @Override
@@ -41,6 +48,11 @@ public final class ForgePlatform implements LoaderExpectPlatform {
     @Override
     public Events events() {
         return events;
+    }
+
+    @Override
+    public Client client() {
+        return client;
     }
 
     @Override
