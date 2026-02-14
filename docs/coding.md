@@ -1,326 +1,217 @@
-# DSL 全対応表
+﻿# Coding Guide
 
-このドキュメントは、本 MDK に実装されている **すべての DSL（Domain Specific Language）** を
-「何を指定する DSL か」「どこに書くか」「何が起きるか」「どう書くか」
-を **1 行も迷わせない** ことを目的としています。
+## Scope
+This guide defines coding rules for this MDK template.
+Follow these rules to keep shared code stable across Forge and Fabric.
+
+## Core rules
+1. Keep common code platform-neutral
+2. Use shared DSL/API for registrations and events
+3. Isolate platform conversion in loader layer
+4. Verify both loaders on every change
+
+## Folder policy
+- `api/`: shared DSL/API and shared logic helpers
+- `loader/Forge`: Forge-only behavior
+- `loader/Fabric`: Fabric-only behavior
+
+Do not place loader-specific imports in `api/`.
+
+## Dependency boundary
+Allowed in common code:
+- Java standard library
+- Template shared APIs in `com.yourname.yourmod.api.*`
+
+Not allowed in common code:
+- `net.minecraft.*`
+- `net.minecraftforge.*`
+- `net.fabricmc.*`
+
+## Naming conventions
+- Class: `PascalCase`
+- Method/field/local: `camelCase`
+- Constant: `UPPER_SNAKE_CASE`
+- Package: lowercase
+
+## Short code templates (current API)
+
+### Block registration
+```java
+public static final Object TEST_BLOCK = Registry.block("test_block")
+        .template(new Object())
+        .strength(2.0f)
+        .noOcclusion()
+        .build();
+```
+
+### Item registration
+```java
+public static final Object TEST_ITEM = Registry.item("test_item")
+        .template(new Object())
+        .stack(64)
+        .durability(100)
+        .build();
+```
+
+### Entity registration
+```java
+public static final Object TEST_ENTITY = Registry.entity("test_entity", Object::new)
+        .category("creature")
+        .size(0.8f, 1.6f)
+        .build();
+```
+
+### BlockEntity registration
+```java
+public static final Object TEST_BE = Registry.blockEntity("test_be", Object::new)
+        .blocks(TEST_BLOCK)
+        .build();
+```
+
+### Event subscription
+```java
+Events.playerJoin().handle(event -> {
+    Object player = event.player;
+    System.out.println("Join: " + player);
+});
+```
+
+### Client DSL
+```java
+Client.init(client -> {
+    client.renders().registerAll();
+    client.keybinds().registerAll();
+    client.screens().registerAll();
+    client.hud().registerAll();
+});
+```
+
+### Datagen DSL
+```java
+DataGen.block("test_block").end();
+DataGen.item("test_item").lang("Test Item").end();
+DataGen.entity("test_entity").lang("Test Entity").end();
+```
+
+## Error prevention checklist
+- Common API has no direct loader imports
+- Public API signatures remain platform-neutral
+- New bridge requirement reflected in `LoaderExpectPlatform`
+- Both loader implementations are updated
+- Build passes on both loaders
+
+## Verification commands
+```bash
+gradlew :forge:compileJava :fabric:compileJava
+gradlew clean build
+```
 
 ---
 
-## 0. DSL 記述ルール共通原則
+# コーディングガイド
 
-* **DSL = 宣言**
+## 対象
+このガイドは本MDKテンプレートの実装ルールを定義します。
+Forge と Fabric の両方で安定動作する共通コードを維持するために従ってください。
 
-  * 処理を書く場所ではない
-  * 「何を登録するか」だけを書く
-* **`build()` / `handle()` / `end()` を呼んだ瞬間に登録確定**
-* **記述場所を間違えると動かない**
-* Client DSL は **Client 環境限定**
+## 基本ルール
+1. 共通コードはプラットフォーム非依存で保つ
+2. 登録とイベントは共有DSL/APIを使う
+3. プラットフォーム変換はローダー層へ隔離する
+4. 変更ごとに両ローダーで検証する
 
-## 1. Block DSL（BlockBuilder）
+## フォルダ方針
+- `api/`: 共有DSL/API と共通ロジック補助
+- `loader/Forge`: Forge 専用処理
+- `loader/Fabric`: Fabric 専用処理
 
-### 概要
+`api/` にローダー依存 import を置かないでください。
 
-| 項目       | 内容                                 |
-| -------- | ---------------------------------- |
-| DSL 型    | `BlockBuilder`                     |
-| 登録対象     | Block                              |
-| 登録先      | Minecraft Block Registry           |
-| 記述ディレクトリ | `src/main/java/**/content/blocks/` |
-| 登録確定     | `build()`                          |
+## 依存境界
+共通コードで許可:
+- Java標準ライブラリ
+- `com.yourname.yourmod.api.*` の共有API
 
-### 対応コマンド表
+共通コードで禁止:
+- `net.minecraft.*`
+- `net.minecraftforge.*`
+- `net.fabricmc.*`
 
-| メソッド                 | 型          | 意味      | デフォルト            |
-| -------------------- | ---------- | ------- | ---------------- |
-| `material(Material)` | `Material` | ブロック素材  | `Material.STONE` |
-| `strength(float)`    | `float`    | 硬さ・破壊速度 | Minecraft 標準     |
-| `noOcclusion()`      | -          | 遮蔽しない   | false            |
-| `build()`            | -          | 登録確定    | -                |
+## 命名規約
+- クラス: `PascalCase`
+- メソッド/フィールド/ローカル変数: `camelCase`
+- 定数: `UPPER_SNAKE_CASE`
+- パッケージ: 小文字
 
-### 記述例
+## ショートテンプレコード（現行API対応）
 
+### Block登録
 ```java
-package com.example.mymod.content.blocks;
-
-import com.yourname.yourmod.api.libs.internal.BlockBuilder;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
-
-public final class ModBlocks {
-
-    public static final Block TEST_BLOCK = new BlockBuilder("test_block")
-        .material(Material.STONE)
-        .strength(3.0f)
-        .build();
-
-    public static final Block GLASS_BLOCK = new BlockBuilder("glass_block")
-        .material(Material.GLASS)
+public static final Object TEST_BLOCK = Registry.block("test_block")
+        .template(new Object())
+        .strength(2.0f)
         .noOcclusion()
         .build();
-}
 ```
 
-## 2. Item DSL（ItemBuilder）
-
-### 概要
-
-| 項目       | 内容                                |
-| -------- | --------------------------------- |
-| DSL 型    | `ItemBuilder`                     |
-| 登録対象     | Item                              |
-| 記述ディレクトリ | `src/main/java/**/content/items/` |
-| 登録確定     | `build()`                         |
-
-### 対応コマンド表
-
-| メソッド                   | 型           | 意味        | デフォルト |
-| ---------------------- | ----------- | --------- | ----- |
-| `stack(int)`           | int         | 最大スタック数   | 64    |
-| `tab(CreativeModeTab)` | CreativeTab | クリエイティブタブ | null  |
-| `durability(int)`      | int         | 耐久値       | 無し    |
-| `build()`              | -           | 登録確定      | -     |
-
-### 記述例
-
+### Item登録
 ```java
-package com.example.mymod.content.items;
-
-import com.yourname.yourmod.api.libs.internal.ItemBuilder;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-
-public final class ModItems {
-
-    public static final Item TEST_ITEM = new ItemBuilder("test_item")
+public static final Object TEST_ITEM = Registry.item("test_item")
+        .template(new Object())
         .stack(64)
-        .tab(CreativeModeTab.TAB_MISC)
+        .durability(100)
         .build();
+```
 
-    public static final Item TOOL_ITEM = new ItemBuilder("tool_item")
-        .durability(250)
+### Entity登録
+```java
+public static final Object TEST_ENTITY = Registry.entity("test_entity", Object::new)
+        .category("creature")
+        .size(0.8f, 1.6f)
         .build();
-}
 ```
 
-## 3. Entity DSL（EntityBuilder）
-
-### 概要
-
-| 項目       | 内容                                   |
-| -------- | ------------------------------------ |
-| DSL 型    | `EntityBuilder<T>`                   |
-| 登録対象     | EntityType                           |
-| 記述ディレクトリ | `src/main/java/**/content/entities/` |
-| 登録確定     | `build()`                            |
-
-### 対応コマンド表
-
-| メソッド                    | 型            | 意味       | デフォルト     |
-| ----------------------- | ------------ | -------- | --------- |
-| `category(MobCategory)` | MobCategory  | エンティティ分類 | `MISC`    |
-| `size(float,float)`     | width,height | 当たり判定    | 0.6 / 1.8 |
-| `build()`               | -            | 登録確定     | -         |
-
-### 記述例
-
+### BlockEntity登録
 ```java
-package com.example.mymod.content.entities;
-
-import com.yourname.yourmod.api.libs.internal.EntityBuilder;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-
-public final class ModEntities {
-
-    public static final EntityType<TestEntity> TEST_ENTITY =
-        new EntityBuilder<>("test_entity", TestEntity::new)
-            .category(MobCategory.CREATURE)
-            .size(0.8f, 1.6f)
-            .build();
-
-    public static final EntityType<FlyingEntity> FLYING_ENTITY =
-        new EntityBuilder<>("flying_entity", FlyingEntity::new)
-            .category(MobCategory.MONSTER)
-            .build();
-}
+public static final Object TEST_BE = Registry.blockEntity("test_be", Object::new)
+        .blocks(TEST_BLOCK)
+        .build();
 ```
 
-## 4. BlockEntity DSL（BlockEntityBuilder）
-
-### 概要
-
-| 項目       | 内容                                        |
-| -------- | ----------------------------------------- |
-| DSL 型    | `BlockEntityBuilder<T>`                   |
-| 必須       | 対応 Block                                  |
-| 記述ディレクトリ | `src/main/java/**/content/blockentities/` |
-| 登録確定     | `build()`                                 |
-
-### 対応コマンド表
-
-| メソッド               | 型       | 意味      |
-| ------------------ | ------- | ------- |
-| `blocks(Block...)` | Block[] | 紐づくブロック |
-| `build()`          | -       | 登録確定    |
-
-### 記述例
-
+### Event購読
 ```java
-package com.example.mymod.content.blockentities;
-
-import com.yourname.yourmod.api.libs.internal.BlockEntityBuilder;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-
-public final class ModBlockEntities {
-
-    public static final BlockEntityType<TestBlockEntity> TEST_BE =
-        new BlockEntityBuilder<>("test_be", TestBlockEntity::new)
-            .blocks(ModBlocks.TEST_BLOCK)
-            .build();
-}
+Events.playerJoin().handle(event -> {
+    Object player = event.player;
+    System.out.println("Join: " + player);
+});
 ```
 
-## 5. Event DSL（EventBuilder）
-
-### 概要
-
-| 項目       | 内容                                 |
-| -------- | ---------------------------------- |
-| DSL 型    | `EventBuilder<T extends ModEvent>` |
-| 実行場所     | EventBus                           |
-| 記述ディレクトリ | `src/main/java/**/logic/events/`   |
-| 登録確定     | `handle()`                         |
-
-### 対応コマンド表
-
-| メソッド                      | 意味    | デフォルト  |
-| ------------------------- | ----- | ------ |
-| `priority(EventPriority)` | 優先度   | NORMAL |
-| `async()`                 | 非同期実行 | false  |
-| `sync()`                  | 同期実行  | true   |
-| `handle(Consumer<T>)`     | 処理登録  | -      |
-
-### 記述例
-
+### Client DSL
 ```java
-package com.example.mymod.logic.events;
-
-import com.yourname.yourmod.api.libs.internal.EventBuilder;
-import com.yourname.yourmod.api.event.PlayerJoinEvent;
-import com.yourname.yourmod.api.event.EventPriority;
-
-public final class ModEvents {
-
-    public static void register() {
-        new EventBuilder<>(PlayerJoinEvent.class)
-            .priority(EventPriority.HIGH)
-            .handle(event -> {
-                System.out.println("Player joined: " + event.getPlayer());
-            });
-    }
-}
+Client.init(client -> {
+    client.renders().registerAll();
+    client.keybinds().registerAll();
+    client.screens().registerAll();
+    client.hud().registerAll();
+});
 ```
 
-## 6. Client DSL（ClientBuilder）
-
-### 概要（※特殊）
-
-| 項目       | 内容                         |
-| -------- | -------------------------- |
-| DSL 型    | `ClientBuilder`            |
-| 実行条件     | Client 環境のみ                |
-| 記述ディレクトリ | `src/main/java/**/client/` |
-| 登録確定     | `registerAll()`            |
-
-### Client DSL 構成
-
-| DSL          | 役割          |
-| ------------ | ----------- |
-| `renders()`  | Renderer 登録 |
-| `keybinds()` | KeyBind     |
-| `screens()`  | Screen      |
-| `hud()`      | HUD Overlay |
-
-### 記述例（完全形）
-
+### Datagen DSL
 ```java
-package com.example.mymod.client;
-
-import com.yourname.yourmod.api.client.Client;
-
-public final class ModClient {
-
-    public static void init() {
-        Client.init(client -> {
-
-            client.renders()
-                .entity(ModEntities.TEST_ENTITY, TestEntityRenderer::new);
-
-            client.keybinds()
-                .action("open_menu")
-                .keys(GLFW.GLFW_KEY_G)
-                .onPress(() -> Client.screen(TestScreen::new));
-
-            client.screens()
-                .register(TestScreen.class);
-
-            client.hud()
-                .overlay((graphics, delta) -> {
-                    graphics.drawString("Hello HUD", 10, 10);
-                });
-
-            client.registerAll();
-        });
-    }
-}
+DataGen.block("test_block").end();
+DataGen.item("test_item").lang("Test Item").end();
+DataGen.entity("test_entity").lang("Test Entity").end();
 ```
 
-## 7. DataGen DSL（BlockGen / ItemGen / EntityGen）
+## 事故防止チェック
+- 共通APIにローダー直importがない
+- 公開APIシグネチャが非依存型のまま
+- 新しい橋渡し要件を `LoaderExpectPlatform` に反映
+- Forge/Fabric 両実装を更新済み
+- 両ローダーでビルド成功
 
-### 概要
-
-| 項目       | 内容                               |
-| -------- | -------------------------------- |
-| DSL 型    | `BlockGen / ItemGen / EntityGen` |
-| 実行タイミング  | DataGen フェーズ                     |
-| 記述ディレクトリ | `src/main/java/**/datagen/`      |
-| 登録確定     | `end()`                          |
-
-### 対応表（共通）
-
-| メソッド      | 意味      |
-| --------- | ------- |
-| `model()` | モデル定義   |
-| `loot()`  | ルートテーブル |
-| `tag()`   | タグ      |
-| `lang()`  | 表示名     |
-| `end()`   | 出力確定    |
-
-### 記述例
-
-```java
-package com.example.mymod.datagen;
-
-import com.yourname.yourmod.api.libs.datagen.DataGen;
-
-public final class ModDataGen {
-
-    public static void register() {
-
-        DataGen.block("test_block")
-            .model(BlockModels.CUBE_ALL)
-            .end();
-
-        DataGen.item("test_item")
-            .lang("Test Item")
-            .end();
-    }
-}
+## 検証コマンド
+```bash
+gradlew :forge:compileJava :fabric:compileJava
+gradlew clean build
 ```
-
-## 最終確認チェックリスト
-
-* [ ] DSL は正しいディレクトリにあるか
-* [ ] `build()` / `handle()` / `end()` を呼んでいるか
-* [ ] Client DSL に `registerAll()` があるか
-* [ ] DataGen を通常ロジックに混ぜていないか

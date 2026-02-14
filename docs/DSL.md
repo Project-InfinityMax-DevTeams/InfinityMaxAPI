@@ -1,175 +1,345 @@
-# 2. DSL による各要素登録
+﻿# DSL Reference
 
-この章では、**DSL で登録できる要素**を網羅します。
-MOD 制作者はここで示す型と DSL メソッドを使い、**何を追加したいかだけを書く**ことができます。
+## Purpose
+This document explains the DSL classes in the current MDK structure.
+All code snippets are aligned with current API signatures.
 
----
+## 1. Registry DSL
+Entry point:
+- `com.yourname.yourmod.api.libs.Registry`
 
-## 2.1 主要 DSL 型一覧
+Available methods:
+- `Registry.block(String id)` -> `BlockBuilder`
+- `Registry.item(String id)` -> `ItemBuilder`
+- `Registry.entity(String id, Supplier<T> factory)` -> `EntityBuilder<T>`
+- `Registry.blockEntity(String id, Supplier<T> factory)` -> `BlockEntityBuilder<T>`
 
-| 型                                                   | 用途                                     | 記述場所                    | 主なメソッド                                                                | 実行時動作                         | 備考                             |
-| --------------------------------------------------- | -------------------------------------- | ----------------------- | --------------------------------------------------------------------- | ----------------------------- | ------------------------------ |
-| `BlockBuilder`                                      | ブロックの登録                                | `content/blocks`        | `material(Material)`, `strength(float)`, `noOcclusion()`, `build()`   | Minecraft Registry にブロック登録    | デフォルト Material は STONE         |
-| `ItemBuilder`                                       | アイテムの登録                                | `content/items`         | `stack(int)`, `tab(CreativeModeTab)`, `durability(int)`, `build()`    | Minecraft Registry にアイテム登録    | CreativeTab 設定可能               |
-| `EntityBuilder<T>`                                  | エンティティの登録                              | `content/entities`      | `category(MobCategory)`, `size(float,float)`, `build()`               | Registry に EntityType 登録      | サイズ・カテゴリ指定可能                   |
-| `BlockEntityBuilder<T>`                             | ブロックエンティティの登録                          | `content/blockentities` | `blocks(Block...)`, `build()`                                         | Registry に BlockEntityType 登録 | 必ずブロックを紐づける必要あり                |
-| `EventBuilder<T extends ModEvent>`                  | イベントリスナー登録                             | `logic/events`          | `priority(EventPriority)`, `async()`, `sync()`, `handle(Consumer<T>)` | ModEventBus にリスナー登録           | async は非同期実行、sync は明示同期        |
-| `ClientBuilder`                                     | Client 専用要素（Render・Screen・KeyBind・HUD） | `client/`               | `renders()`, `screens()`, `keybinds()`, `hud()`, `registerAll()`      | Client 環境でのみ実行                | サーバーでは noop                    |
-| `BaseGen<T>` / `BlockGen` / `ItemGen` / `EntityGen` | データ生成 (DataGen)                        | `datagen/`              | `model()`, `loot()`, `tag()`, `lang()`, `end()`                       | JSON データ生成・登録                 | build 時ではなく、DataGen フェーズで処理される |
+### BlockBuilder
+Methods:
+- `template(Object)`
+- `strength(float)`
+- `noOcclusion()`
+- `build()` -> `Object`
 
----
-
-## 2.2 簡易サンプルコード
-
-### ブロック登録
-
+Short template:
 ```java
-public final class MyBlocks {
-    public static final Block TEST_BLOCK = new BlockBuilder("test_block")
-        .material(Material.STONE)
+Object block = Registry.block("sample_block")
+        .template(new Object())
         .strength(3.0f)
         .noOcclusion()
         .build();
-}
 ```
 
-* `material` → ブロック素材
-* `strength` → 硬さ・破壊速度
-* `noOcclusion` → 通常ブロックの背面描画制御
-* `build()` → 登録実行
+### ItemBuilder
+Methods:
+- `stack(int)`
+- `tab(Object)`
+- `durability(int)`
+- `template(Object)`
+- `build()` -> `Object`
 
-### アイテム登録
-
+Short template:
 ```java
-public final class MyItems {
-    public static final Item TEST_ITEM = new ItemBuilder("test_item")
+Object item = Registry.item("sample_item")
+        .template(new Object())
         .stack(64)
-        .tab(CreativeModeTab.TAB_MISC)
-        .durability(100)
+        .durability(120)
         .build();
-}
 ```
 
-### エンティティ登録
+### EntityBuilder
+Methods:
+- `category(Object)`
+- `size(float width, float height)`
+- `build()` -> `T`
 
+Short template:
 ```java
-public final class MyEntities {
-    public static final EntityType<MyEntity> TEST_ENTITY = new EntityBuilder<>("test_entity", MyEntity::new)
-        .category(MobCategory.CREATURE)
-        .size(0.6f, 1.8f)
+Object entity = Registry.entity("sample_entity", Object::new)
+        .category("creature")
+        .size(0.8f, 1.6f)
         .build();
-}
 ```
 
-### ブロックエンティティ登録
+### BlockEntityBuilder
+Methods:
+- `blocks(Object... blocks)`
+- `build()` -> `T`
 
+Short template:
 ```java
-public final class MyBlockEntities {
-    public static final BlockEntityType<MyBlockEntity> TEST_BE = new BlockEntityBuilder<>("test_be", MyBlockEntity::new)
-        .blocks(MyBlocks.TEST_BLOCK)
+Object blockEntity = Registry.blockEntity("sample_be", Object::new)
+        .blocks(block)
         .build();
-}
 ```
 
-### イベント登録
+## 2. Event DSL
+Entry point:
+- `com.yourname.yourmod.api.libs.Events`
 
+Available methods:
+- `Events.on(Class<T>)`
+- `Events.playerJoin()`
+
+Builder methods:
+- `priority(EventPriority)`
+- `async()`
+- `sync()`
+- `handle(Consumer<T>)`
+
+Short template:
 ```java
-new EventBuilder<>(PlayerJoinEvent.class)
-    .priority(EventPriority.HIGH)
-    .async()
-    .handle(event -> {
-        System.out.println(event.getPlayer() + " joined!");
-    });
+Events.playerJoin()
+        .priority(EventPriority.NORMAL)
+        .handle(event -> {
+            Object player = event.player;
+            System.out.println("joined: " + player);
+        });
 ```
 
-### Client 要素登録
+## 3. Client DSL
+Entry point:
+- `com.yourname.yourmod.api.libs.Client`
 
+Builder objects:
+- `renders()` -> `RenderDSL`
+- `keybinds()` -> `KeybindDSL`
+- `screens()` -> `ScreenDSL`
+- `hud()` -> `HudDSL`
+
+Each sub-DSL currently exposes:
+- `registerAll()`
+
+Short template:
 ```java
 Client.init(client -> {
-    client.renders()
-        .entity(MyEntities.TEST_ENTITY, MyEntityRenderer::new)
-        .block(MyBlocks.TEST_BLOCK, MyBlockRenderer::new);
-
-    client.keybinds()
-        .action("open_menu")
-        .keys(GLFW.GLFW_KEY_G)
-        .onPress(() -> Client.screen(MyScreen::new));
-
-    client.screens()
-        .register(MyScreen.class);
-
-    client.hud()
-        .overlay((graphics, tickDelta) -> {
-            graphics.drawString("Hello HUD", 10, 10);
-        });
-
-    client.registerAll(); // まとめて登録
+    client.renders().registerAll();
+    client.keybinds().registerAll();
+    client.screens().registerAll();
+    client.hud().registerAll();
 });
 ```
 
-* Client DSL は **サーバーで実行しない**
-* `registerAll()` が必要
-* KeyBind の `.action()` は一意 ID を指定、`.onPress()` で挙動を定義
+Note:
+- `Client.init(...)` already calls `builder.registerAll()` internally.
 
-### DataGen の例
+## 4. Datagen DSL
+Entry point:
+- `com.yourname.yourmod.api.libs.datagen.DataGen`
 
+Available methods:
+- `DataGen.block(String)` -> `BlockGen`
+- `DataGen.item(String)` -> `ItemGen`
+- `DataGen.entity(String)` -> `EntityGen`
+
+Common finalize method:
+- `end()`
+
+Short template:
 ```java
-DataGen.block("my_block")
-    .model(myModel)
-    .loot(myLoot)
-    .tag(Tags.Blocks.MINEABLE_WITH_PICKAXE)
-    .end();
-
-DataGen.item("my_item")
-    .model(myModel)
-    .tag(Tags.Items.MISC)
-    .lang("My Item Name")
-    .end();
-
-DataGen.entity("my_entity")
-    .loot(myLoot)
-    .lang("My Entity")
-    .end();
+DataGen.block("sample_block").end();
+DataGen.item("sample_item").lang("Sample Item").end();
+DataGen.entity("sample_entity").lang("Sample Entity").end();
 ```
 
-* **DataGen は DSL と同じく「宣言的」**
-* 生成されるのは JSON ファイルや言語ファイル
-* 書く場所は `datagen/` ディレクトリ
+## 5. Packet DSL
+Entry point:
+- `com.yourname.yourmod.api.libs.packet.Packet`
+
+Core methods:
+- `Packet.define(String id)`
+- `serverbound()` / `clientbound()`
+- `codec(...)`
+- `handle(...)`
+- `register()`
+- `sendToServer(T)`
+- `sendToPlayer(Object, T)`
+
+Short template:
+```java
+Packet<String> ping = Packet.<String>define("ping")
+        .serverbound()
+        .codec(buf -> "ping", (packet, buf) -> {})
+        .handle((packet, ctx) -> System.out.println(packet));
+
+ping.register();
+ping.sendToServer("hello");
+```
+
+## 6. Common event helper
+`CommonEvents.onPlayerJoin(Object player)` posts `PlayerJoinEvent` to `ModEventBus`.
+Use this path for shared event behavior.
 
 ---
 
-## 2.3 DSL と登録場所のまとめ（推奨）
+# DSL リファレンス
 
-| 要素         | DSL 型                          | 記述場所                    | 注意点                         |
-| ---------- | ------------------------------ | ----------------------- | --------------------------- |
-| ブロック       | BlockBuilder                   | `content/blocks`        | build() で登録                 |
-| アイテム       | ItemBuilder                    | `content/items`         | CreativeTab / stack 指定可能    |
-| エンティティ     | EntityBuilder                  | `content/entities`      | build() で EntityType 登録     |
-| ブロックエンティティ | BlockEntityBuilder             | `content/blockentities` | blocks() 指定必須               |
-| イベント       | EventBuilder                   | `logic/events`          | async / sync 指定可            |
-| Client     | ClientBuilder                  | `client/`               | registerAll() 必須、サーバーで noop |
-| データ生成      | BlockGen / ItemGen / EntityGen | `datagen/`              | end() で処理実行                 |
+## 目的
+このドキュメントは、現行MDK構成のDSLクラスを説明します。
+すべてのサンプルコードは現在のAPIシグネチャに合わせています。
 
----
+## 1. Registry DSL
+入口:
+- `com.yourname.yourmod.api.libs.Registry`
 
-### 2.4 特殊注意点
+利用可能メソッド:
+- `Registry.block(String id)` -> `BlockBuilder`
+- `Registry.item(String id)` -> `ItemBuilder`
+- `Registry.entity(String id, Supplier<T> factory)` -> `EntityBuilder<T>`
+- `Registry.blockEntity(String id, Supplier<T> factory)` -> `BlockEntityBuilder<T>`
 
-1. **Client DSL**
+### BlockBuilder
+メソッド:
+- `template(Object)`
+- `strength(float)`
+- `noOcclusion()`
+- `build()` -> `Object`
 
-   * 描画・UI・キー入力はサーバーでは動かない
-   * `.registerAll()` を呼ばないと反映されない
+ショートテンプレ:
+```java
+Object block = Registry.block("sample_block")
+        .template(new Object())
+        .strength(3.0f)
+        .noOcclusion()
+        .build();
+```
 
-2. **DataGen**
+### ItemBuilder
+メソッド:
+- `stack(int)`
+- `tab(Object)`
+- `durability(int)`
+- `template(Object)`
+- `build()` -> `Object`
 
-   * JSON・言語ファイルの生成
-   * 実行はビルド時フェーズのみ
-   * `datagen/` ディレクトリに宣言
+ショートテンプレ:
+```java
+Object item = Registry.item("sample_item")
+        .template(new Object())
+        .stack(64)
+        .durability(120)
+        .build();
+```
 
-3. **EventBuilder**
+### EntityBuilder
+メソッド:
+- `category(Object)`
+- `size(float width, float height)`
+- `build()` -> `T`
 
-   * async は非同期で、サーバー側イベントをブロックせずに処理
-   * priority は EventBus の呼び出し順
+ショートテンプレ:
+```java
+Object entity = Registry.entity("sample_entity", Object::new)
+        .category("creature")
+        .size(0.8f, 1.6f)
+        .build();
+```
 
-4. **BlockEntityBuilder**
+### BlockEntityBuilder
+メソッド:
+- `blocks(Object... blocks)`
+- `build()` -> `T`
 
-   * ブロック紐付けを忘れると登録失敗
+ショートテンプレ:
+```java
+Object blockEntity = Registry.blockEntity("sample_be", Object::new)
+        .blocks(block)
+        .build();
+```
+
+## 2. Event DSL
+入口:
+- `com.yourname.yourmod.api.libs.Events`
+
+利用可能メソッド:
+- `Events.on(Class<T>)`
+- `Events.playerJoin()`
+
+ビルダーメソッド:
+- `priority(EventPriority)`
+- `async()`
+- `sync()`
+- `handle(Consumer<T>)`
+
+ショートテンプレ:
+```java
+Events.playerJoin()
+        .priority(EventPriority.NORMAL)
+        .handle(event -> {
+            Object player = event.player;
+            System.out.println("joined: " + player);
+        });
+```
+
+## 3. Client DSL
+入口:
+- `com.yourname.yourmod.api.libs.Client`
+
+ビルダー:
+- `renders()` -> `RenderDSL`
+- `keybinds()` -> `KeybindDSL`
+- `screens()` -> `ScreenDSL`
+- `hud()` -> `HudDSL`
+
+各サブDSLの現行メソッド:
+- `registerAll()`
+
+ショートテンプレ:
+```java
+Client.init(client -> {
+    client.renders().registerAll();
+    client.keybinds().registerAll();
+    client.screens().registerAll();
+    client.hud().registerAll();
+});
+```
+
+補足:
+- `Client.init(...)` 内で `builder.registerAll()` は自動実行されます。
+
+## 4. Datagen DSL
+入口:
+- `com.yourname.yourmod.api.libs.datagen.DataGen`
+
+利用可能メソッド:
+- `DataGen.block(String)` -> `BlockGen`
+- `DataGen.item(String)` -> `ItemGen`
+- `DataGen.entity(String)` -> `EntityGen`
+
+共通確定メソッド:
+- `end()`
+
+ショートテンプレ:
+```java
+DataGen.block("sample_block").end();
+DataGen.item("sample_item").lang("Sample Item").end();
+DataGen.entity("sample_entity").lang("Sample Entity").end();
+```
+
+## 5. Packet DSL
+入口:
+- `com.yourname.yourmod.api.libs.packet.Packet`
+
+主要メソッド:
+- `Packet.define(String id)`
+- `serverbound()` / `clientbound()`
+- `codec(...)`
+- `handle(...)`
+- `register()`
+- `sendToServer(T)`
+- `sendToPlayer(Object, T)`
+
+ショートテンプレ:
+```java
+Packet<String> ping = Packet.<String>define("ping")
+        .serverbound()
+        .codec(buf -> "ping", (packet, buf) -> {})
+        .handle((packet, ctx) -> System.out.println(packet));
+
+ping.register();
+ping.sendToServer("hello");
+```
+
+## 6. 共通イベント補助
+`CommonEvents.onPlayerJoin(Object player)` は `PlayerJoinEvent` を `ModEventBus` に投稿します。
+共通イベント処理はこの経路を使います。

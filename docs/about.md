@@ -1,186 +1,179 @@
-# 1. MODの仕組みと作り方
+﻿# About This Template
 
-この MOD フレームワークは、  
-**「Minecraft MOD を “宣言的に” 書く」** ことを目的として設計されています。  
+## What this MDK is
+InfinityMaxMOD-Template is a multi-loader MDK.
+One shared codebase can build both Forge and Fabric artifacts.
 
-Forge / Fabric の違い、初期化順序、Registry の罠、Client / Server 分離など、
-従来 MOD 開発で毎回悩まされてきた要素を DSL とライフサイクルで吸収し、
-「何を追加したいか」だけを書けば、
-「いつ・どこで・どう登録されるか」はフレームワークが処理する
+## Main design
+This template is split into two layers:
+- Common layer (`api` and shared logic): pure Java, platform-neutral
+- Loader layer (`loader/Forge`, `loader/Fabric`): platform-specific adaptation
 
-という構造を取っています。
+The common layer should not directly depend on Minecraft loader classes.
+Use `Object` or wrapper interfaces at API boundaries.
 
-## 1.1 全体像
+## Why this design exists
+Benefits:
+- One gameplay/business logic codebase
+- Less duplication between Forge and Fabric
+- Faster maintenance when updating features
 
-この MOD は、大きく3層構造になっています。  
-```
-[ あなたのMODコード ]
-        ↓
-[ 共通API / DSL層 ]
-        ↓
-[ Loader / Platform層 (Forge / Fabric) ]
-```
+Tradeoff:
+- You must keep strict boundaries between common and loader code
 
-この分離によって、  
-- Forge / Fabric の違いを意識しない
-- 初期化順序で事故らない
-- Client クラスを Server で誤ロードしない
+## High-level flow
+1. Loader entrypoint starts (`ForgeEntrypoint` or `FabricEntrypoint`)
+2. Runtime platform bridge is set with `Platform.set(...)`
+3. Network/events are registered
+4. `YourMod.init()` runs
+5. Shared API/DSL calls route into loader implementations
 
-という状態を作っています。  
-
-## 1.2 MOD が起動するまでの流れ（実行の流れ）
-
-「Minecraft 起動 → MOD が動く」までの流れを、時系列で説明します。  
-
-### ① Minecraft が MOD を検出する. 
-- Fabric: fabric.mod.json
-- Forge: META-INF/mods.tomi
-
-ここで、  
-- MOD ID
-- エントリポイント
-- 対応バージョン
-
-などが読み込まれます。  
-
-※ この時点では あなたの DSL コードはまだ実行されていません。  
-
-### ② Loader Entrypoint が呼ばれる
-
-Forge / Fabric それぞれに対応した Entrypoint クラスが呼ばれます。  
-
-このクラスの役割は ただ一つ：
-
-「共通ライフサイクルを正しいタイミングで起動すること」
-ここでは、  
-- Registry 初期化
-- Event 登録
-- Client 専用処理の分岐
-などを 直接書きません。  
-
-### ③ ライフサイクルが起動する
-
-このフレームワークでは、MOD の初期化を
-明示的なライフサイクル段階に分けています。  
-
-例（概念）：
-- COMMON_INIT
-- REGISTRY
-- CLIENT_INIT
-- SERVER_INIT
-
-あなたが DSL で書いた処理は、  
-「このライフサイクル段階で実行される」
-という形で 登録だけされており、  
-実行そのものは Loader 側が行います。  
-
-### ④ DSL による宣言が実体化する
-
-例えば、  
-- ブロック DSL → Registry に登録
-- イベント DSL → EventBus に接続
-- Client DSL → Client 環境でのみ実行
-
-というように、  
-宣言された内容が、適切なタイミングで実体化します。  
-
-重要なのは：
-
-DSL を書いた時点では「登録されない」
-ライフサイクルが来て初めて「登録される」
-という点です。  
-
-## 1.3 推奨ディレクトリ構成
-
-このフレームワークでは、  
-役割ごとにディレクトリを分けることを強く推奨します。  
-```
-src/main/java/
-└ com/yourname/yourmod/
-   ├ ModMain.java              ← MODの入口（最小）
-   │
-   ├ content/                 ← 触る場所①：オブジェ定義
-   │  ├ blocks/
-   │  ├ items/
-   │  ├ entities/
-   │  └ blockentities/
-   │
-   ├ client/                  ← 触る場所②：Client専用DSL
-   │
-   ├ logic/                   ← 触る場所③：カスタムロジック
-   │
-   └ api/                     ← 触らない（DSL本体）
+## Project map
+```text
+src/main/java/com/yourname/yourmod/
+  api/
+    event/
+    libs/
+    lifecycle/
+    platform/
+    util/
+  loader/
+    LoaderExpectPlatform.java
+    Platform.java
+    Forge/
+    Fabric/
 ```
 
-各ディレクトリの意味
-ModMain.java
-- DSL を呼び出すだけ
-- ロジックを書かない
-content/
-- ブロック・アイテム・エンティティなどの宣言
-- 「何を追加するか」を書く場所
-client/
-- レンダリング、GUI、キー設定など
-- Client 専用 DSL のみを書く
-logic/
-- 独自処理、計算、AI、状態管理など
-- Minecraft API 依存でも OK
-api/
-- フレームワーク内部
-- 触らない・改造しない
+## Non-negotiable rules
+1. No direct `net.minecraft.*` imports in common API layer
+2. Keep shared signatures platform-neutral (`Object` or wrappers)
+3. Cast/convert platform types only in loader implementations
+4. Validate both loaders on every change
 
-## 1.4 触ってはいけない場所（重要）
+## Build commands
+```bash
+gradlew :forge:compileJava :fabric:compileJava
+gradlew clean build
+```
 
-以下は 基本的に編集禁止です。  
-- loader/
-- api/（DSL 本体・Lifecycle・Platform）
-- Forge / Fabric の Platform 実装
+## Minimal short template (current structure)
+```java
+package com.example.mymod;
 
-理由は単純で、  
-ここは「MODを書く人」ではなく「フレームワークを書く人」の領域. 
-だからです。  
+import com.yourname.yourmod.api.libs.Events;
+import com.yourname.yourmod.api.libs.Registry;
 
-ここを触り始めると、  
-- Loader 不整合. 
-- Client/Server 混線. 
-- 初期化順バグ. 
+public final class MyFeature {
 
-が発生します。  
+    private static final Object TEST_BLOCK = Registry.block("test_block")
+            .template(new Object())
+            .strength(3.0f)
+            .build();
 
-⸻
+    private MyFeature() {}
 
-## 1.5 「MODを書く」とは何をすることか
+    public static void init() {
+        Events.playerJoin().handle(event -> {
+            Object player = event.player;
+            System.out.println("Player joined: " + player);
+        });
+    }
+}
+```
 
-このフレームワークにおいて、  
-MOD を書くとは 次の3つだけを行うことです。  
-1.DSL でオブジェを宣言する
-- ブロック、アイテム、イベントなど
-2.必要ならロジックを書く
-- 独自挙動、状態管理、計算処理
-3.Client 専用処理を分離して書く
-- 描画・UI・入力
+## Typical mistakes to avoid
+- Importing Minecraft classes in common API files
+- Writing Forge logic in Fabric classes (or opposite)
+- Assuming loader-specific objects are available in common code
+- Skipping dual-loader compile checks
 
-「いつ登録するか」「どの環境で動くか」は、一切考えなくていい。  
+---
 
-## 1.6 なぜこの構造なのか（思想）
+# このテンプレートについて
 
-Minecraft MOD 開発が難しい理由は、  
-- 初期化順が暗黙的
-- Loader 差分が侵食してくる
-- Client/Server 分離が事故る
+## このMDKの役割
+InfinityMaxMOD-Template はマルチローダー対応MDKです。
+1つの共通コードベースから Forge と Fabric の両方をビルドできます。
 
-という 構造的な問題にあります。  
+## 基本設計
+このテンプレートは2層構造です。
+- 共通層（`api` と共通ロジック）: 純Java、プラットフォーム非依存
+- ローダー層（`loader/Forge`, `loader/Fabric`）: プラットフォーム固有の適応処理
 
-このフレームワークはそれを、  
-- 明示的ライフサイクル
-- 宣言型 DSL
-- Platform 完全分離
+共通層は Minecraft ローダー固有クラスに直接依存しません。
+API境界では `Object` かラッパーを使います。
 
-で 物理的に事故れない構造にしています。  
+## この設計の目的
+メリット:
+- ゲームロジックを1つのコードベースに集約できる
+- Forge/Fabric間の重複を減らせる
+- 機能更新時の保守が速い
 
-ここまで理解できれば、  
-- どこに何を書くか
-- なぜその場所なのか
-- 何を書かなくていいのか
+トレードオフ:
+- 共通層とローダー層の境界管理が必須
 
-が一気に解決します。  
+## 全体の流れ
+1. ローダーのエントリポイント起動（`ForgeEntrypoint` / `FabricEntrypoint`）
+2. `Platform.set(...)` で実行中のプラットフォームブリッジを設定
+3. ネットワーク・イベントを登録
+4. `YourMod.init()` 実行
+5. 共通API/DSL呼び出しをローダー実装へ委譲
+
+## プロジェクト構成
+```text
+src/main/java/com/yourname/yourmod/
+  api/
+    event/
+    libs/
+    lifecycle/
+    platform/
+    util/
+  loader/
+    LoaderExpectPlatform.java
+    Platform.java
+    Forge/
+    Fabric/
+```
+
+## 必須ルール
+1. 共通API層で `net.minecraft.*` を直接 import しない
+2. 共有シグネチャは非依存型（`Object` かラッパー）で保つ
+3. 型変換はローダー実装側だけで行う
+4. 変更時は両ローダーを必ず検証する
+
+## ビルドコマンド
+```bash
+gradlew :forge:compileJava :fabric:compileJava
+gradlew clean build
+```
+
+## 最小ショートテンプレ（現行構成対応）
+```java
+package com.example.mymod;
+
+import com.yourname.yourmod.api.libs.Events;
+import com.yourname.yourmod.api.libs.Registry;
+
+public final class MyFeature {
+
+    private static final Object TEST_BLOCK = Registry.block("test_block")
+            .template(new Object())
+            .strength(3.0f)
+            .build();
+
+    private MyFeature() {}
+
+    public static void init() {
+        Events.playerJoin().handle(event -> {
+            Object player = event.player;
+            System.out.println("Player joined: " + player);
+        });
+    }
+}
+```
+
+## よくある失敗
+- 共通APIに Minecraft クラスを import してしまう
+- Forge実装を Fabric 側に書く（逆も同様）
+- 共通層でローダー専用オブジェクトがある前提で書く
+- 両ローダーのコンパイル確認を省略する
