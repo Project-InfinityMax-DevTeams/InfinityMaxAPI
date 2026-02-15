@@ -1,9 +1,18 @@
 # Custom System Guide
 
 ## Purpose
-Custom systems are templates for implementing unique game/business modules independent of the loader's internal structure.
-Build the core system with shared code, connecting components via DSLs and events.
-This guide provides **copy-and-paste code blocks and a reference table** to help developers easily place elements.
+Custom systems are templates for implementing unique game/business modules without depending on loader internals.
+You build the core system in shared code and connect it through DSLs and events.
+This guide is written for beginners and includes **copy/paste templates** plus **tables that explain exactly what to replace**.
+
+## How to read the templates (important)
+- Values wrapped in `<...>` are placeholders. Replace them with your own values.
+- String IDs (for example `"my_item"`) should usually be lowercase snake_case.
+- If a row says **Required**, set that value before running.
+
+Example:
+- `Registry.item("<item_id>")` → `Registry.item("copper_hammer")`
+- `.stack(<max_stack>)` → `.stack(1)`
 
 # Registration Systems
 
@@ -17,21 +26,23 @@ import com.yourname.yourmod.api.libs.Registry;
 public final class CustomItemSystem {
 
     public static void init() {
-        Object item = Registry.item("custom_id")
-                .template(new Object())
-                .stack(stackSize)
-                .durability(durabilityValue)
-                .tab(tabCategory)
+        Object item = Registry.item("<item_id>")
+                .template(<item_template>)
+                .stack(<max_stack>)
+                .durability(<durability>)
+                .tab(<creative_tab>)
                 .build();
     }
 }
 ```
-| Required field (variable name)     | Information entered into variable | Behavior/processing when specified                    |
-| --------------- | ------- | ------------------------------ - |
-| “custom_id”     | string  | Item is registered with the entered ID. |
-| stackSize       | int     | Maximum stack size for the item |
-| durabilityValue | int     | Item durability          |
-| tabCategory     | Object  | Creative tab the item belongs to       |
+
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<item_id>` | string | Item registry ID (example: `"copper_hammer"`) | Registers the item with that ID |
+| `<item_template>` | Object | Base template object | Defines base item behavior |
+| `<max_stack>` | int | Max stack size | Limits stack size |
+| `<durability>` | int | Durability value | Sets item durability |
+| `<creative_tab>` | Object | Creative tab/category | Places item in that tab |
 
 ---
 
@@ -45,21 +56,21 @@ import com.yourname.yourmod.api.libs.Registry;
 public final class CustomBlockSystem {
 
     public static void init() {
-        Object block = Registry.block(“custom_block_id”)
-                .template(blockTemplate)
-                .strength(blockStrength)
-                .noOcclusion(occlusionFlag)
+        Object block = Registry.block("<block_id>")
+                .template(<block_template>)
+                .strength(<block_strength>)
+                .noOcclusion(<no_occlusion>)
                 .build();
     }
 }
 ```
 
-| Required Specifier (Variable Name)       | Information Entered into Variable | Behavior/Processing When Specified                  |
-| ----------------- | ------- | ---------------------------- - |
-| “custom_block_id” | string  | Block is registered with the entered ID              |
-| blockTemplate     | Object  | Base template for the block                  |
-| blockStrength     | float   | Block hardness/destruction time                  |
-| occlusionFlag     | boolean | true for non-transparent block, false for transparent block |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<block_id>` | string | Block registry ID | Registers the block |
+| `<block_template>` | Object | Base block template | Sets base properties |
+| `<block_strength>` | float | Hardness/break speed | Controls mining resistance |
+| `<no_occlusion>` | boolean | `true` or `false` | `true`: non-occluding, `false`: normal occlusion |
 
 ---
 
@@ -73,21 +84,21 @@ import com.yourname.yourmod.api.libs.Registry;
 public final class CustomEntitySystem {
 
     public static void init() {
-        Object entity = Registry.entity(“custom_entity_id”, entityFactory)
-                .category(entityCategory)
-                .size(entityWidth, entityHeight)
+        Object entity = Registry.entity("<entity_id>", <entity_factory>)
+                .category(<entity_category>)
+                .size(<entity_width>, <entity_height>)
                 .build();
     }
 }
 ```
 
-| Required Specifier (Variable Name)        | Information Entered into Variable     | Behavior/Processing When Specified       |
-| ------------------ | ----------- | ------------------ |
-| “custom_entity_id” | string      | Entity is registered with the provided ID |
-| entityFactory      | Supplier<T> | Entity generation function         |
-| entityCategory     | Object      | Entity category         |
-| entityWidth        | float       | Width                  |
-| entityHeight       | float       | Height                 |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<entity_id>` | string | Entity registry ID | Registers the entity |
+| `<entity_factory>` | Supplier<T> | Entity creation function | Creates entity instance |
+| `<entity_category>` | Object | Category/type | Assigns category |
+| `<entity_width>` | float | Width | Hitbox/render size |
+| `<entity_height>` | float | Height | Hitbox/render size |
 
 ---
 
@@ -103,19 +114,20 @@ public final class CustomEventSystem {
 
     public static void init() {
         Events.playerJoin()
-                .priority(eventPriority)
+                .priority(<event_priority>)
                 .handle(event -> {
-                    // Event processing logic
-                    customLogic.accept(event);
+                    <custom_logic>.accept(event);
                 });
     }
 }
 ```
 
-| Required Specifcation (Variable Name)   | Information Entered into Variable       | Behavior/Processing When Specified  |
-| ------------- | ------------- | ------------- |
-| eventPriority | EventPriority    | Event processing priority    |
-| customLogic   | Consumer<T>     | Event logic to execute       |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<event_priority>` | EventPriority | Event order priority | Controls execution order |
+| `<custom_logic>` | Consumer<T> | Logic to run | Runs on event trigger |
+
+---
 
 ## 5. Custom UI/Client Processing System
 
@@ -137,9 +149,9 @@ public final class CustomClientSystem {
 }
 ```
 
-| Required Specifcation (Variable Name) | Information Entered into Variable | Behavior/Processing When Specified     |
-| ----------- | ------- | ---------------- |
-| (None)        |         | Initializes and registers all sub-DSLs |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| (none) | - | No replacement required | Initializes all client sub-DSLs |
 
 ---
 
@@ -153,20 +165,20 @@ import com.yourname.yourmod.api.libs.datagen.DataGen;
 public final class CustomDataGenSystem {
 
     public static void init() {
-        DataGen.block(“custom_block_id”).end();
-        DataGen.item(“custom_item_id”).lang(itemName).end();
-        DataGen.entity(“custom_entity_id”).lang(entityName).end();
+        DataGen.block("<block_id>").end();
+        DataGen.item("<item_id>").lang(<item_name>).end();
+        DataGen.entity("<entity_id>").lang(<entity_name>).end();
     }
 }
 ```
 
-| Required Specifcation (Variable Name)        | Information Entered into Variable | Behavior/Processing When Specified   |
-| ------------------ | ------- | -------------- |
-| “custom_block_id”  | string  | Block ID for Data Generation   |
-| “custom_item_id”   | string  | Item ID for data generation   |
-| itemName           | string  | Item name          |
-| “custom_entity_id” | string  | Entity ID for data generation |
-| entityName         | string  | Entity name        |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<block_id>` | string | Block ID for data gen | Generates block data |
+| `<item_id>` | string | Item ID for data gen | Generates item data |
+| `<item_name>` | string | Item display name | Used for language text |
+| `<entity_id>` | string | Entity ID for data gen | Generates entity data |
+| `<entity_name>` | string | Entity display name | Used for language text |
 
 ---
 
@@ -180,28 +192,135 @@ import com.yourname.yourmod.api.libs.packet.Packet;
 public final class CustomPacketSystem {
 
     public static void init() {
-        Packet<String> ping = Packet.<String>define(“ping”)
+        Packet<String> ping = Packet.<String>define("<packet_id>")
                 .serverbound()
-                .codec(buf -> “ping”, (packet, buf) -> {})
-                .handle((packet, ctx) -> customLogic.accept(packet));
+                .codec(buf -> "ping", (packet, buf) -> {})
+                .handle((packet, ctx) -> <custom_logic>.accept(packet));
 
         ping.register();
-        ping.sendToServer(“hello”);
+        ping.sendToServer("hello");
     }
 }
 ```
 
-| Required Specifcation (Variable Name) | Information Entered into Variable       | Behavior/Processing When Specified |
-| ----------- | ------------- | ------------ |
-| “ping”      | string        | Packet ID       |
-| customLogic | PacketHandler | Processing when packet is received   |
+| Placeholder | Type | What to set | Result |
+| --- | --- | --- | --- |
+| `<packet_id>` | string | Packet ID | Identifies packet channel |
+| `<custom_logic>` | PacketHandler | Receive logic | Runs when packet is received |
 
+# Processing Systems
+
+## 1. Constants and Registry IDs
+```java
+public final class XSystemConstants {
+    public static final int MAX_VALUE = <max_value>;
+    public static final int MIN_VALUE = <min_value>;
+    public static final String ENERGY_ID = "<energy_id>";
+    public static final String LEVEL_ID  = "<level_id>";
+    private XSystemConstants() {}
+}
+```
+
+## 2. State Model (multiple values, collections, flags)
+```java
+public final class XState {
+    private int energy;
+    private boolean unlocked;
+    private int level;
+    private final Map<String, Integer> counters = new HashMap<>();
+    // getter/setter methods...
+}
+```
+
+## 3. Service Layer (player-linked state access)
+```java
+public final class XService {
+    private static final Map<Object, XState> STATE = new ConcurrentHashMap<>();
+    public static XState byPlayer(Object player) { return STATE.computeIfAbsent(player, k -> new XState()); }
+}
+```
+
+## 4. Event Connections (multiple events and conditions)
+```java
+public final class XEvents {
+    public static void register() {
+        Events.playerJoin().handle(event -> { /* init */ });
+        Events.on(CustomEvent.class).handle(event -> { /* conditional update */ });
+        Events.on(LevelUpEvent.class).handle(event -> { /* level sync */ });
+    }
+}
+```
+
+## 5. Client Connections (HUD/UI)
+```java
+public final class XClient {
+    public static void register() {
+        Client.init(client -> {
+            client.hud().registerAll();
+            client.screens().registerAll();
+        });
+    }
+}
+```
+
+## 6. Initialization Wiring
+```java
+public final class MyModInit {
+    public static void init() {
+        XEvents.register();
+        XClient.register();
+    }
+}
+```
+
+# Advanced Processing Systems
+
+## 1. Per-player state operations
+Use utility methods like `setPlayerEnergy`, `addPlayerEnergy`, `setPlayerLevel`, and `resetPlayerState` for clear state updates.
+
+## 2. Server-wide multi-player operations
+Use loops over `Collection<Object> players` for batch operations such as add energy, set level, and reset.
+
+## 3. Condition/calculation utilities
+Centralize checks like `isPlayerLevelAtLeast`, `canConsumeEnergy`, and `consumeEnergyIfPossible`.
+
+## 4. Client HUD template
+Expose text builders (for example `getEnergyText(player)`) that read data from `XService`.
+
+## 5. System entry point
+Group registration into a single `init()` that calls:
+- player join initialization
+- custom event registration
+- tick-based auto progress registration
+
+# Expert Systems
+
+## 1. Expanded state management (time-aware)
+Track not only `energy/level/unlocked` but also tick-based fields (`lastUpdateTick`, `playTimeTicks`).
+
+## 2. Centralized multi-player manager
+Use an `XManager` map to get/remove player states and enumerate all players/states.
+
+## 3. Auto progression (tick-driven)
+Update per tick, perform periodic recovery, and apply long-play bonuses.
+
+## 4. Complex conditional event logic
+Combine level, energy, counters, and unlock flags before triggering advanced effects.
+
+## 5. Entity ownership binding
+Use a map to bind entities to owners and support `bind/getOwner/unbind`.
+
+## 6. Network synchronization (pseudo packet)
+Build packet data from state (`energy`, `level`, `unlocked`) and send to the target player.
+
+## 7. Real-time HUD (every tick)
+Render an always-updated string from current state, for example energy, level, and kill counter.
 
 ## Do / Don't
 Do:
 - Keep system logic testable and pure
-- Use `Object` boundary for shared API
-- Keep loader-specific conversion isolated
+- Use `Object` as the shared API boundary
+- Isolate loader-specific conversions
 
 Don't:
 - Import Minecraft classes into shared system core
@@ -210,11 +329,9 @@ Don't:
 
 ## Validation
 ```bash
-gradlew :forge:compileJava :fabric:compileJava
-gradlew clean build
+./gradlew :forge:compileJava :fabric:compileJava
+./gradlew clean build
 ```
-
----
 
 # カスタムシステムガイド
 
