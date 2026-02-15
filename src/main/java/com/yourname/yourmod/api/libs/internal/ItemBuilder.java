@@ -6,20 +6,26 @@ public final class ItemBuilder {
 
     private final String id;
     private Object template;
+    private int stack = 64;
+    private Object tab = null;
+    private int durability = 0;
 
     public ItemBuilder(String id) {
         this.id = id;
     }
 
     public ItemBuilder stack(int size) {
+        this.stack = size;
         return this;
     }
 
     public ItemBuilder tab(Object tab) {
+        this.tab = tab;
         return this;
     }
 
     public ItemBuilder durability(int value) {
+        this.durability = value;
         return this;
     }
 

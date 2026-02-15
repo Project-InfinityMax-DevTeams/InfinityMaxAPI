@@ -215,7 +215,7 @@ Registry.block(id)
 
 ショートテンプレ:
 ```java
-BlockHandle block = Registry.block("sample_block")
+Object block = Registry.block("sample_block")
         .template(new Object())
         .strength(3.0f)
         .noOcclusion()
@@ -223,27 +223,52 @@ BlockHandle block = Registry.block("sample_block")
 ```
 
 ### ItemBuilder
-メソッド:
-- `stack(int)`
-- `tab(Object)`
-- `durability(int)`
-- `template(Object)`
-- `build()` -> `Object`
+構文:
+```java
+Registry.item(id)
+        .template(Object)
+        .stack(int)
+        .tab(Object)
+        .durability(int)
+        .build()
+
+```
+| 要素         | 必須 | 説明                 | 指定しない場合             |
+| ---------- | -- | ------------------ | ------------------- |
+| id         | 必須 | アイテム登録ID           | ビルド不可               |
+| template   | 任意 | アイテムの元となるテンプレートを指定 | new Object() が生成される |
+| stack      | 任意 | アイテムのスタック上限を指定     | デフォルト値 64 が使用される    |
+| tab        | 任意 | クリエイティブタブやカテゴリを指定  | null（どのタブにも所属しない）   |
+| durability | 任意 | 耐久値を指定             | デフォルト値 0 が使用される     |
 
 ショートテンプレ:
 ```java
 Object item = Registry.item("sample_item")
         .template(new Object())
         .stack(64)
+        .tab("misc_tab")
         .durability(120)
         .build();
 ```
 
 ### EntityBuilder
-メソッド:
-- `category(Object)`
-- `size(float width, float height)`
-- `build()` -> `T`
+
+構文:
+
+```java
+Registry.entity(id, Supplier<T>)
+        .category(Object)
+        .size(float width, float height)
+        .build()
+```
+
+| 要素          | 必須 | 説明                               | 指定しない場合    |
+| ----------- | -- | -------------------------------- | ---------- |
+| id          | 必須 | エンティティ登録ID                       | ビルド不可      |
+| Supplier<T> | 必須 | エンティティインスタンス生成ファクトリ              | ビルド不可      |
+| category    | 任意 | エンティティカテゴリ（creature, monster など） | null       |
+| width       | 任意 | エンティティの幅                         | デフォルト 0.6f |
+| height      | 任意 | エンティティの高さ                        | デフォルト 1.8f |
 
 ショートテンプレ:
 ```java
