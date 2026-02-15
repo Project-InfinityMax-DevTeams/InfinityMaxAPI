@@ -210,6 +210,112 @@ public final class CustomPacketSystem {
 
 # Processing Systems
 
+## 1. Constants and Registry IDs
+```java
+public final class XSystemConstants {
+    public static final int MAX_VALUE = <max_value>;
+    public static final int MIN_VALUE = <min_value>;
+    public static final String ENERGY_ID = "<energy_id>";
+    public static final String LEVEL_ID  = "<level_id>";
+    private XSystemConstants() {}
+}
+```
+
+## 2. State Model (multiple values, collections, flags)
+```java
+public final class XState {
+    private int energy;
+    private boolean unlocked;
+    private int level;
+    private final Map<String, Integer> counters = new HashMap<>();
+    // getter/setter methods...
+}
+```
+
+## 3. Service Layer (player-linked state access)
+```java
+public final class XService {
+    private static final Map<Object, XState> STATE = new ConcurrentHashMap<>();
+    public static XState byPlayer(Object player) { return STATE.computeIfAbsent(player, k -> new XState()); }
+}
+```
+
+## 4. Event Connections (multiple events and conditions)
+```java
+public final class XEvents {
+    public static void register() {
+        Events.playerJoin().handle(event -> { /* init */ });
+        Events.on(CustomEvent.class).handle(event -> { /* conditional update */ });
+        Events.on(LevelUpEvent.class).handle(event -> { /* level sync */ });
+    }
+}
+```
+
+## 5. Client Connections (HUD/UI)
+```java
+public final class XClient {
+    public static void register() {
+        Client.init(client -> {
+            client.hud().registerAll();
+            client.screens().registerAll();
+        });
+    }
+}
+```
+
+## 6. Initialization Wiring
+```java
+public final class MyModInit {
+    public static void init() {
+        XEvents.register();
+        XClient.register();
+    }
+}
+```
+
+# Advanced Processing Systems
+
+## 1. Per-player state operations
+Use utility methods like `setPlayerEnergy`, `addPlayerEnergy`, `setPlayerLevel`, and `resetPlayerState` for clear state updates.
+
+## 2. Server-wide multi-player operations
+Use loops over `Collection<Object> players` for batch operations such as add energy, set level, and reset.
+
+## 3. Condition/calculation utilities
+Centralize checks like `isPlayerLevelAtLeast`, `canConsumeEnergy`, and `consumeEnergyIfPossible`.
+
+## 4. Client HUD template
+Expose text builders (for example `getEnergyText(player)`) that read data from `XService`.
+
+## 5. System entry point
+Group registration into a single `init()` that calls:
+- player join initialization
+- custom event registration
+- tick-based auto progress registration
+
+# Expert Systems
+
+## 1. Expanded state management (time-aware)
+Track not only `energy/level/unlocked` but also tick-based fields (`lastUpdateTick`, `playTimeTicks`).
+
+## 2. Centralized multi-player manager
+Use an `XManager` map to get/remove player states and enumerate all players/states.
+
+## 3. Auto progression (tick-driven)
+Update per tick, perform periodic recovery, and apply long-play bonuses.
+
+## 4. Complex conditional event logic
+Combine level, energy, counters, and unlock flags before triggering advanced effects.
+
+## 5. Entity ownership binding
+Use a map to bind entities to owners and support `bind/getOwner/unbind`.
+
+## 6. Network synchronization (pseudo packet)
+Build packet data from state (`energy`, `level`, `unlocked`) and send to the target player.
+
+## 7. Real-time HUD (every tick)
+Render an always-updated string from current state, for example energy, level, and kill counter.
+
 > Goal: let users build core MOD logic by replacing placeholders, like editing JSON values.
 
 ## 1. Constants and Registry IDs
@@ -503,7 +609,6 @@ Do:
 - Keep system logic testable and pure
 - Use `Object` as the shared API boundary
 - Isolate loader-specific conversions
-- Replace placeholders one by one from top to bottom
 
 Don't:
 - Import Minecraft classes into shared system core
