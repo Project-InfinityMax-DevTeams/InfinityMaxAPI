@@ -1,4 +1,4 @@
-﻿# Custom System Guide
+# Custom System Guide
 
 ## Purpose
 Custom systems are templates for implementing unique game/business modules independent of the loader's internal structure.
@@ -859,6 +859,298 @@ public final class XSystemAdvanced {
 | event.deltaEnergy | int      | 消費量     | MAX/MIN制限適用      |
 | player            | Object   | 対象プレイヤー | Registry紐付け      |
 
+⸻
+# 最上級層
+## 1. 状態管理（拡張版・時間対応）
+```Java
+package com.example.mymod.system.X;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class XState {
+
+    private int energy;
+    private int level;
+    private boolean unlocked;
+
+    private long lastUpdateTick;
+    private long playTimeTicks;
+
+    final Map<String, Integer> counters = new HashMap<>();
+
+    // ===== ENERGY =====
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int value) {
+        this.energy = Math.max(0, value);
+    }
+
+    public void addEnergy(int delta) {
+        setEnergy(this.energy + delta);
+    }
+
+    // ===== LEVEL =====
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = Math.max(0, level);
+    }
+
+    // ===== UNLOCK =====
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public void setUnlocked(boolean value) {
+        this.unlocked = value;
+    }
+
+    // ===== COUNTERS =====
+    public void incrementCounter(String key) {
+        counters.put(key, getCounter(key) + 1);
+    }
+
+    public int getCounter(String key) {
+        return counters.getOrDefault(key, 0);
+    }
+
+    public void setCounter(String key, int value) {
+        counters.put(key, value);
+    }
+
+    // ===== TIME =====
+    public void updateTick(long tick) {
+        this.playTimeTicks += (tick - lastUpdateTick);
+        this.lastUpdateTick = tick;
+    }
+
+    public long getPlayTimeTicks() {
+        return playTimeTicks;
+    }
+}
+```
+引数表
+
+指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|key	|String|カウンター|識別子|ID紐付け可能|
+|value	|int|設定値|0以上|
+|tick	|long|現在サーバーTick	|自動進行で使用|
+
+
+⸻
+
+## 2. 複数プレイヤー管理（集中管理型）
+```Java
+package com.example.mymod.system.X;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public final class XManager {
+
+    private static final Map<Object, XState> PLAYER_STATES = new HashMap<>();
+
+    private XManager() {}
+
+    public static XState get(Object player) {
+        return PLAYER_STATES.computeIfAbsent(player, p -> new XState());
+    }
+
+    public static void remove(Object player) {
+        PLAYER_STATES.remove(player);
+    }
+
+    public static Collection<XState> allStates() {
+        return PLAYER_STATES.values();
+    }
+
+    public static Collection<Object> allPlayers() {
+        return PLAYER_STATES.keySet();
+    }
+}
+```
+指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|player	|Object	|プレイヤー|Registry紐付け|
+
+## 3. 自動進行システム（Tick駆動）
+```Java
+package com.example.mymod.system.X;
+
+public final class XAutoProgress {
+
+    private XAutoProgress() {}
+
+    public static void onServerTick(long currentTick) {
+
+        for (Object player : XManager.allPlayers()) {
+
+            XState state = XManager.get(player);
+            state.updateTick(currentTick);
+
+            // レベル自動上昇
+            if(state.getPlayTimeTicks() > 12000) {
+                state.setLevel(state.getLevel() + 1);
+                state.setCounter("auto_levelups",
+                        state.getCounter("auto_levelups") + 1);
+            }
+
+            // エネルギー自然回復
+            if(currentTick % 20 == 0) {
+                state.addEnergy(1);
+            }
+        }
+    }
+}
+```
+
+指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|currentTick	|long|現在Tick|サーバーイベントから渡す|
+
+⸻
+
+## 4. 複雑条件イベント処理
+```Java
+package com.example.mymod.system.X;
+
+public final class XEventLogic {
+
+    private XEventLogic() {}
+
+    public static void handleAdvancedCondition(Object player) {
+
+        XState state = XManager.get(player);
+
+        boolean levelOk = state.getLevel() >= 5;
+        boolean energyOk = state.getEnergy() >= 50;
+        boolean killCountOk = state.getCounter("kills") >= 10;
+        boolean unlocked = state.isUnlocked();
+
+        if(levelOk && energyOk && killCountOk && unlocked) {
+
+            state.addEnergy(-50);
+            state.incrementCounter("ultimate_used");
+
+            triggerUltimateEffect(player);
+        }
+    }
+
+    private static void triggerUltimateEffect(Object player) {
+        // エフェクトやスキル処理
+    }
+}
+```
+
+|指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|player|Object	|対象プレイヤー	|Registry紐付け|
+|“kills”	|String	|カウンターキー	|任意ID|
+|“ultimate_used”	|String|使用回数キー|任意ID|
+
+⸻
+
+## 5. エンティティ紐付け管理
+```Java
+package com.example.mymod.system.X;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public final class XEntityBinding {
+
+    private static final Map<Object, Object> ENTITY_OWNER = new HashMap<>();
+
+    private XEntityBinding() {}
+
+    public static void bind(Object entity, Object player) {
+        ENTITY_OWNER.put(entity, player);
+    }
+
+    public static Object getOwner(Object entity) {
+        return ENTITY_OWNER.get(entity);
+    }
+
+    public static void unbind(Object entity) {
+        ENTITY_OWNER.remove(entity);
+    }
+}
+```
+指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|entity	|Object	|対象エンティティ|登録ID紐付け
+|player	|Object	|所有プレイヤー	|Registry紐付け
+
+
+⸻
+
+## 6. ネットワーク同期（疑似Packet構造）
+```Java
+package com.example.mymod.system.X;
+
+public final class XSync {
+
+    private XSync() {}
+
+    public static void syncToClient(Object player) {
+
+        XState state = XManager.get(player);
+
+        Packet packet = new Packet();
+        packet.putInt("energy", state.getEnergy());
+        packet.putInt("level", state.getLevel());
+        packet.putBoolean("unlocked", state.isUnlocked());
+
+        sendToPlayer(player, packet);
+    }
+
+    private static void sendToPlayer(Object player, Packet packet) {
+        // 実装依存
+    }
+}
+```
+
+|指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|player	|Object	|同期対象	|クライアントへ送信|
+|“energy”|String	|データキー|ID固定
+|packet	|Packet	|データ構造|実装依存
+
+
+⸻
+
+## 7. リアルタイムHUD（毎Tick描画）
+```
+package com.example.mymod.system.X;
+
+public final class XHudRealtime {
+
+    private XHudRealtime() {}
+
+    public static String render(Object player) {
+
+        XState state = XManager.get(player);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("Energy: ").append(state.getEnergy());
+        builder.append(" | Level: ").append(state.getLevel());
+        builder.append(" | Kills: ").append(state.getCounter("kills"));
+
+        return builder.toString();
+    }
+}
+```
+|指定必須箇所|型|内容|Note|
+|---|---|---|---|
+|player	|Object	|描画対象	|Registry紐付け
+|“kills”	|String	|カウンターキー	|任意ID
 
 ## Do / Don't
 Do:
