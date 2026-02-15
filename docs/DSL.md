@@ -25,6 +25,7 @@ Registry.block(id)
 ```
  Element          | Required | Description             | Default Value             
  ----------- | -- | --------- ----- | ------------------- 
+
  id          | Required | Block registration ID       | Compilation error             
  template    | Optional | Base block object            | new Object() is created            
  strength    | Optional | Block hardness             | Default value used             
