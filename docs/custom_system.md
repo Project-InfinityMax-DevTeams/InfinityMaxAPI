@@ -624,23 +624,6 @@ public final class MyModInit {
 | ----------- | ------- | ------------ | ---------------- |
 | （なし）        |         | MOD初期化       | イベント・クライアント登録を呼ぶ |
 
-## 7. 新規システム用ショートテンプレ（最小構成）
-
-```java
-public final class XSystem {
-    public static void init() {
-        Events.playerJoin().handle(event -> {
-            Object player = event.player;
-            // 初期化・サービス呼び出し・フラグ設定など
-        });
-    }
-}
-```
-
-| 指定必須箇所(変数名) | 変数に入る情報 | 指定した場合の挙動・処理 | Note |
-| ----------- | ------- | ------------ | ---- |
-| （なし）        |         | イベント接続のみ     | 最小構成 |
-
 # 上級処理系
 
 ## 1. プレイヤー単位の状態操作系
@@ -827,37 +810,91 @@ public final class XHud {
 
 ---
 
-## 5. ショートテンプレ（上級版）
+## 5. エントリポイント
 
 ```java
-public final class XSystemAdvanced {
+package com.example.mymod.system.X;
+
+public final class XSystem {
+
+    private XSystem() {}
+
+    /**
+     * ===== SYSTEM ENTRY POINT =====
+     * このシステムの全イベント・自動進行を登録する
+     */
     public static void init() {
 
-        // プレイヤー参加時初期化
-        Events.playerJoin().handle(event -> {
-            Object player = event.player;
-            XServiceAdvanced.setPlayerEnergy(player, 100);
-            XServiceAdvanced.setPlayerLevel(player, 1);
-            XServiceAdvanced.unlockPlayerFeature(player);
-        });
+        registerPlayerJoin();
+        registerCustomEvents();
+        registerAutoProgress();
+    }
 
-        // カスタムイベント接続
-        Events.on(CustomEvent.class).handle(event -> {
+    // =========================================
+    // 🔹 PLAYER JOIN INITIALIZATION
+    // =========================================
+    private static void registerPlayerJoin() {
+
+        Events.playerJoin().handle(event -> {
+
             Object player = event.player;
-            if(XUtils.canConsumeEnergy(player, event.deltaEnergy)) {
-                XUtils.consumeEnergyIfPossible(player, event.deltaEnergy);
+
+            XState state = XManager.get(player);
+
+            state.setEnergy(100);
+            state.setLevel(1);
+            state.setUnlocked(true);
+
+            XSync.syncToClient(player);
+        });
+    }
+
+    // =========================================
+    // 🔹 CUSTOM EVENT REGISTRATION
+    // =========================================
+    private static void registerCustomEvents() {
+
+        Events.on(CustomEvent.class).handle(event -> {
+
+            Object player = event.player;
+
+            if (XUtils.consumeEnergyIfPossible(player, event.deltaEnergy)) {
+                XEventLogic.handleAdvancedCondition(player);
+                XSync.syncToClient(player);
             }
         });
+    }
 
+    // =========================================
+    // 🔹 AUTO PROGRESS SYSTEM (TICK BASED)
+    // =========================================
+    private static void registerAutoProgress() {
+
+        Events.serverTick().handle(event -> {
+            long tick = event.currentTick;
+
+            XAutoProgress.onServerTick(tick);
+
+            for (Object player : XManager.allPlayers()) {
+                XSync.syncToClient(player);
+            }
+        });
     }
 }
+
 ```
 
-| 指定必須箇所(変数名)       | 変数に入る情報  | 挙動      | Note             |
-| ----------------- | -------- | ------- | ---------------- |
-| CustomEvent       | Class<T> | 任意イベント型 | deltaEnergyなどを含む |
-| event.deltaEnergy | int      | 消費量     | MAX/MIN制限適用      |
-| player            | Object   | 対象プレイヤー | Registry紐付け      |
+| 指定必須箇所                  | 型       | 内容      | Note       |
+| ----------------------- | ------- | ------- | ---------- |
+| state.setEnergy(100)    | int     | 初期エネルギー | システム固有値    |
+| state.setLevel(1)       | int     | 初期レベル   | 0以上        |
+| state.setUnlocked(true) | boolean | 初期フラグ   | true/false |
+| CustomEvent       | Class  | 任意イベント型 | deltaEnergy必須 |
+| event.deltaEnergy | int    | 消費エネルギー | マイナス可         |
+| player            | Object | 対象プレイヤー | Registry紐付け   |
+| event.currentTick  | long   | 現在Tick | サーバーイベント |
+| XAutoProgress      | class  | 自動進行処理 | ロジック層    |
+| XSync.syncToClient | method | 同期処理   | Tick毎同期  |
 
 ⸻
 # 最上級系
