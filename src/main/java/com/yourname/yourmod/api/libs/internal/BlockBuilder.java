@@ -1,6 +1,6 @@
 package com.yourname.yourmod.api.libs.internal;
 
-import com.yourname.yourmod.api.libs.ModRegistries;
+import com.yourname.yourmod.api.libs.handle.BlockHandle;
 
 public final class BlockBuilder {
 
@@ -28,7 +28,7 @@ public final class BlockBuilder {
         return this;
     }
 
-    public Object build() {
+    public BlockHandle build() {
         Object block = template != null ? template : new Object();
 
         ModRegistries.registerBlock(
@@ -38,6 +38,6 @@ public final class BlockBuilder {
                 noOcclusion
         );
 
-        return block;
+        return new BlockHandle(block);
     }
 }
