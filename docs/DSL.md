@@ -40,32 +40,55 @@ BlockHandle block = Registry.block(“sample_block”)
 ```
 
 ### ItemBuilder
-Methods:
-- `stack(int)`
-- `tab(Object)`
-- `durability(int)`
-- `template(Object)`
-- `build()` -> `Object`
+Syntax:
+```java
+Registry.item(id)
+        .template(Object)
+        .stack(int)
+        .tab(Object)
+        .durability(int)
+        .build()
+
+```
+| Element         | Required | Description                 | If not specified             |
+| ---------- | -- | ------------------ | ------------------- |
+| id         | Required | Item registration ID           | Cannot be built               |
+| template   | Optional | Specifies the template for the item           | new Object() is generated     |
+| stack      | Optional | Specifies the item's stack limit     | Default value 64 is used     |
+| tab        | Optional | Specifies the Creative tab or category  | null (does not belong to any tab)   |
+| durability | Optional | Specifies durability             | Default value 0 is used     |
 
 Short template:
 ```java
-Object item = Registry.item("sample_item")
+Object item = Registry.item(“sample_item”)
         .template(new Object())
         .stack(64)
+        .tab(“misc_tab”)
         .durability(120)
         .build();
 ```
 
-### EntityBuilder
-Methods:
-- `category(Object)`
-- `size(float width, float height)`
-- `build()` -> `T`
+#### EntityBuilder
+Syntax:
+```java
+Registry.entity(id, Supplier<T>)
+        .category(Object)
+        .size(float width, float height)
+        .build()
+```
+
+| Element          | Required | Description                               | Default Value    |
+| ----------- | -- | -------------------------------- | ---------- |
+| id          | Required | Entity registration ID                       | Cannot be built      |
+| Supplier<T> | Required | Entity instance generation factory              | Cannot be built      |
+| category    | Optional | Entity category (creature, monster, etc.) | null       |
+| width       | Optional | Entity width                         | Default 0.6f |
+| height      | Optional | Entity height                        | Default 1.8f |
 
 Short template:
 ```java
-Object entity = Registry.entity("sample_entity", Object::new)
-        .category("creature")
+Object entity = Registry.entity(“sample_entity”, Object::new)
+        .category(“creature”)
         .size(0.8f, 1.6f)
         .build();
 ```
