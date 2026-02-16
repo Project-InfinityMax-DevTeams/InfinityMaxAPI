@@ -1,7 +1,6 @@
 package com.yourname.yourmod.api.system.state;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,18 +11,30 @@ public final class StateContainer {
     private final Map<StateKey<?>, Object> values = new ConcurrentHashMap<>();
 
     public <T> void put(StateKey<T> key, T value) {
+        if (value == null) {
+            throw new IllegalArgumentException("State value cannot be null");
+        }
         values.put(key, value);
     }
 
-    public <T> Optional<T> get(StateKey<T> key) {
+    public <T> T get(StateKey<T> key) {
         Object value = values.get(key);
         if (value == null) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(key.type().cast(value));
+        return key.type().cast(value);
+    }
+
+    public <T> T getOrDefault(StateKey<T> key, T defaultValue) {
+        T value = get(key);
+        return value != null ? value : defaultValue;
     }
 
     public <T> void remove(StateKey<T> key) {
         values.remove(key);
+    }
+
+    public void clear() {
+        values.clear();
     }
 }
