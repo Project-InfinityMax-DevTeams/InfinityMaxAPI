@@ -11,14 +11,5 @@ public interface DslDefinition {
 
     String systemId();
 
-    /**
-     * WHAT(宣言)を明示化するための設定マップ。
-     */
-    Map<String, Object> properties();
-
-    /**
-     * 非ConfigurableSystem向けの適用フック。
-     */
-    default void apply(ModSystem system) {
-    }
+    void apply(ModSystem system);
 }

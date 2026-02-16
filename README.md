@@ -1,4 +1,4 @@
-﻿# InfinityMaxMOD-Template
+# InfinityMaxMOD-Template
 
 ## Overview
 InfinityMaxMOD-Template is a multi-loader Minecraft MDK template.
@@ -43,6 +43,19 @@ gradlew :fabric:build
 - Keep common code platform-neutral (no direct Minecraft imports)
 - Put loader-specific conversions in `loader/Forge` and `loader/Fabric`
 - Run both compile tasks before release
+
+## DSL-Driven System Template
+- `SystemRegistry`: central registry and lifecycle manager for all systems
+- Capability-like `StateManager` / `StateContainer`
+- `NetworkChannel`: platform-neutral packet channel abstraction
+- `TickScheduler`: delayed/repeating tick execution
+- `SaveManager`: section-based save/load aggregation
+- `EventBridge`: loader events -> common event bus bridge
+- `DataDrivenLoader`: DSL declaration binding to runtime systems
+
+Key packages:
+- API layer: `com.yourname.yourmod.api.system.*`
+- Loader bridge layer: `com.yourname.yourmod.loader.bridge.*`
 
 ---
 
@@ -91,15 +104,15 @@ gradlew :fabric:build
 - ローダー固有の型変換は `loader/Forge` / `loader/Fabric` に置く
 - リリース前に両方の compile タスクを実行する
 
-## DSL-Driven System Template (NEW)
-- `SystemRegistry`: central registry and lifecycle manager for all systems
-- Capability-like `StateManager` / `StateContainer`
-- `NetworkChannel`: platform-neutral packet channel abstraction
-- `TickScheduler`: delayed/repeating tick execution
-- `SaveManager`: section-based save/load aggregation
-- `EventBridge`: loader events -> common event bus bridge
-- `DataDrivenLoader`: DSL declaration binding to runtime systems
+## DSL駆動システムテンプレート（新規）
+- `SystemRegistry`: 全システムの中心的なレジストリおよびライフサイクル管理
+- 機能ベースの `StateManager` / `StateContainer`
+- `NetworkChannel`: プラットフォーム非依存のパケットチャネル抽象化
+- `TickScheduler`: 遅延/繰り返しティック実行
+- `SaveManager`: セクションベースの保存/読み込み集約
+- `EventBridge`: ローダーイベント → 共通イベントバスブリッジ
+- `DataDrivenLoader`: DSL宣言とランタイムシステムのバインディング
 
-Key packages:
-- API layer: `com.yourname.yourmod.api.system.*`
-- Loader bridge layer: `com.yourname.yourmod.loader.bridge.*`
+主要パッケージ:
+- API層: `com.yourname.yourmod.api.system.*`
+- ローダーブリッジ層: `com.yourname.yourmod.loader.bridge.*`
