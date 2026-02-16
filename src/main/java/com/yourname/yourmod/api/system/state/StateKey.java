@@ -35,15 +35,4 @@ public final class StateKey<T> {
         return type;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StateKey<?> stateKey)) return false;
-        return Objects.equals(id, stateKey.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
