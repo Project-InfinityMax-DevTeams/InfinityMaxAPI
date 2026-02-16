@@ -10,7 +10,6 @@ public final class ForgeEntrypoint {
     public ForgeEntrypoint() {
         Platform.set(new ForgePlatform());
         Platform.get().network().register();
-        Platform.get().events().register();
         YourMod.init();
     }
 }

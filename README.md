@@ -37,6 +37,7 @@ gradlew :fabric:build
 - Coding guide: [docs/coding.md](docs/coding.md)
 - About: [docs/about.md](docs/about.md)
 - Custom system: [docs/custom_system.md](docs/custom_system.md)
+- System runtime guide: [docs/system_runtime.md](docs/system_runtime.md)
 
 ## Support Notes
 - Keep common code platform-neutral (no direct Minecraft imports)
@@ -89,3 +90,16 @@ gradlew :fabric:build
 - 共通層はプラットフォーム非依存で保つ（Minecraft直import禁止）
 - ローダー固有の型変換は `loader/Forge` / `loader/Fabric` に置く
 - リリース前に両方の compile タスクを実行する
+
+## DSL-Driven System Template (NEW)
+- `SystemRegistry`: central registry and lifecycle manager for all systems
+- Capability-like `StateManager` / `StateContainer`
+- `NetworkChannel`: platform-neutral packet channel abstraction
+- `TickScheduler`: delayed/repeating tick execution
+- `SaveManager`: section-based save/load aggregation
+- `EventBridge`: loader events -> common event bus bridge
+- `DataDrivenLoader`: DSL declaration binding to runtime systems
+
+Key packages:
+- API layer: `com.yourname.yourmod.api.system.*`
+- Loader bridge layer: `com.yourname.yourmod.loader.bridge.*`
