@@ -1,8 +1,13 @@
 package com.yourname.yourmod.api.system.save;
 
-public interface SaveSection {
+/**
+ * 型安全なセーブセクション。
+ */
+public interface SaveSection<T> {
 
-    Object save();
+    T save();
 
-    void load(Object data);
+    void load(T data);
+
+    Class<T> type();
 }
