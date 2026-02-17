@@ -10,7 +10,7 @@ jobs:
 
     permissions:
       contents: read
-      issues: write   # Issue作成に必要
+      issues: write   # Issue作成権限
 
     steps:
       # リポジトリ取得
@@ -28,43 +28,41 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      # Gradleビルド実行（ログだけ取得）
+      # Gradleビルド実行
       - name: Run Gradle Build
         id: gradle
         run: |
           set +e
-          ./gradlew build --stacktrace > gradle-log.txt 2>&1
+          ./gradlew build --stacktrace --info > gradle-log.txt 2>&1
           echo "EXIT_CODE=$?" >> $GITHUB_ENV
         continue-on-error: true
 
-      # ビルド失敗時のみIssue作成
+      # 失敗時のみ Issue を作成
       - name: Create Issue with Gradle Log
         if: env.EXIT_CODE != '0'
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
+
+            // ログファイル読み込み
             const log = fs.readFileSync('gradle-log.txt', 'utf8');
 
-            const maxLength = 65000; // GitHub Issue本文制限対策
-            const truncatedLog = log.length > maxLength 
-              ? log.slice(-maxLength) 
-              : log;
+            // ログが長すぎると投稿できないため最大65000文字に制限
+            const trimmedLog = log.length > 65000 ? log.slice(-65000) : log;
 
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `CI Build Failed - ${context.sha.substring(0,7)}`,
+              title: `CI Build Failed - ${new Date().toISOString()}`,
               body: `
 ## Gradle Build Failed
 
-Commit: ${context.sha}
-
-### Last Part of Gradle Log:
 \`\`\`
-${truncatedLog}
+${trimmedLog}
 \`\`\`
-`
+`,
+              labels: ['ci-failure']
             });
 
       # 最後に失敗扱いにする
