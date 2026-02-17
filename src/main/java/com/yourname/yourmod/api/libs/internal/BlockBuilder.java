@@ -2,10 +2,10 @@ package com.yourname.yourmod.api.libs.internal;
 
 import com.yourname.yourmod.api.libs.ModRegistries;
 
-public final class BlockBuilder {
+public final class BlockBuilder<T> {
 
     private final String id;
-    private Object template;
+    private T template;
     private float strength = 1.0f;
     private boolean noOcclusion = false;
 
@@ -13,30 +13,33 @@ public final class BlockBuilder {
         this.id = id;
     }
 
-    public BlockBuilder template(Object template) {
+    public BlockBuilder<T> template(T template) {
         this.template = template;
         return this;
     }
 
-    public BlockBuilder strength(float value) {
+    public BlockBuilder<T> strength(float value) {
         this.strength = value;
         return this;
     }
 
-    public BlockBuilder noOcclusion() {
+    public BlockBuilder<T> noOcclusion() {
         this.noOcclusion = true;
         return this;
     }
 
-    public Object build() {
-        Object block = template != null ? template : new Object();
+    public T build() {
+        if (template == null) {
+            throw new IllegalStateException("Template must be provided");
+        }
 
         ModRegistries.registerBlock(
                 id,
-                block,
+                template,
                 strength,
                 noOcclusion
         );
 
-        return block;
+        return template;
     }
+}
