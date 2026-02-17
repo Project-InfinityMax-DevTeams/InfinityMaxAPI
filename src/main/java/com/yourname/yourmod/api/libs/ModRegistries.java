@@ -14,8 +14,8 @@ public final class ModRegistries {
         Platform.get().registries().block(id, block);
     }
 
-    public static <T> void registerEntity(String id, T entityType) {
-        Platform.get().registries().entity(id, entityType);
+    public static <T,C> void registerEntity(String id, T entityType,C category,float width,float height) {
+        Platform.get().registries().entity(id, entityType,category,width,height);
     }
 
     public static <T, B> void registerBlockEntity(

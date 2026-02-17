@@ -9,13 +9,11 @@ public final class BlockEntityBuilder<T, B> {
     private final Supplier<T> factory;
     private B[] blocks;
 
-    @SafeVarargs
     public BlockEntityBuilder(String id, Supplier<T> factory) {
         this.id = id;
         this.factory = factory;
     }
 
-    @SafeVarargs
     public final BlockEntityBuilder<T, B> blocks(B... blocks) {
         this.blocks = blocks;
         return this;
