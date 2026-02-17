@@ -6,19 +6,19 @@ public final class ModRegistries {
 
     private ModRegistries() {}
 
-    public static void registerItem(String id, Object item) {
+    public static <T> void registerItem(String id, T item) {
         Platform.get().registries().item(id, item);
     }
 
-    public static void registerBlock(String id, Object block) {
+    public static <T> void registerBlock(String id, T block) {
         Platform.get().registries().block(id, block);
     }
 
-    public static void registerEntity(String id, Object entityType) {
+    public static <T> void registerEntity(String id, T entityType) {
         Platform.get().registries().entity(id, entityType);
     }
 
-    public static void registerBlockEntity(String id, Object blockEntityType) {
+    public static <T> void registerBlockEntity(String id, T blockEntityType) {
         Platform.get().registries().blockEntity(id, blockEntityType);
     }
 }
