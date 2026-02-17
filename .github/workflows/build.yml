@@ -1,0 +1,50 @@
+# ワークフロー名（GitHub上に表示される）
+name: CI Build
+
+# 実行トリガー設定
+on:
+  push:
+    branches: [ "main", "master" ]  # mainまたはmasterにpush時
+  pull_request:
+    branches: [ "main", "master" ]  # PR作成時
+
+# 実行ジョブ定義
+jobs:
+  build:
+    # 実行環境（Ubuntu最新版）
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # JDK17をセットアップ
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'  # Eclipse Temurin
+          java-version: '17'
+
+      # Gradle Wrapperに実行権限付与
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # ビルド実行（失敗してもログを残すためcontinue-on-error）
+      - name: Build with Gradle
+        id: gradle-build
+        continue-on-error: true
+        run: |
+          ./gradlew build --stacktrace --info > build-log.txt 2>&1
+
+      # ログをアーティファクトとして保存
+      - name: Upload build log
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build-log.txt
+
+      # 失敗していたらジョブを失敗扱いにする
+      - name: Fail if build failed
+        if: steps.gradle-build.outcome == 'failure'
+        run: exit 1
