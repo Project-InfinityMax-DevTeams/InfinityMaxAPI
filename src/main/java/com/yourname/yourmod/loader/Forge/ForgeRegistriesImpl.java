@@ -12,22 +12,22 @@ public final class ForgeRegistriesImpl implements LoaderExpectPlatform.Registrie
     private final Map<String, Object> blockEntities = new HashMap<>();
 
     @Override
-    public void item(String name, Object item) {
+    public <T> void item(String name, T item) {
         items.put(name, item);
     }
 
     @Override
-    public void block(String name, Object block) {
+    public <T> void block(String name, T block) {
         blocks.put(name, block);
     }
 
     @Override
-    public void entity(String name, Object entityType) {
+    public <T> void entity(String name, T entityType) {
         entities.put(name, entityType);
     }
 
     @Override
-    public void blockEntity(String name, Object blockEntityType) {
+    public <T> void blockEntity(String name, T blockEntityType) {
         blockEntities.put(name, blockEntityType);
     }
 }
