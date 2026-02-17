@@ -12,7 +12,7 @@ public interface LoaderExpectPlatform {
     interface Registries {
         <T> void item(String name, T item);
         <T> void block(String name, T block);
-        <T> void entity(String name, T entityType);
+        <T, C> void entity(String name, T entityType, C category, float width, float height);
         <T, B> void blockEntity(String name, T blockEntityType, B... blocks);
     }
 
