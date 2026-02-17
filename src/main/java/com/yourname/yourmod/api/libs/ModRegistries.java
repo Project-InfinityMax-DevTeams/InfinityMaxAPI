@@ -1,23 +1,28 @@
 package com.yourname.yourmod.api.libs;
 
-import com.yourname.yourmod.loader.Platform;
+import com.yourname.yourmod.loader.LoaderExpectPlatform;
 
 public final class ModRegistries {
-    private ModRegistries() {}
 
-    public static <T> void registerItem(String id, T item) {
-        Platform.get().registries().item(id, item);
+    private final LoaderExpectPlatform.Registries platformRegistries;
+
+    public ModRegistries(LoaderExpectPlatform.Registries platformRegistries) {
+        this.platformRegistries = platformRegistries;
     }
 
-    public static <T> void registerBlock(String id, T block, float strength, boolean noOcclusion) {
-        Platform.get().registries().block(id, block);
+    public <T> void registerItem(String id, T item) {
+        platformRegistries.item(id, item);
     }
 
-    public static <T, C> void registerEntity(String id, T entityType, C category, float width, float height) {
-        Platform.get().registries().entity(id, entityType, category, width, height);
+    public <T> void registerBlock(String id, T block, float strength, boolean noOcclusion) {
+        platformRegistries.block(id, block);
     }
 
-    public static <T, B> void registerBlockEntity(String id, T blockEntityType, B... blocks) {
-        Platform.get().registries().blockEntity(id, blockEntityType, blocks);
+    public <T, C> void registerEntity(String id, T entityType, C category, float width, float height) {
+        platformRegistries.entity(id, entityType, category, width, height);
+    }
+
+    public <T, B> void registerBlockEntity(String id, T blockEntityType, B... blocks) {
+        platformRegistries.blockEntity(id, blockEntityType, blocks);
     }
 }
