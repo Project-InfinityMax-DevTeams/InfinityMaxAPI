@@ -1,4 +1,4 @@
-package com.yourname.yourmod.loader;
+package com.yourname.yourmod.api.platform
 
 import com.yourname.yourmod.api.libs.internal.*;
 
