@@ -15,7 +15,7 @@ public final class ModRegistries {
     }
 
     public static <T> void registerBlock(String id, T block, float strength, boolean noOcclusion) {
-        platformRegistries.block(id, block,strength,noOcculusion);
+        platformRegistries.block(id, block,strength,noOcclusion);
     }
 
     public static <T, C> void registerEntity(String id, T entityType, C category, float width, float height) {
