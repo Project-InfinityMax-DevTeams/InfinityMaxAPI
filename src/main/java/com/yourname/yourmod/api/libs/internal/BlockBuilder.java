@@ -5,7 +5,7 @@ import com.yourname.yourmod.api.libs.ModRegistries;
 public final class BlockBuilder<T> {
 
     private final String id;
-    private Supplier<T> template;
+    private BlockBuilder<T> template;
     private float strength = 1.0f;
     private boolean noOcclusion = false;
 

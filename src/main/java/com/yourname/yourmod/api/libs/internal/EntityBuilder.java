@@ -7,7 +7,7 @@ public final class EntityBuilder<T, C> {
 
     private final String id;
     private final Supplier<T> factory;
-    private final Supplier<C> category;
+    private final  Supplier<C> category;
     private float width = 0.6f;
     private float height = 1.8f;
 
@@ -16,7 +16,7 @@ public final class EntityBuilder<T, C> {
         this.factory = factory;
     }
 
-    public EntityBuilder<T, C> category(C category) {
+    public EntityBuilder<T, C> category(Supplier<C> category) {
         this.category = category;
         return this;
     }
