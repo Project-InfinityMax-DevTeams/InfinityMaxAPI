@@ -4,7 +4,7 @@ import com.yourname.yourmod.loader.LoaderExpectPlatform;
 
 public final class ModRegistries {
 
-    private static final LoaderExpectPlatform.Registries platformRegistries;
+    private static LoaderExpectPlatform.Registries platformRegistries;
 
     public ModRegistries(LoaderExpectPlatform.Registries platformRegistries) {
         this.platformRegistries = platformRegistries;
