@@ -16,7 +16,7 @@ public final class EntityBuilder<T, C> {
         this.factory = factory;
     }
 
-    public EntityBuilder<T, C> category(Supplier<C> category) {
+    public EntityBuilder category(Supplier<C> category) {
         this.category = category;
         return this;
     }
