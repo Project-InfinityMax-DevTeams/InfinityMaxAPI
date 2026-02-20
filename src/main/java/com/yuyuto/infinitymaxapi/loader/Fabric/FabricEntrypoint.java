@@ -10,6 +10,6 @@ public final class FabricEntrypoint implements ModInitializer {
     public void onInitialize() {
         Platform.set(new FabricPlatform());
         Platform.get().network().register();
-        infinitymaxapi.init();
+        InfinityMaxAPI.init();
     }
 }
