@@ -45,7 +45,7 @@ sourceSets {
         }
         java {
             srcDir "../src/main/java"
-            exclude "com/yourname/infinitymaxapi/loader/Forge/**"
+            exclude "com/yuyuto/infinitymaxapi/loader/Forge/**"
         }
     }
 }
