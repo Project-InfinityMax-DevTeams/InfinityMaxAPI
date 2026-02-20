@@ -10,6 +10,6 @@ public final class ForgeEntrypoint {
     public ForgeEntrypoint() {
         Platform.set(new ForgePlatform());
         Platform.get().network().register();
-        infinitymaxapi.init();
+        InfinityMaxAPI.init();
     }
 }
