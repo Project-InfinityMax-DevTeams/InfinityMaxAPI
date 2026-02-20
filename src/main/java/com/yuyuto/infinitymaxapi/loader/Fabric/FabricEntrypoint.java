@@ -1,6 +1,6 @@
 package com.yuyuto.infinitymaxapi.loader.fabric;
 
-import com.yuyuto.infinitymaxapi.infinitymaxapi;
+import com.yuyuto.infinitymaxapi.InfinityMaxAPI;
 import com.yuyuto.infinitymaxapi.loader.Platform;
 import net.fabricmc.api.ModInitializer;
 
