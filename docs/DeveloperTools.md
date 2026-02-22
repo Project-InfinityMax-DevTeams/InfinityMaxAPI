@@ -1,4 +1,274 @@
-# Developing DSL
+# InfinityMaxAPI Internal DSL – Developer Documentation
+---
+# 📦 BlockBuilder DSL
+
+## 🔹 Usage Example (with imports)
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.BlockBuilder;
+import net.minecraft.world.level.block.Block;
+
+Block myBlock = new BlockBuilder<Block>("copper_machine")
+        .template(new Block(Block.Properties.of()))
+        .strength(3.0f)
+        .noOcclusion()
+        .build();
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method                    | Data Passed    | Type     | Purpose                         | Required | Notes                 |
+| ------------------------- | -------------- | -------- | ------------------------------- | -------- | --------------------- |
+| `BlockBuilder(String id)` | Block ID       | `String` | Registry identifier             | ✅        | Used in ModRegistries |
+| `template(T template)`    | Block instance | `T`      | Actual block object to register | ✅        | Cannot be null        |
+| `strength(float)`         | Hardness       | `float`  | Mining strength                 | ❌        | Default = 1.0         |
+| `noOcclusion()`           | Flag           | boolean  | Disables light occlusion        | ❌        | Sets true when called |
+| `build()`                 | —              | `T`      | Executes registration           | —        | Calls registerBlock   |
+
+---
+
+## 🔹 Internal Registration Call
+
+```
+ModRegistries.registerBlock(
+    id,
+    template,
+    strength,
+    noOcclusion
+)
+```
+
+---
+
+# 📦 ItemBuilder DSL
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.ItemBuilder;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+
+Item myItem = new ItemBuilder<Item, CreativeModeTab>("energy_core")
+        .template(new Item(new Item.Properties()))
+        .stack(16)
+        .durability(250)
+        .tab(CreativeModeTab.TAB_MISC)
+        .build();
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method                   | Data          | Type     | Purpose                     | Required | Notes              |
+| ------------------------ | ------------- | -------- | --------------------------- | -------- | ------------------ |
+| `ItemBuilder(String id)` | ID            | `String` | Registry name               | ✅        |                    |
+| `template(T)`            | Item instance | `T`      | Actual item                 | ✅        |                    |
+| `stack(int)`             | Stack size    | `int`    | Max stack count             | ❌        | Default = 64       |
+| `durability(int)`        | Durability    | `int`    | Tool durability             | ❌        | Default = 0        |
+| `tab(TAB)`               | Creative tab  | `TAB`    | Creative inventory category | ❌        |                    |
+| `build()`                | —             | `T`      | Executes registration       | —        | Calls registerItem |
+
+---
+
+## 🔹 Internal Registration
+
+```
+ModRegistries.registerItem(id, template)
+```
+
+*Note:* stack/durability/tab are expected to influence the template configuration.
+
+---
+
+# 📦 EntityBuilder DSL
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.EntityBuilder;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+
+EntityType<?> myEntity = new EntityBuilder<>("energy_drone", () -> EntityType.Builder.of(...))
+        .category(() -> MobCategory.MISC)
+        .size(0.8f, 0.8f)
+        .build();
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method                               | Data           | Type                | Purpose               | Required | Notes                |
+| ------------------------------------ | -------------- | ------------------- | --------------------- | -------- | -------------------- |
+| `EntityBuilder(String, Supplier<T>)` | ID + factory   | `String + Supplier` | Entity creation logic | ✅        |                      |
+| `category(Supplier<C>)`              | Mob category   | `Supplier<C>`       | Entity classification | ⚠        | Must not be null     |
+| `size(float, float)`                 | Width / Height | `float`             | Hitbox size           | ❌        | Default = 0.6 / 1.8  |
+| `build()`                            | —              | `T`                 | Executes registration | —        | Calls registerEntity |
+
+---
+
+## 🔹 Internal Registration
+
+```
+ModRegistries.registerEntity(
+    id,
+    entity,
+    category,
+    width,
+    height
+)
+```
+
+---
+
+# 📦 BlockEntityBuilder DSL
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.BlockEntityBuilder;
+
+BlockEntityType<?> machineEntity =
+    new BlockEntityBuilder<>("machine_entity", MyBlockEntity::new)
+        .blocks(machineBlock)
+        .build();
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method                                    | Data          | Type                | Purpose                        | Required |
+| ----------------------------------------- | ------------- | ------------------- | ------------------------------ | -------- |
+| `BlockEntityBuilder(String, Supplier<T>)` | ID + factory  | `String + Supplier` | BlockEntity factory            | ✅        |
+| `blocks(B...)`                            | Target blocks | Varargs             | Blocks this entity attaches to | ⚠        |
+| `build()`                                 | —             | `T`                 | Executes registration          | —        |
+
+---
+
+## 🔹 Internal Registration
+
+```
+ModRegistries.registerBlockEntity(id, blockEntity, blocks)
+```
+
+---
+
+# 📦 EventBuilder DSL
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.EventBuilder;
+import com.yuyuto.infinitymaxapi.api.event.PlayerJoinEvent;
+import com.yuyuto.infinitymaxapi.api.event.EventPriority;
+
+new EventBuilder<>(PlayerJoinEvent.class)
+        .priority(EventPriority.HIGH)
+        .async()
+        .handle(event -> {
+            System.out.println("Player joined");
+        });
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method                    | Data          | Type          | Purpose                 | Options             |
+| ------------------------- | ------------- | ------------- | ----------------------- | ------------------- |
+| `EventBuilder(Class<T>)`  | Event class   | `Class<T>`    | Target event type       | Any `ModEvent`      |
+| `priority(EventPriority)` | Priority      | enum          | Execution order         | LOW / NORMAL / HIGH |
+| `async()`                 | Async flag    | boolean       | Runs on separate thread | async = true        |
+| `sync()`                  | Sync flag     | boolean       | Main-thread execution   | async = false       |
+| `handle(Consumer)`        | Handler logic | `Consumer<T>` | Event processing        | Required            |
+
+---
+
+## 🔹 Internal Registration
+
+```
+ModEventBus.listen(eventClass, consumer, priority, async)
+```
+
+---
+
+# 📦 ClientBuilder DSL
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.libs.internal.ClientBuilder;
+
+ClientBuilder client = new ClientBuilder();
+
+client.renders().registerAll();
+client.keybinds().registerAll();
+client.screens().registerAll();
+client.hud().registerAll();
+
+client.registerAll();
+```
+
+---
+
+## 🔹 DSL Structure Overview
+
+| Method          | Purpose                     |
+| --------------- | --------------------------- |
+| `renders()`     | Renderer registration DSL   |
+| `keybinds()`    | Keybinding registration DSL |
+| `screens()`     | GUI screen registration     |
+| `hud()`         | HUD elements                |
+| `registerAll()` | Final registration trigger  |
+
+---
+
+# 📦 PlatformDataGen
+
+## 🔹 Usage Example
+
+```java
+import com.yuyuto.infinitymaxapi.api.platform.PlatformDataGen;
+
+PlatformDataGen.submitBlock(id, model, loot, tags);
+PlatformDataGen.submitItem(id, model, tags, lang);
+PlatformDataGen.submitEntity(id, loot, lang);
+```
+
+---
+
+## 🔹 Configuration Table
+
+| Method         | Data Passed              | Purpose                |
+| -------------- | ------------------------ | ---------------------- |
+| `submitBlock`  | id / model / loot / tags | Block data generation  |
+| `submitItem`   | id / model / tags / lang | Item data generation   |
+| `submitEntity` | id / loot / lang         | Entity data generation |
+
+A custom `Handler` implementation can override behavior.
+
+---
+
+# 🧠 Architectural Summary
+
+| DSL                | Registers To  | Manages         |
+| ------------------ | ------------- | --------------- |
+| BlockBuilder       | ModRegistries | Blocks          |
+| ItemBuilder        | ModRegistries | Items           |
+| EntityBuilder      | ModRegistries | Entities        |
+| BlockEntityBuilder | ModRegistries | BlockEntities   |
+| EventBuilder       | ModEventBus   | Events          |
+| ClientBuilder      | Client Layer  | Rendering / UI  |
+| PlatformDataGen    | Handler       | Data generation |
+---
+
+# 開発DSLライブラリドキュメント
 ここでは、MODのアドオン開発者向けにAPIの登録DSLを用いたゲームオブジェクトを実装する方法を示します。
 
 # 📦 BlockBuilder DSL
