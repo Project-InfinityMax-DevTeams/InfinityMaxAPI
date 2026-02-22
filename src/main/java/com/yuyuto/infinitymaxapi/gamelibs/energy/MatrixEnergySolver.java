@@ -77,7 +77,7 @@ public class MatrixEnergySolver implements EnergySolver {
             if (node instanceof ChargedEnergyNode charged){
                 int idx = indexMap.get(node);
                 double internalR = charged.getInternalResistance();
-                double conductance = 1.0 / charged.getInternalResistance();
+                double conductance = 1.0 / internalR;
 
                 double voltage = charged.computeVoltageFromCharge();
                 //自分自身にコンダクタンスを追加
