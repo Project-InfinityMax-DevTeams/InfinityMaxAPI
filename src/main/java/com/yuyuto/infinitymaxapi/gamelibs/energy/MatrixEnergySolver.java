@@ -15,15 +15,9 @@ import java.util.Map;
  * 伝導度行列「G」とベクトル「I」を構築する。
  * 接地制約(V0=0)を適用する。
  * G*V=Iをガウス消去法で解く。
- * 仮定:
- * ・抵抗器と電流源のみサポートする
- * ・1つのノードを接地として固定する
- * 概念:
- * Gとは、電気のルールを入れる箱である
- * Iとは外から押し込まれる電流の量のことである
  */
 
-public class MatrixCircuitSolver implements CircuitSolver {
+public class MatrixEnergySolver implements EnergySolver {
 
     @Override
     public void solve(EnergyNetwork network, double deltaTime) {
@@ -38,6 +32,10 @@ public class MatrixCircuitSolver implements CircuitSolver {
         //ノード0,1,2...と番号をつける。行列は番号でしか扱えないため。
         for (EnergyNode node : network.getNodes()) {
             indexMap.put(node, i++);
+        }
+        for (EnergyNode node : network.getNodes()){
+            int idx = indexMap.get(node);
+            I[idx] += node.getInjectedCurrent();
         }
 
         /*
@@ -76,13 +74,19 @@ public class MatrixCircuitSolver implements CircuitSolver {
         }
 
         for (EnergyNode node : network.getNodes()) {
-            int idx = indexMap.get(node);
-            /* ノードに外部から入る電流を1にセット。KCLのΣ 電流 = 外部注入電流の右辺。
-             * 簡単に言うと、「このノードはどれだけ電気を押し込んでるのか」を教える処理。
-             * 例えば
-             * 発電側なら+5A,消費側なら-5Aという感じ。
-             */
-            I[idx] = node.getInjectedCurrent();
+            if (node instanceof ChargedEnergyNode charged){
+                int idx = indexMap.get(node);
+                double internalR = charged.getInternalResistance();
+                double conductance = 1.0 / charged.getInternalResistance();
+
+                double voltage = charged.computeVoltageFromCharge();
+                //自分自身にコンダクタンスを追加
+                G[idx][idx] += conductance;
+
+                //電圧源項をIベクトルへ
+                I[idx] +=  voltage / internalR;
+
+            }
         }
 
         /*
@@ -106,9 +110,40 @@ public class MatrixCircuitSolver implements CircuitSolver {
 
         for (EnergyNode node : network.getNodes()){
             int idx = indexMap.get(node);
-            //ゴール:計算した電圧をノードに書き出す。
+            //ゴール:計算した電圧をノードに書き出す。電流もノードに書き出す。
             node.setPotential(V[idx]);
+
+            if (node instanceof ChargedEnergyNode charged){
+                double totalCurrent = 0;
+
+                for (EnergyConnection conn : network.getConnections()){
+
+                    int iFrom = indexMap.get(conn.from());
+                    int iTo = indexMap.get(conn.to());
+
+                    double voltageDiff = V[iFrom] - V[iTo];
+                    double currentFlow = voltageDiff /conn.resistance();
+
+                    if (conn.from() == node) {
+                        totalCurrent += currentFlow; //外へ出る
+                    }
+
+                    if (conn.to() == node) {
+                        totalCurrent -= currentFlow;//中に入る
+                    }
+                }
+
+                double nodeVoltage = V[idx];
+                double sourceVoltage = charged.computeVoltageFromCharge();
+
+                double internalCurrent =
+                        (nodeVoltage - sourceVoltage) / charged.getInternalResistance();
+                totalCurrent += internalCurrent;
+                charged.addCharge(-totalCurrent * deltaTime);
+            }
         }
+
+        applyTransmissionLoss(network, V, indexMap);
     }
 
     /*
@@ -171,5 +206,22 @@ public class MatrixCircuitSolver implements CircuitSolver {
         }
 
         return x;
+    }
+
+    private void applyTransmissionLoss(EnergyNetwork network, double[] voltages, Map<EnergyNode, Integer> indexMap){
+        for(EnergyConnection conn : network.getConnections()){
+            int iFrom = indexMap.get(conn.from());
+            int iTo = indexMap.get(conn.to());
+
+            double voltageDiff = voltages[iFrom] - voltages[iTo];
+            double currentFlow = voltageDiff / conn.resistance();
+
+            //電力損失　= I^2*R
+            double loss = currentFlow * currentFlow * conn.resistance();
+
+            //ノードに減衰を適用
+            conn.from().addPowerLoss(loss / 2); //送電側に半分
+            conn.to().addPowerLoss(loss / 2);//受電側に半分
+        }
     }
 }

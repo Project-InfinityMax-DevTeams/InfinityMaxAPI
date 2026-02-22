@@ -1,5 +1,5 @@
 package com.yuyuto.infinitymaxapi.gamelibs.energy;
 
-public interface CircuitSolver {
+public interface EnergySolver {
     void solve(EnergyNetwork network, double deltaTime);
 }

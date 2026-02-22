@@ -6,9 +6,9 @@ import java.util.Set;
 public class EnergyNetwork {
     private final Set<EnergyNode> nodes = new HashSet<>();
     private final Set<EnergyConnection> connections = new HashSet<>();
-    private final MatrixCircuitSolver solver;
+    private final MatrixEnergySolver solver;
 
-    public EnergyNetwork(MatrixCircuitSolver solver){
+    public EnergyNetwork(MatrixEnergySolver solver){
         this.solver = solver;
     }
 
