@@ -46,6 +46,8 @@ public class MatrixEnergySolver implements EnergySolver {
          */
         //各抵抗について、
         for (EnergyConnection C : network.getConnections()) {
+            ConnectionState state = network.getState(C);
+            if (state != null && !state.isActive()) continue;
             //接続の両端ノードの行番号を取得する
             int i1 = indexMap.get(C.from());
             int i2 = indexMap.get(C.to());
@@ -144,6 +146,20 @@ public class MatrixEnergySolver implements EnergySolver {
         }
 
         applyTransmissionLoss(network, V, indexMap);
+        for (ConnectionState state : network.getConnectionStates()) {
+
+            if (!state.isActive()) continue;
+
+            EnergyConnection conn = state.connection();
+
+            int iFrom = indexMap.get(conn.from());
+            int iTo = indexMap.get(conn.to());
+
+            double vFrom = V[iFrom];
+            double vTo = V[iTo];
+
+            state.evaluate(vFrom, vTo, deltaTime);
+        }
     }
 
     /*
