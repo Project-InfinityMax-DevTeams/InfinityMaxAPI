@@ -20,25 +20,34 @@ public class DefaultPIMXRegistry implements PIMXRegistry {
         dirty = true;
     }
 
-    @Override
-    public void update(PIMXKey key, Object newValue) {
-        PIMXData<?> old = registry.get(key);
+@Override
+@SuppressWarnings("unchecked")
+public <T> void update(PIMXKey key, T newValue) {
 
-        if (old == null) {
-            throw new PIMXException("Key not found: " + key);
-        }
+    PIMXData<?> oldRaw = registry.get(key);
 
-        if (!old.type().isValid(newValue)) {
-            throw new PIMXException("Invalid value");
-        }
-
-        PIMXData<?> updated =
-                new PIMXData<>(key, old.type(), old.scope(), old.syncPolicy(), newValue);
-
-        registry.put(key, updated);
-        dirty = true;
+    if (oldRaw == null) {
+        throw new PIMXException("Key not found: " + key);
     }
 
+    PIMXData<T> old = (PIMXData<T>) oldRaw;
+
+    if (!old.type().isValid(newValue)) {
+        throw new PIMXException("Invalid value");
+    }
+
+    PIMXData<T> updated =
+            new PIMXData<>(
+                    key,
+                    old.type(),
+                    old.scope(),
+                    old.syncPolicy(),
+                    newValue
+            );
+
+    registry.put(key, updated);
+    dirty = true;
+}
     @Override
     public void save() {
 
