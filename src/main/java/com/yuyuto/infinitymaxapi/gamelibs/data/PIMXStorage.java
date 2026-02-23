@@ -4,10 +4,6 @@ import java.util.Map;
 
 public interface PIMXStorage {
 
-    private boolean dirty;
-    dirty = true;
-    if (!dirty) return;
-
     Object raw = data.type().serialize(data.value());
     T value = type.deserialize(rawFromFile);
 
