@@ -1,24 +1,12 @@
 package com.yuyuto.infinitymaxapi.gamelibs.data;
 
-/**
- * PIMX型定義
- */
-public final class PIMXType<T> {
+public interface PIMXType<T> {
 
-    private final Class<T> type;
+    boolean isValid(Object value);
 
-    public PIMXType(Class<T> type) {
-        if (type == null) {
-            throw new PIMXException("Type cannot be null");
-        }
-        this.type = type;
-    }
+    Object serialize(T value);
 
-    public Class<T> getTypeClass() {
-        return type;
-    }
+    T deserialize(Object raw);
 
-    public boolean isValid(Object value) {
-        return type.isInstance(value);
-    }
+    T cast(Object value);
 }
