@@ -1,29 +1,15 @@
 package com.yuyuto.infinitymaxapi.gamelibs.data;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+public interface PIMXRegistry {
 
-public class PIMXRegistry {
+    <T> void register(PIMXData<T> data);
 
-    private final Map<PIMXKey, PIMXData<?>> registry = new ConcurrentHashMap<>();
+    <T> T getValue(PIMXKey key, PIMXType<T> type);
 
-    public <T> void register(PIMXData<T> data) {
-        if (registry.containsKey(data.key())) {
-            throw new PIMXException("Duplicate key: " + data.key());
-        }
-        registry.put(data.key(), data);
-    }
+    void update(PIMXKey key, Object newValue);
 
-    @SuppressWarnings("unchecked")
-    public <T> PIMXData<T> get(PIMXKey key) {
-        return (PIMXData<T>) registry.get(key);
-    }
+    void remove(PIMXKey key);
 
-    public boolean contains(PIMXKey key) {
-        return registry.containsKey(key);
-    }
-
-    public void remove(PIMXKey key) {
-        registry.remove(key);
-    }
+    void save();   // 永続化
+    void load();   // 読み込み
 }
