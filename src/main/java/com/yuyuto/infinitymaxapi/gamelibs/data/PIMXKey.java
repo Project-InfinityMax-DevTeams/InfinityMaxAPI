@@ -28,4 +28,8 @@ public final class PIMXKey {
     public String toString() {
         return key;
     }
+
+    public static PIMXKey fromString(String str) {
+        return new PIMXKey(str);
+    }
 }
