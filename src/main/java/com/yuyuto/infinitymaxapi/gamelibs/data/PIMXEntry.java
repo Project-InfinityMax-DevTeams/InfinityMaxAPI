@@ -36,4 +36,9 @@ public class PIMXEntry<T> {
     public PIMXSync getSync(){
         return sync;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> PIMXEntry<T> create(String key,Class<?> clazz,Object value,PIMXSync sync){
+        return new PIMXEntry<>(key,(Class<T>) clazz,(T) value,sync);
+    }
 }

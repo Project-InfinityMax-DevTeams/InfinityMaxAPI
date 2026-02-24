@@ -59,7 +59,7 @@ public class PIMXData {
             }
 
             case MERGE -> {
-                Object merged = mergeValue(existing, newEntry);
+                Object merged = PIMXMergeRegistry.merge(newEntry.getType(), existing.getValue(), newEntry.getValue());
                 ((PIMXEntry<Object>) existing).setValue(merged);
             }
         }
@@ -176,7 +176,7 @@ public class PIMXData {
 
             PIMXSync sync = new PIMXSync(apply, conflict);
 
-            PIMXEntry<?> entry = new PIMXEntry<>(key, clazz, value, sync);
+            PIMXEntry<?> entry = PIMXEntry.create(key, clazz, value, sync);
 
             pimxData.registryEntry(entry);
         }
