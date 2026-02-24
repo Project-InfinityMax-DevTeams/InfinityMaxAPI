@@ -1,24 +1,53 @@
 package com.yuyuto.infinitymaxapi.gamelibs.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * PIMXデータ本体
- * 不変オブジェクトとして設計
+ * PIMXデータ本体。
+ * 1Owner単位で管理される
  */
-public record PIMXData<T>(PIMXKey key, PIMXType<T> type, PIMXScope scope, PIMXSyncPolicy syncPolicy, T value) {
+public class PIMXData {
+    private final String version = "1.0";
+    private final PIMXOwner owner;
 
-    public PIMXData {
+    //key → entry
+    private final Map<String,PIMXEntry<?>> dataMap = new HashMap<>();
 
-        if (key == null) {
-            throw new PIMXException("Key cannot be null");
+    public PIMXData(PIMXOwner owner){
+        this.owner = owner;
+    }
+
+    public String getVersion(){
+        return version;
+    }
+
+    public PIMXOwner getOwner(){
+        return owner;
+    }
+
+    /**
+     * データ管理(競合処理は後でEventBusと連携)
+     */
+    public <T> void registryEntry(PIMXEntry<T> entry){
+        dataMap.put(entry.getKey(), entry);
+    }
+
+    /**
+     * 型安全に取得
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getValue(String key,Class<T> type){
+        PIMXEntry<?> entry = dataMap.get(key);
+
+        if (entry == null){
+            throw new IllegalArgumentException("key not found:" + key);
         }
 
-        if (type == null) {
-            throw new PIMXException("Type cannot be null");
+        if (!entry.getType().equals(type)) {
+            throw new IllegalArgumentException("Type mismatch for key:" + key);
         }
 
-        if (!type.isValid(value)) {
-            throw new PIMXException("Value does not match declared type");
-        }
-
+        return (T) entry.getValue();
     }
 }
