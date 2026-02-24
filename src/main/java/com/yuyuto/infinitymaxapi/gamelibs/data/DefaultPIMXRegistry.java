@@ -56,4 +56,4 @@ public class DefaultPIMXRegistry implements PIMXRegistry {
         storage.save(registry);
         dirty = false;
     }
-}}
+}
