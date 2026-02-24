@@ -107,6 +107,10 @@ public class PIMXData {
             throw new IllegalArgumentException("Type mismatch for key:" + key);
         }
 
+        if (clazz == null) {
+            throw new IllegalStateException("Unknown type: " + typeName);
+        }
+
         return (T) entry.getValue();
     }
 
@@ -157,6 +161,10 @@ public class PIMXData {
         PIMXData pimxData = new PIMXData(owner);
 
         JsonObject dataObject = root.getAsJsonObject("data");
+
+        if (!"1.0".equals(version)) {
+            throw new IllegalStateException("Unsupported PIMX version: " + version);
+        }
 
         for (String key : dataObject.keySet()){
 
