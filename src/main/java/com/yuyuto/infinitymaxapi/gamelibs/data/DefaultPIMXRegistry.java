@@ -64,4 +64,11 @@ public class DefaultPIMXRegistry implements PIMXRegistry {
         storage.save(registry);
         dirty = false;
     }
+
+    @Override
+    public void remove(PIMXKey key) {
+        if (registry.remove(key) != null) {
+            dirty = true;
+        }
+    }
 }
