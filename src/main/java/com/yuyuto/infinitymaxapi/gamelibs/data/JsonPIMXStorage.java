@@ -37,7 +37,47 @@ public class JsonPIMXStorage implements PIMXStorage {
 
     @Override
     public Map<PIMXKey, PIMXData<?>> load() {
-        // ここは次のステップで実装
-        return new HashMap<>();
+
+        Map<PIMXKey, PIMXData<?>> result = new HashMap<>();
+
+        if (!Files.exists(filePath)) {
+            return result;
+        }
+
+        try (Reader reader = Files.newBufferedReader(filePath)) {
+
+            JsonObject root = gson.fromJson(reader, JsonObject.class);
+
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+
+                String keyString = entry.getKey();
+                JsonObject obj = entry.getValue().getAsJsonObject();
+
+                String typeId = obj.get("type").getAsString();
+                String scopeName = obj.get("scope").getAsString();
+                String syncName = obj.get("sync").getAsString();
+
+                JsonElement valueElement = obj.get("value");
+
+                PIMXType<?> type = PIMXTypes.get(typeId);
+
+                Object raw = gson.fromJson(valueElement, Object.class);
+                Object value = type.deserialize(raw);
+
+                PIMXKey key = PIMXKey.fromString(keyString);
+                PIMXScope scope = PIMXScope.valueOf(scopeName);
+                PIMXSyncPolicy sync = PIMXSyncPolicy.valueOf(syncName);
+
+                PIMXData<?> data =
+                        new PIMXData<>(key, type, scope, sync, value);
+
+                result.put(key, data);
+            }
+
+        } catch (IOException e) {
+            throw new PIMXException("Failed to load JSON", e);
+        }
+
+        return result;
     }
 }
