@@ -13,6 +13,11 @@ public class IntegerType implements PIMXType<Integer> {
     }
 
     @Override
+    public String getId() {
+        return "integer";
+    }
+
+    @Override
     public Integer deserialize(Object raw) {
         if (raw instanceof Number number) {
             return number.intValue();
