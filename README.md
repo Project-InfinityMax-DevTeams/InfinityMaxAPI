@@ -1,5 +1,7 @@
 # InfinityMaxMOD-API
 
+[![CI Build](https://github.com/Project-InfinityMax-DevTeams/InfinityMaxAPI/actions/workflows/build.yml/badge.svg)](https://github.com/Project-InfinityMax-DevTeams/InfinityMaxAPI/actions/workflows/build.yml)
+
 ## Overview
 Development library and common API for InfinityMax MODs.
 Many common standards are implemented.
