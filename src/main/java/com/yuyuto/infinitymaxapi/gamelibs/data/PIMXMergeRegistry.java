@@ -1,3 +1,5 @@
+package com.yuyuto.infinitymaxapi.gamelibs.data;
+
 import java.util.HashMap;
 import java.util.Map;
 
