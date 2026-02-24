@@ -48,6 +48,14 @@ public class DefaultPIMXRegistry implements PIMXRegistry {
         registry.put(key, updated);
         dirty = true;
     }
+
+    @Override
+    public void load() {
+        registry.clear();
+        registry.putAll(storage.load());
+        dirty = false;
+    }
+
     @Override
     public void save() {
 
