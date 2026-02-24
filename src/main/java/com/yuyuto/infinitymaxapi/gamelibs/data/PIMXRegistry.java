@@ -4,12 +4,13 @@ public interface PIMXRegistry {
 
     <T> void register(PIMXData<T> data);
 
-    <T> T getValue(PIMXKey key, PIMXType<T> type);
+    <T> void update(PIMXKey key, T newValue);
 
-    void update(PIMXKey key, Object newValue);
+    <T> T getValue(PIMXKey key, PIMXType<T> type);
 
     void remove(PIMXKey key);
 
-    void save();   // 永続化
-    void load();   // 読み込み
+    void save();
+
+    void load();
 }
