@@ -30,8 +30,66 @@ public class PIMXData {
     /**
      * データ管理(競合処理は後でEventBusと連携)
      */
-    public <T> void registryEntry(PIMXEntry<T> entry){
-        dataMap.put(entry.getKey(), entry);
+    public <T> void registryEntry(PIMXEntry<T> newEntry){
+
+        PIMXEntry<?> existing = dataMap.get(newEntry.getKey());
+
+        // 既存が無ければそのまま登録
+        if (existing == null){
+            dataMap.put(newEntry.getKey(), newEntry);
+            return;
+        }
+
+        // 型が違う場合は即エラー
+        if (!existing.getType().equals(newEntry.getType())){
+            throw new IllegalStateException("Type conflict for key: " + newEntry.getKey());
+        }
+
+        // 競合ポリシー取得
+        ConflictPolicy policy = newEntry.getSync().conflictPolicy();
+
+        switch (policy){
+
+            case REPLACE -> {
+                dataMap.put(newEntry.getKey(), newEntry);
+            }
+
+            case ERROR -> {
+                throw new IllegalStateException("Conflict detected for key: " + newEntry.getKey());
+            }
+
+            case MERGE -> {
+                Object merged = mergeValue(existing, newEntry);
+                ((PIMXEntry<Object>) existing).setValue(merged);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object mergeValue(PIMXEntry<?> oldEntry, PIMXEntry<?> newEntry){
+
+        Object oldVal = oldEntry.getValue();
+        Object newVal = newEntry.getValue();
+
+        if (oldVal instanceof Integer){
+            return (Integer) oldVal + (Integer) newVal;
+        }
+
+        if (oldVal instanceof Double){
+            return (Double) oldVal + (Double) newVal;
+        }
+
+        if (oldVal instanceof String){
+            return oldVal.toString() + newVal.toString();
+        }
+
+        if (oldVal instanceof Boolean){
+            return (Boolean) oldVal || (Boolean) newVal;
+        }
+
+        throw new UnsupportedOperationException(
+                "Merge not supported for type: " + oldEntry.getType()
+        );
     }
 
     /**
@@ -52,6 +110,7 @@ public class PIMXData {
         return (T) entry.getValue();
     }
 
+    //Jsonシリアライズ
     public JsonObject toJson(){
         JsonObject root = new JsonObject();
 
@@ -87,6 +146,7 @@ public class PIMXData {
         return root;
     }
 
+    //Jsonデシリアライズ
     public static PIMXData fromJson(JsonObject root){
 
         String version = root.get("version").getAsString();
