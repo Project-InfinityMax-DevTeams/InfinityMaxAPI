@@ -5,20 +5,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InfinityEventBus {
 
-    private static final Map<Class<? extends InfinityEvent>,
-            List<InfinityEventListener<?>>> listeners = new ConcurrentHashMap<>();
-
+    private static final Map<Class<? extends InfinityEvent>, List<ListenerHolder<?>>> listeners = new ConcurrentHashMap<>();
     /**
      * イベント登録
      */
-    public static <T extends InfinityEvent> void register(
-            Class<T> eventType,
-            InfinityEventListener<T> listener
-    ) {
-        listeners
-                .computeIfAbsent(eventType, k -> new ArrayList<>())
-                .add(listener);
-    }
+        public static <T extends InfinityEvent> void register(Class<T> eventType,EventPriority priority,InfinityEventListener<T> listener) {
+            listeners.computeIfAbsent(eventType, k -> new ArrayList<>()).add(new ListenerHolder<>(priority, listener));
+        }
 
     /**
      * イベント送信
@@ -26,30 +19,30 @@ public class InfinityEventBus {
     @SuppressWarnings("unchecked")
     public static <T extends InfinityEvent> void post(T event) {
 
-        List<InfinityEventListener<?>> eventListeners =
-                listeners.get(event.getClass());
+        List<InfinityEventListener<?>> eventListeners = listeners.get(event.getClass());
 
-        if (eventListeners == null) {
-            return; // 登録なし＝何もしない
-        }
+        if (eventListeners == null) return; // 登録なし＝何もしない
 
-        for (InfinityEventListener<?> rawListener : eventListeners) {
+            // 優先度順にソート（HIGH → LOW）
+        eventListeners.sort(Comparator.comparing(holder -> ((ListenerHolder<?>) holder).getPriority()));
+
+        for (ListenerHolder<?> rawHolder : eventListeners) {
 
             try {
-                InfinityEventListener<T> listener =
-                        (InfinityEventListener<T>) rawListener;
+                ListenerHolder<T> holder = (ListenerHolder<T>) rawHolder;
 
-                listener.handle(event);
+                holder.getListener().handle(event);
+
+                // キャンセルされたら即停止
+                if (event instanceof CancelableEvent cancelable
+                        && cancelable.isCancelled()) {
+                    break;
+                }
 
             } catch (Exception e) {
 
-                // 🔥 絶対にクラッシュさせない
-                System.err.println(
-                        "[InfinityAPI] Event error in "
-                                + event.getClass().getSimpleName()
-                                + ": " + e.getMessage()
-                );
-
+                //  絶対にクラッシュさせない
+                System.err.println("[InfinityAPI] Event error in " + event.getClass().getSimpleName() + ": " + e.getMessage());
                 e.printStackTrace();
             }
         }
