@@ -107,10 +107,6 @@ public class PIMXData {
             throw new IllegalArgumentException("Type mismatch for key:" + key);
         }
 
-        if (clazz == null) {
-            throw new IllegalStateException("Unknown type: " + typeName);
-        }
-
         return (T) entry.getValue();
     }
 
@@ -173,7 +169,9 @@ public class PIMXData {
             // type
             String typeName = entryObject.get("type").getAsString();
             Class<?> clazz = PIMXTypeRegistry.getClass(typeName);
-
+            if (clazz == null) {
+                throw new IllegalStateException("Unknown type: " + typeName);
+            }
             // value
             Object value = new Gson().fromJson(entryObject.get("value"), clazz);
 
