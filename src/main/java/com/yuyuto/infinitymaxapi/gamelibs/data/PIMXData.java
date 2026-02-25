@@ -11,6 +11,7 @@ import java.util.Map;
 public class PIMXData {
     private final String version = "1.0";
     private final PIMXOwner owner;
+    private static final Gson GSON = new Gson();
 
     //key → entry
     private final Map<String,PIMXEntry<?>> dataMap = new HashMap<>();
@@ -173,7 +174,7 @@ public class PIMXData {
                 throw new IllegalStateException("Unknown type: " + typeName);
             }
             // value
-            Object value = new Gson().fromJson(entryObject.get("value"), clazz);
+            Object value = Gson.fromJson(entryObject.get("value"), clazz);
 
             // sync
             JsonObject syncObject = entryObject.getAsJsonObject("sync");
