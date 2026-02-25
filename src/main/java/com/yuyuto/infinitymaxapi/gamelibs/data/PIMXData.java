@@ -174,7 +174,7 @@ public class PIMXData {
                 throw new IllegalStateException("Unknown type: " + typeName);
             }
             // value
-            Object value = Gson.fromJson(entryObject.get("value"), clazz);
+            Object value = GSON.fromJson(entryObject.get("value"), clazz);
 
             // sync
             JsonObject syncObject = entryObject.getAsJsonObject("sync");

@@ -27,7 +27,7 @@ public class InfinityEventBus {
 
         while (eventClass != null) {
             
-            List<InfinityEventListener<?>> eventListeners = listeners.get(event.getClass());
+            List<ListenerHolder<?>> eventListeners = listeners.get(event.getClass());
             
             if (eventListeners == null) return; // 登録なし＝何もしない
 
