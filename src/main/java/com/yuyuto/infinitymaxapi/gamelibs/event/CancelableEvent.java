@@ -1,4 +1,4 @@
-import com.yuyuto.infinitymaxapi.gamelibs.event;
+package com.yuyuto.infinitymaxapi.gamelibs.event;
 
 public abstract class CancelableEvent extends InfinityEvent {
 
