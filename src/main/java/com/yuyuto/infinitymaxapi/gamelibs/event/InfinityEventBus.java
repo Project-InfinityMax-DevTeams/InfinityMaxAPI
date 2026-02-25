@@ -10,7 +10,11 @@ public class InfinityEventBus {
      * イベント登録
      */
         public static <T extends InfinityEvent> void register(Class<T> eventType,EventPriority priority,InfinityEventListener<T> listener) {
-            listeners.computeIfAbsent(eventType, k -> new ArrayList<>()).add(new ListenerHolder<>(priority, listener));
+        List<ListenerHolder<?>> list = listeners.computeIfAbsent(eventType, k -> new ArrayList<>());
+        list.add(new ListenerHolder<>(priority, listener));
+
+        // 登録時にソート
+        Collections.sort(list);
         }
 
     /**
@@ -18,33 +22,64 @@ public class InfinityEventBus {
      */
     @SuppressWarnings("unchecked")
     public static <T extends InfinityEvent> void post(T event) {
+        
+        Class<?> eventClass = event.getClass();
 
-        List<InfinityEventListener<?>> eventListeners = listeners.get(event.getClass());
+        while (eventClass != null) {
+            
+            List<InfinityEventListener<?>> eventListeners = listeners.get(event.getClass());
+            
+            if (eventListeners == null) return; // 登録なし＝何もしない
 
-        if (eventListeners == null) return; // 登録なし＝何もしない
+            for (ListenerHolder<?> rawHolder : eventListeners) {
+                try {
+                    ListenerHolder<T> holder = (ListenerHolder<T>) rawHolder;
 
-            // 優先度順にソート（HIGH → LOW）
-        eventListeners.sort(Comparator.comparing(holder -> ((ListenerHolder<?>) holder).getPriority()));
+                    holder.getListener().handle(event);
 
-        for (ListenerHolder<?> rawHolder : eventListeners) {
+                    // キャンセルされたら即停止
+                    if (event instanceof CancelableEvent cancelable && cancelable.isCancelled()) {
+                        break;
+                    }
 
-            try {
-                ListenerHolder<T> holder = (ListenerHolder<T>) rawHolder;
+                } catch (Exception e) {
 
-                holder.getListener().handle(event);
-
-                // キャンセルされたら即停止
-                if (event instanceof CancelableEvent cancelable
-                        && cancelable.isCancelled()) {
-                    break;
+                    //絶対にクラッシュさせない
+                    System.err.println("[InfinityAPI] Event error in " + event.getClass().getSimpleName() + ": " + e.getMessage());
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-
-                //  絶対にクラッシュさせない
-                System.err.println("[InfinityAPI] Event error in " + event.getClass().getSimpleName() + ": " + e.getMessage());
-                e.printStackTrace();
             }
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends InfinityEvent> void unregister(Class<T> eventType,InfinityEventListener<T> listener) {
+
+        List<ListenerHolder<?>> list = listeners.get(eventType);
+
+        if (list == null) return;
+
+        list.removeIf(holder -> {InfinityEventListener<T> registered = (InfinityEventListener<T>) holder.getListener();
+            return registered.equals(listener);
+        });
+        
+        // 空になったらMapから削除（メモリ軽量化）
+        if (list.isEmpty()) {
+            listeners.remove(eventType);
+        }
+    }
+
+    public static void unregisterAll(InfinityEventListener<?> listener) {
+
+        for (Class<? extends InfinityEvent> key : listeners.keySet()) {
+
+            List<ListenerHolder<?>> list = listeners.get(key);
+            list.removeIf(holder -> holder.getListener().equals(listener));
+
+            if (list.isEmpty()) {
+                listeners.remove(key);
+            }
+        }
+    }
+
 }
