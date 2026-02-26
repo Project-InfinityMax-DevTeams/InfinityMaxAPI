@@ -97,9 +97,11 @@ Phase phase = PhaseResolver.resolve(ironLike, temp);
 Phase phase = PhaseResolver.resolve(temp);
 ```
 
+> ⚠️ 注意: 材質未指定の場合、デフォルト材質（水相当：融点0℃、沸点100℃）で判定されます。
+
 ---
 
-## 5. 実装メモ
+## 5. 実装の注意点
 
 - `Energy` は SI 単位ジュール（J）です。
 - `PhysicalState` は immutable（更新時は新インスタンスを返す）です。
