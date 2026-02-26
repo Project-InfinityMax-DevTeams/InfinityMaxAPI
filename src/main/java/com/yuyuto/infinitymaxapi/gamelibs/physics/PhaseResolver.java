@@ -14,15 +14,12 @@ public final class PhaseResolver {
     private static final Material DEFAULT_MATERIAL =
             new Material(273.15, 373.15, 10_000.0);
 
-    private static final Material DEFAULT_MATERIAL =
-            new Material(273.15, 373.15, 10_000.0);
-
     /**
- * ユーティリティクラスのインスタンス化を防ぐための非公開コンストラクタ。
- *
- * このクラスは全て静的メソッドで提供されるため、外部からのインスタンス生成を許可しません。
- */
-private PhaseResolver() {}
+     * ユーティリティクラスのインスタンス化を防ぐための非公開コンストラクタ。
+     *
+     * このクラスは全て静的メソッドで提供されるため、外部からのインスタンス生成を許可しません。
+     */
+    private PhaseResolver() {}
 
     /**
      * 与えられた物質特性と温度からその物質の相（Phase）を決定する。
@@ -31,23 +28,7 @@ private PhaseResolver() {}
      * @param temperature 判定に使用する温度（Temperature）
      * @return 判定された相を表すPhase
      */
-    public static Phase resolve(Material material,
-                                Temperature temperature) {
-
-        return material.resolvePhase(
-                temperature.getSI()
-        );
-    }
-
-    /**
-     * 材質を指定せずに温度から相を判定する互換用メソッド。
-     *
-     * <p>指定がない場合はクラス内のデフォルト材質（簡易的に水相当）を用いて判定を行う。</p>
-     *
-     * @param temperature 判定対象の温度
-     * @return 指定された温度に対する相（デフォルト材質に基づく）
-     */
-    public static Phase resolve(Temperature temperature) {
-        return resolve(DEFAULT_MATERIAL, temperature);
+    public static Phase resolve(Material material,Temperature temperature) {
+        return material.resolvePhase(temperature.getSI());
     }
 }
