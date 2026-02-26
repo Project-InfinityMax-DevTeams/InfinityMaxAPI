@@ -36,8 +36,6 @@ PhysicalState state = new PhysicalState(
 
 ---
 
-⸻
-
 ## 2. ジュール熱 JouleHeating の使い方
 
 JouleHeating は電流による抵抗損失（I²R）から
@@ -56,8 +54,6 @@ Q = P × Δt
 - Δt : 経過時間（秒）
 - m : 物体質量（kg）
 - c : 比熱（J/kgK）
-
-⸻
 
 ### 🔌 推奨使用例（EnergyAPI連携）
 ```
@@ -79,8 +75,6 @@ JouleHeating heating = new JouleHeating(
 PhysicalState next = heating.apply(state, 0.1);
 ```
 
-⸻
-
 ### 🔥 数値の目安
 
 比熱の目安
@@ -92,9 +86,6 @@ PhysicalState next = heating.apply(state, 0.1);
 |水|4200|
 |空気|1005|
 
-
-⸻
-
 抵抗の目安
 
 |機械|抵抗|
@@ -102,8 +93,6 @@ PhysicalState next = heating.apply(state, 0.1);
 |太い銅線|0.01〜0.1Ω|
 |小型ヒーター|2〜10Ω|
 |魔導回路|任意設定|
-
-⸻
 
 ### 🏭 想定ユースケース
 
@@ -113,7 +102,6 @@ PhysicalState next = heating.apply(state, 0.1);
 - コンピュータ
 - 魔導炉
 
-⸻
 
 ### 🔥 過熱判定
 ```
@@ -121,8 +109,6 @@ if (state.getTemperature().getSI() > 1200) {
     explode();
 }
 ```
-
-⸻
 
 ### ❄ 冷却との併用
 
@@ -132,7 +118,6 @@ JouleHeating と HeatTransfer を組み合わせることで：
 - 熱暴走
 - 自然平衡
 が再現できる。
-⸻
 
 ### 🏭 機械設計例
 
@@ -145,8 +130,6 @@ I = 24 / 5 = 4.8A
 P = 4.8² × 5 ≈ 115W
 ```
 → 約115J/秒の発熱
-
-⸻
 
 魔導コイル（危険）
 ```
