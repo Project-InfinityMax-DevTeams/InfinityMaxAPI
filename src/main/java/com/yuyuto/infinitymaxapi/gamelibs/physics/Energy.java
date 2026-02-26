@@ -23,9 +23,12 @@ public final class Energy extends PhysicalQuantity {
      * @param unit  value の単位（例: ジュールを表す単位）
      */
     public Energy(double value, Unit unit) {
+
+        if (scalar == 0) {
+            throw new IllegalArgumentException("Cannot divide by zero");
+        }
         super(value, unit);
     }
-
     /**
      * SI単位（ジュール）から Energy インスタンスを初期化するコンストラクタ。
      *
@@ -41,7 +44,10 @@ public final class Energy extends PhysicalQuantity {
      * @param other 加算するエネルギー
      * @return 加算結果を表す Energy（SI単位（ジュール）で表現された値）
      */
-    public Energy add(Energy other) {
+   public Energy add(Energy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot add null Energy");
+        }
         return new Energy(this.getSI() + other.getSI());
     }
 
@@ -52,6 +58,9 @@ public final class Energy extends PhysicalQuantity {
      * @return this から other を引いた差の Energy。結果は SI 単位（ジュール）で表現される。
      */
     public Energy subtract(Energy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot subtract null Energy");
+        }
         return new Energy(this.getSI() - other.getSI());
     }
 
@@ -72,6 +81,9 @@ public final class Energy extends PhysicalQuantity {
      * @return 指定した `scalar` で除算した結果の Energy（SI単位：ジュール）
      */
     public Energy divide(double scalar) {
+        if (scalar == 0) {
+            throw new IllegalArgumentException("Cannot divide by zero");
+        }
         return new Energy(this.getSI() / scalar);
     }
 }

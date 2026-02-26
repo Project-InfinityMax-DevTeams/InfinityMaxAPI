@@ -18,6 +18,24 @@ public final class JouleHeating implements PhysicalPhenomenon {
     private final double specificHeat;
 
     /**
+     * EnergyAPI の接続情報を使ってジュール熱を計算する。
+     */
+    public JouleHeating(EnergyConnection connection, double specificHeat) {
+        if(connection == null) {
+            throw new IllegalArgumentException("connection must not be null");
+        }
+        if (specificHeat <= 0) {
+            throw new IllegalArgumentException("specificHeat must be positive");
+        }
+        this.connection = connection;
+
+        if (resistance <= 0) {
+                throw new IllegalArgumentException("resistance must be positive");
+        }
+        if (specificHeat <= 0) {
+            throw new IllegalArgumentException("specificHeat must be positive");
+        }
+
      * EnergyConnection を基にジュール加熱モデルを初期化する。
      *
      * @param connection ジュール熱（電力損失）計算に使用する電力接続情報。接続のポテンシャルと抵抗から消費電力を算出するために用いられる。
@@ -78,8 +96,9 @@ public final class JouleHeating implements PhysicalPhenomenon {
                 state.getPressure(),
                 state.getDensity(),
                 newEnergy,
-                PhaseResolver.resolve(newTemp),
-                state.getMass()
+                PhaseResolver.resolve(state.getMaterial(),newTemp),
+                state.getMass(),
+                state.getMaterial()
         );
     }
 }
