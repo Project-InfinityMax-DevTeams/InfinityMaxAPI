@@ -81,6 +81,9 @@ public final class Energy extends PhysicalQuantity {
      * @return 指定した `scalar` で除算した結果の Energy（SI単位：ジュール）
      */
     public Energy divide(double scalar) {
+        if (scalar == 0) {
+            throw new IllegalArgumentException("Cannot divide by zero");
+        }
         return new Energy(this.getSI() / scalar);
     }
 }
