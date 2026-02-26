@@ -47,8 +47,8 @@ PhysicalState state = new PhysicalState(
 ```java
 EnergyNode a = new EnergyNode();
 EnergyNode b = new EnergyNode();
-a.setPotential(12.0);
-b.setPotential(0.0);
+a.setPotential(12.0);  // 12V
+b.setPotential(0.0);   // 0V → 電位差12V、電流 = 12V / 2Ω = 6A
 
 EnergyConnection wire = new EnergyConnection(a, b, 2.0); // 2Ω
 
