@@ -36,26 +36,129 @@ PhysicalState state = new PhysicalState(
 
 ---
 
-## 2. ジュール熱 `JouleHeating` の使い方
+⸻
 
-`JouleHeating` は EnergyAPI の `EnergyConnection` を使って、
-接続損失（I²R）から発熱量を計算します。
+## 2. ジュール熱 JouleHeating の使い方
 
-### 推奨（EnergyAPI連携）
+JouleHeating は電流による抵抗損失（I²R）から
+物体の温度上昇を計算するためのAPIです。
 
-```java
+### 🔬 物理モデル
+
+内部では以下の式を使用します：
+
+P = I²R
+Q = P × Δt
+ΔT = Q / (m c)
+
+- I : 電流（アンペア）
+- R : 抵抗（オーム）
+- Δt : 経過時間（秒）
+- m : 物体質量（kg）
+- c : 比熱（J/kgK）
+
+⸻
+
+### 🔌 推奨使用例（EnergyAPI連携）
+```
 EnergyNode a = new EnergyNode();
 EnergyNode b = new EnergyNode();
+
 a.setPotential(12.0);  // 12V
-b.setPotential(0.0);   // 0V → 電位差12V、電流 = 12V / 2Ω = 6A
+b.setPotential(0.0);   // 0V
 
-EnergyConnection wire = new EnergyConnection(a, b, 2.0); // 2Ω
+// 抵抗2Ω → I = 12 / 2 = 6A
+EnergyConnection wire = new EnergyConnection(a, b, 2.0);
 
-JouleHeating heating = new JouleHeating(wire, 4200.0); // 比熱[J/(kg*K)]
-PhysicalState next = heating.apply(state, 0.1); // 0.1秒進める
+JouleHeating heating = new JouleHeating(
+        wire,
+        4200.0 // 比熱（例：水）
+);
+
+// 0.1秒分発熱計算
+PhysicalState next = heating.apply(state, 0.1);
 ```
----
 
+⸻
+
+### 🔥 数値の目安
+
+比熱の目安
+
+|物質|比熱 J/(kgK)|
+|---|-----------|
+|鉄|450|
+|銅|385|
+|水|4200|
+|空気|1005|
+
+
+⸻
+
+抵抗の目安
+
+|機械|抵抗|
+|---|---|
+|太い銅線|0.01〜0.1Ω|
+|小型ヒーター|2〜10Ω|
+|魔導回路|任意設定|
+
+⸻
+
+### 🏭 想定ユースケース
+
+** 🔧 機械の発熱　**
+- 発電機
+- モーター
+- コンピュータ
+- 魔導炉
+
+⸻
+
+### 🔥 過熱判定
+```
+if (state.getTemperature().getSI() > 1200) {
+    explode();
+}
+```
+
+⸻
+
+### ❄ 冷却との併用
+
+JouleHeating と HeatTransfer を組み合わせることで：
+- 発熱
+- 冷却
+- 熱暴走
+- 自然平衡
+が再現できる。
+⸻
+
+### 🏭 機械設計例
+
+小型ヒーター
+```
+resistance = 5Ω
+voltage = 24V
+
+I = 24 / 5 = 4.8A
+P = 4.8² × 5 ≈ 115W
+```
+→ 約115J/秒の発熱
+
+⸻
+
+魔導コイル（危険）
+```
+resistance = 1Ω
+voltage = 100V
+
+I = 100A
+P = 10000W
+```
+→ 10kJ/秒 → 即過熱
+
+---
 ## 3. 熱伝導 `HeatTransfer`
 
 `HeatTransfer` はフーリエの法則ベースの簡易モデルです。
