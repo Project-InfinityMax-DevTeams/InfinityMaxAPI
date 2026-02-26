@@ -37,8 +37,7 @@ public final class ChunkPhysicalStorage {
 
     private final double cellVolume = 1.0; // 仮定体積（m^3）
 
-    public ChunkPhysicalStorage(LODLevel lodLevel,
-                                PhysicalState defaultState) {
+    public ChunkPhysicalStorage(LODLevel lodLevel, PhysicalState defaultState) {
 
         this.lodLevel = lodLevel;
 
@@ -103,10 +102,8 @@ public final class ChunkPhysicalStorage {
                 avgPressure,
                 avgDensity,
                 new Energy(totalEnergy / count, Energy.JOULE),
-                PhaseResolver.resolve(
-                        new Temperature(avgTemp, Temperature.KELVIN)
-                ),
-                new Mass(avgMass, Mass.KILOGRAM)
+                PhaseResolver.resolve(material,new Temperature(avgTemp, Temperature.KELVIN)),
+                new Mass(avgMass, Mass.KILOGRAM),material
         );
     }
 

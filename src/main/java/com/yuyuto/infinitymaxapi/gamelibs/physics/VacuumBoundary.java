@@ -41,7 +41,8 @@ public final class VacuumBoundary implements BoundaryCondition {
                 new Density(EPSILON_DENSITY, Density.KG_PER_M3),
                 internal.getInternalEnergy(),
                 Phase.GAS,
-                new Mass(EPSILON_MASS, Mass.KILOGRAM)
+                new Mass(EPSILON_MASS, Mass.KILOGRAM),
+                internal.getMaterial()
         );
     }
 }

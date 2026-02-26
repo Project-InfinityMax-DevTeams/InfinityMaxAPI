@@ -58,6 +58,6 @@ public final class HeatTransfer implements PhysicalPhenomenon {
         Energy newEnergy = new Energy(state.getInternalEnergy().getSI() + dQ,Energy.JOULE);
         Temperature newTemp =new Temperature(newTempValue, Temperature.KELVIN);
 
-        return new PhysicalState(newTemp, state.getPressure(), state.getDensity(), newEnergy, state.getPhase(), state.getMass());
+        return new PhysicalState(newTemp, state.getPressure(), state.getDensity(), newEnergy, state.getPhase(), state.getMass(),state.getMaterial());
     }
 }

@@ -89,7 +89,8 @@ public final class PressurePropagation {
                         d1,
                         s1.getInternalEnergy(),
                         s1.getPhase(),
-                        new Mass(newM1, Mass.KILOGRAM)
+                        new Mass(newM1, Mass.KILOGRAM),
+                        s1.getMaterial()
                 )
         );
 
@@ -100,7 +101,8 @@ public final class PressurePropagation {
                         d2,
                         s2.getInternalEnergy(),
                         s2.getPhase(),
-                        new Mass(newM2, Mass.KILOGRAM)
+                        new Mass(newM2, Mass.KILOGRAM),
+                        s2.getMaterial()
                 )
         );
     }
