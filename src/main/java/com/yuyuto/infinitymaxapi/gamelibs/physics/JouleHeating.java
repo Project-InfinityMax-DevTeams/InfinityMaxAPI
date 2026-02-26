@@ -1,5 +1,8 @@
 package com.yuyuto.infinitymaxapi.gamelibs.physics;
 
+import com.yuyuto.infinitymaxapi.gamelibs.energy.EnergyConnection;
+import com.yuyuto.infinitymaxapi.gamelibs.energy.EnergyNode;
+
 /**
  * <h2>JouleHeating（ジュール熱）</h2>
  *
@@ -13,14 +16,36 @@ package com.yuyuto.infinitymaxapi.gamelibs.physics;
  */
 public final class JouleHeating implements PhysicalPhenomenon {
 
-    private final double resistance;
-    private final double current;
+    private final EnergyConnection connection;
+    private final EnergyNode fromNode;
+    private final EnergyNode toNode;
     private final double specificHeat;
 
-    public JouleHeating(double resistance, double current, double specificHeat) {
+    /**
+     * EnergyAPI の接続情報を使ってジュール熱を計算する。
+     */
+    public JouleHeating(EnergyConnection connection, EnergyNode fromNode, EnergyNode toNode, double specificHeat) {
 
-        this.resistance = resistance;
-        this.current = current;
+        this.connection = connection;
+        this.fromNode = fromNode;
+        this.toNode = toNode;
+        this.specificHeat = specificHeat;
+    }
+
+    /**
+     * 既存コード互換のための簡易コンストラクタ。
+     * 内部で EnergyAPI の接続を組み立てて利用する。
+     */
+    public JouleHeating(double resistance, double current, double specificHeat) {
+        EnergyNode source = new EnergyNode();
+        EnergyNode sink = new EnergyNode();
+
+        source.setPotential(current * resistance);
+        sink.setPotential(0);
+
+        this.connection = new EnergyConnection(source, sink, resistance);
+        this.fromNode = source;
+        this.toNode = sink;
         this.specificHeat = specificHeat;
     }
 
@@ -29,7 +54,8 @@ public final class JouleHeating implements PhysicalPhenomenon {
         /*
          * ジュール熱
          */
-        double heat = current * current * resistance * deltaTime;
+        double powerLoss = connection.computeLoss(fromNode.getPotential(), toNode.getPotential());
+        double heat = powerLoss * deltaTime;
         double mass = state.getMass().getSI();
         double temperatureChange = heat / (mass * specificHeat);
         double newTempValue = state.getTemperature().getSI() + temperatureChange;
