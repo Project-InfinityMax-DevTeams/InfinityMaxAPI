@@ -96,6 +96,7 @@ public final class ChunkPhysicalStorage {
         Density avgDensity = new Density(avgMass / cellVolume, Density.KG_PER_M3);
 
         Pressure avgPressure = PhysicalCalculator.calculatePressure(avgDensity, new Temperature(avgTemp, Temperature.KELVIN));
+        Material material = state.getMaterial();
 
         averagedState = new PhysicalState(
                 new Temperature(avgTemp, Temperature.KELVIN),
