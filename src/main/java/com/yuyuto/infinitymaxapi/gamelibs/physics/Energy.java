@@ -28,11 +28,17 @@ public final class Energy extends PhysicalQuantity {
         super(siValue, DIMENSION);
     }
 
-    public Energy add(Energy other) {
+   public Energy add(Energy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot add null Energy");
+        }
         return new Energy(this.getSI() + other.getSI());
     }
 
     public Energy subtract(Energy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot subtract null Energy");
+        }
         return new Energy(this.getSI() - other.getSI());
     }
 
