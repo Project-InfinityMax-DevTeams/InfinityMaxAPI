@@ -17,6 +17,10 @@ public final class Energy extends PhysicalQuantity {
             new Unit("J", DIMENSION, 1.0);
 
     public Energy(double value, Unit unit) {
+
+        if (scalar == 0) {
+            throw new IllegalArgumentException("Cannot divide by zero");
+        }
         super(value, unit);
     }
 
