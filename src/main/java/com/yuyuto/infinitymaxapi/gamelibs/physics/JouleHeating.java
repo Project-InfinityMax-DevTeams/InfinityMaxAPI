@@ -75,7 +75,8 @@ public final class JouleHeating implements PhysicalPhenomenon {
                 state.getDensity(),
                 newEnergy,
                 PhaseResolver.resolve(state.getMaterial(),newTemp),
-                state.getMass()
+                state.getMass(),
+                state.getMaterial()
         );
     }
 }
