@@ -6,7 +6,11 @@ package com.yuyuto.infinitymaxapi.gamelibs.physics;
  * 物質に基づいて相を決定する。
  */
 public final class PhaseResolver {
-
+     /**
+      * デフォルト材質（水相当）。
+      * 融点: 273.15 K (0°C), 沸点: 373.15 K (100°C)
+      * 標準気圧下での水を想定した簡易判定用。
+      */
     private static final Material DEFAULT_MATERIAL =
             new Material(273.15, 373.15, 10_000.0);
 
