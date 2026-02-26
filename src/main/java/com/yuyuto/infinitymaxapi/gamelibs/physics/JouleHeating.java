@@ -36,12 +36,25 @@ public final class JouleHeating implements PhysicalPhenomenon {
             throw new IllegalArgumentException("specificHeat must be positive");
         }
 
+     * EnergyConnection を基にジュール加熱モデルを初期化する。
+     *
+     * @param connection ジュール熱（電力損失）計算に使用する電力接続情報。接続のポテンシャルと抵抗から消費電力を算出するために用いられる。
+     * @param specificHeat 対象物質の比熱容量（J/(kg·K)）。
+     */
+    public JouleHeating(EnergyConnection connection, double specificHeat) {
+        this.connection = connection;
         this.specificHeat = specificHeat;
     }
 
     /**
-     * 既存コード互換のための簡易コンストラクタ。
-     * 内部で EnergyAPI の接続を組み立てて利用する。
+     * 既存API互換のために簡易的なエネルギー接続を構築するコンストラクタ。
+     *
+     * 指定した抵抗と電流から供給側・吸収側の EnergyNode を作成して内部の EnergyConnection を初期化し、
+     * 与えられた比熱を保存する。
+     *
+     * @param resistance 抵抗値（オーム）
+     * @param current    電流（アンペア）
+     * @param specificHeat 比熱（ジュール／（キログラム・ケルビン））
      */
     public JouleHeating(double resistance, double current, double specificHeat) {
         EnergyNode source = new EnergyNode();
@@ -54,6 +67,15 @@ public final class JouleHeating implements PhysicalPhenomenon {
         this.specificHeat = specificHeat;
     }
 
+    /**
+     * 接続によるジュール熱を与え、与えられた状態を基に熱影響を反映した新しい物理状態を返す。
+     *
+     * <p>接続からの電力損失に基づき発生した熱量で内部エネルギーと温度を更新し、更新後の温度から相を決定した PhysicalState を生成して返します。</p>
+     *
+     * @param state 現在の物理状態
+     * @param deltaTime 適用する時間間隔（秒）
+     * @return 接続によるジュール熱を反映して更新された PhysicalState
+     */
     @Override
     public PhysicalState apply(PhysicalState state, double deltaTime) {
         double powerLoss = connection.computeLoss(
