@@ -101,7 +101,7 @@ Phase phase = PhaseResolver.resolve(ironLike, temp);
 Phase phase = PhaseResolver.resolve(temp);
 ```
 
-> ⚠️ 注意: 材質未指定の場合、デフォルト材質（水相当：融点0℃、沸点100℃）で判定されます。
+> ⚠️ 注意: 材質未指定の場合、デフォルト材質（水相当：融点0℃（273.15 K）、沸点100℃（373.15 K））で判定されます。
 
 ---
 
