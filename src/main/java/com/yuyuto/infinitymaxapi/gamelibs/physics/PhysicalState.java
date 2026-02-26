@@ -20,18 +20,20 @@ public final class PhysicalState {
     private final Energy internalEnergy;
     private final Phase phase;
     private final Mass mass;
+    private final Material material;
 
     /**
      * コンストラクタ（全て指定）
      */
     public PhysicalState(Temperature temperature, Pressure pressure, Density density,
-                         Energy internalEnergy, Phase phase, Mass mass) {
+                         Energy internalEnergy, Phase phase, Mass mass, Material material) {
         this.temperature = Objects.requireNonNull(temperature);
         this.pressure = Objects.requireNonNull(pressure);
         this.density = Objects.requireNonNull(density);
         this.internalEnergy = Objects.requireNonNull(internalEnergy);
         this.phase = Objects.requireNonNull(phase);
         this.mass = Objects.requireNonNull(mass);
+        this.material = material
 
         validate();
     }
@@ -54,7 +56,7 @@ public final class PhysicalState {
     public Phase getPhase() { return phase; }
     public Mass getMass() { return mass; }
 
-    /** 小学生向けコピー */
+    /** コピー */
     public PhysicalState copy() {
         return new PhysicalState(temperature, pressure, density, internalEnergy, phase, mass);
     }
@@ -92,5 +94,12 @@ public final class PhysicalState {
      */
     public PhysicalState withPhase(Phase newPhase) {
         return new PhysicalState(temperature, pressure, density, internalEnergy, newPhase, mass);
+    }
+
+    /**
+    * 材料更新
+    */
+    public Material getMaterial() {
+        return material;
     }
 }
