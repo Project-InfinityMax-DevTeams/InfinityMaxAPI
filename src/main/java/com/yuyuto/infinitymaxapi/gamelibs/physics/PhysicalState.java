@@ -58,42 +58,42 @@ public final class PhysicalState {
 
     /** コピー */
     public PhysicalState copy() {
-        return new PhysicalState(temperature, pressure, density, internalEnergy, phase, mass);
+        return new PhysicalState(temperature, pressure, density, internalEnergy, phase, mass,material);
     }
 
     /**
      * 温度だけ更新して新しい状態を返す（イミュータブル更新）
      */
     public PhysicalState withTemperature(Temperature newTemp) {
-        return new PhysicalState(newTemp, pressure, density, internalEnergy, phase, mass);
+        return new PhysicalState(newTemp, pressure, density, internalEnergy, phase, mass, material);
     }
 
     /**
      * 内部エネルギーを更新
      */
     public PhysicalState withInternalEnergy(Energy newEnergy) {
-        return new PhysicalState(temperature, pressure, density, newEnergy, phase, mass);
+        return new PhysicalState(temperature, pressure, density, newEnergy, phase, mass, material);
     }
 
     /**
      * 圧力を更新
      */
     public PhysicalState withPressure(Pressure newPressure) {
-        return new PhysicalState(temperature, newPressure, density, internalEnergy, phase, mass);
+        return new PhysicalState(temperature, newPressure, density, internalEnergy, phase, mass, material);
     }
 
     /**
      * 密度を更新
      */
     public PhysicalState withDensity(Density newDensity) {
-        return new PhysicalState(temperature, pressure, newDensity, internalEnergy, phase, mass);
+        return new PhysicalState(temperature, pressure, newDensity, internalEnergy, phase, mass, material);
     }
 
     /**
      * 相を更新
      */
     public PhysicalState withPhase(Phase newPhase) {
-        return new PhysicalState(temperature, pressure, density, internalEnergy, newPhase, mass);
+        return new PhysicalState(temperature, pressure, density, internalEnergy, newPhase, mass, material);
     }
 
     /**
