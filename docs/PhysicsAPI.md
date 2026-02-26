@@ -59,7 +59,11 @@ PhysicalState next = heating.apply(state, 0.1); // 0.1秒進める
 ### 旧形式（互換）
 
 ```java
-JouleHeating heating = new JouleHeating(2.0, 3.0, 4200.0);
+JouleHeating heating = new JouleHeating(
+        2.0,    // 抵抗[Ω]
+        3.0,    // 電流[A]
+        4200.0  // 比熱[J/(kg*K)]
+);
 PhysicalState next = heating.apply(state, 0.1);
 ```
 
