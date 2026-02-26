@@ -29,6 +29,13 @@ public final class JouleHeating implements PhysicalPhenomenon {
         }
         this.connection = connection;
 
+        if (resistance <= 0) {
+                throw new IllegalArgumentException("resistance must be positive");
+        }
+        if (specificHeat <= 0) {
+            throw new IllegalArgumentException("specificHeat must be positive");
+        }
+
         this.specificHeat = specificHeat;
     }
 
