@@ -21,7 +21,14 @@ public final class JouleHeating implements PhysicalPhenomenon {
      * EnergyAPI の接続情報を使ってジュール熱を計算する。
      */
     public JouleHeating(EnergyConnection connection, double specificHeat) {
+        if(connection == null) {
+            throw new IllegalArgumentException("connection must not be null");
+        }
+        if (specificHeat <= 0) {
+            throw new IllegalArgumentException("specificHeat must be positive");
+        }
         this.connection = connection;
+
         this.specificHeat = specificHeat;
     }
 
