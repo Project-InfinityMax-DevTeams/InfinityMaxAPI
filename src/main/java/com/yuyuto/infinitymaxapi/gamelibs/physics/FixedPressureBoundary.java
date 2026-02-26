@@ -77,7 +77,8 @@ public final class FixedPressureBoundary implements BoundaryCondition {
                 internal.getDensity(),
                 internal.getInternalEnergy(),
                 internal.getPhase(),
-                internal.getMass()
+                internal.getMass(),
+                internal.getMaterial()
         );
     }
 }
