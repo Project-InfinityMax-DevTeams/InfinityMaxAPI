@@ -33,7 +33,7 @@ public final class PhysicalState {
         this.internalEnergy = Objects.requireNonNull(internalEnergy);
         this.phase = Objects.requireNonNull(phase);
         this.mass = Objects.requireNonNull(mass);
-        this.material = material
+        this.material = material;
 
         validate();
     }
