@@ -208,7 +208,67 @@ public final class PacketLogic {
     }
 }
 ```
+```java
+package com.yuyuto.infinitymaxapi.example;
 
+import com.yuyuto.infinitymaxapi.api.libs.Behavior;
+import com.yuyuto.infinitymaxapi.logic.BlockLogic;
+import com.yuyuto.infinitymaxapi.logic.PacketLogic;
+
+public final class MyModInitializer {
+
+    public static void init() {
+        // Behavior.connect() でKotlin DSLにブリッジ
+        Behavior.connect(scope -> {
+            // block: BehaviorConnector を使用
+            scope.block("copper_block", binding -> {
+                binding.setResourceId("models/block/copper_block");
+                binding.setPhase("interact");
+                binding.meta("power_cost", 20);
+                // BlockLogic::onCopperBlockInteract が BehaviorContext を受け取る
+                binding.setConnector(BlockLogic::onCopperBlockInteract);
+            });
+
+            // item: 同様にメソッド参照を渡す
+            scope.item("copper_wand", binding -> {
+                binding.setResourceId("textures/item/copper_wand");
+                binding.setPhase("use");
+                binding.meta("cooldown", 40);
+                binding.setConnector(BlockLogic::onCopperWandUse);
+            });
+
+            // entity
+            scope.entity("copper_golem", binding -> {
+                binding.setResourceId("entities/copper_golem");
+                binding.setPhase("tick");
+                binding.setConnector(BlockLogic::onCopperGolemTick);
+            });
+
+            // keybind
+            scope.keybind("open_energy_ui", binding -> {
+                binding.setResourceId("keybind/open_energy_ui");
+                binding.setPhase("press");
+                binding.setConnector(BlockLogic::onOpenEnergyUiKey);
+            });
+
+            // ui
+            scope.ui("energy_screen", binding -> {
+                binding.setResourceId("ui/energy_screen");
+                binding.setPhase("render");
+                binding.setConnector(BlockLogic::onEnergyScreenRender);
+            });
+
+            // packet: PacketBehaviorConnector<T> を使用
+            scope.packet("sync_energy", binding -> {
+                binding.setResourceId("network/sync_energy");
+                binding.setPhase("receive");
+                // PacketLogic::onSyncEnergyPacket は (BehaviorContext, SyncEnergyPacket) を受け取る
+                binding.setConnector(PacketLogic::onSyncEnergyPacket);
+            });
+        });
+    }
+}
+```
 ---
 
 ## 5) 設計ルール（推奨）
