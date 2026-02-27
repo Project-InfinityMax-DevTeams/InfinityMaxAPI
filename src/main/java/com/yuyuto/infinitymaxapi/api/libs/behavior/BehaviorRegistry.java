@@ -48,8 +48,14 @@ public final class BehaviorRegistry {
     /** 宣言済みパケット接続を実行するヘルパ。 */
     @SuppressWarnings("unchecked")
     public static <T> void executePacket(String targetId, T payload) {
+        Class<?> payloadClass = payload.getClass();
         PACKET_BINDINGS.stream()
                 .filter(it -> Objects.equals(it.targetId(), targetId))
-                .forEach(it -> ((PacketBehaviorBinding<T>) it).execute(payload));
+                .filter(it -> it.payloadType().isAssignableFrom(payloadClass))
+                .forEach(it -> {
+                    `@SuppressWarnings`("unchecked")
+                    PacketBehaviorBinding<T> binding = (PacketBehaviorBinding<T>) it;
+                    binding.execute(payload);
+                });
     }
 }

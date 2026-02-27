@@ -36,33 +36,45 @@ object BehaviorApi {
 @RegistryDsl
 class BehaviorScope {
 
+    // 検証用のプライベート関数を追加
+    private fun requireTargetId(id: String) {
+        requireTargetId(id)  // ← ここで検証
+        require(id.isNotBlank()) { "target id must not be blank" }
+    }
+
     /** ブロックIDとロジックを接続する。 */
     fun block(id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.BLOCK, id, block)
     }
 
     /** アイテムIDとロジックを接続する。 */
     fun item(id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.ITEM, id, block)
     }
 
     /** エンティティIDとロジックを接続する。 */
     fun entity(id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.ENTITY, id, block)
     }
 
     /** キーバインドIDとロジックを接続する。 */
     fun keybind(id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.KEYBIND, id, block)
     }
 
     /** UI IDとロジックを接続する。 */
     fun ui(id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.UI, id, block)
     }
 
     /** パケットIDとロジックを接続する。 */
-    fun <T : Any> packet(id: String, block: PacketBehaviorBindingScope<T>.() -> Unit) {
+    inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
 
@@ -72,13 +84,15 @@ class BehaviorScope {
                 definition.resourceId,
                 definition.phase,
                 definition.metadata,
-                connector
+                connector,
+                T::class.java
             )
         )
     }
 
     /** 共通接続ロジック。 */
     private fun register(type: BehaviorBindingType, id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
 

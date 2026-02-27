@@ -202,12 +202,13 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext;
 public final class PacketLogic {
 
     private PacketLogic() {}
-
+    +// SyncEnergyPacket はユーザー定義のパケットクラス（例）
     public static void onSyncEnergyPacket(BehaviorContext context, SyncEnergyPacket packet) {
         // packet logic
     }
 }
 ```
+
 ```java
 package com.yuyuto.infinitymaxapi.example;
 
@@ -217,6 +218,7 @@ import com.yuyuto.infinitymaxapi.logic.PacketLogic;
 
 public final class MyModInitializer {
 
+    // mod初期化時（例: FabricならonInitialize、ForgeならFMLCommonSetupEvent）に呼び出す
     public static void init() {
         // Behavior.connect() でKotlin DSLにブリッジ
         Behavior.connect(scope -> {
