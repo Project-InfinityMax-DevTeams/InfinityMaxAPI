@@ -47,5 +47,8 @@ sourceSets {
             srcDir "../src/main/java"
             exclude "com/yuyuto/infinitymaxapi/loader/forge/**"
         }
+        kotlin {
+            srcDir "../src/main/kotlin"
+        }
     } as String
 }

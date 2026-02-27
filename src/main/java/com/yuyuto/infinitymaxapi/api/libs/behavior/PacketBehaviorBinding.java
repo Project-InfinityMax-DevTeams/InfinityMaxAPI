@@ -1,0 +1,56 @@
+package com.yuyuto.infinitymaxapi.api.libs.behavior;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * パケット接続専用の内部定義。
+ *
+ * @param <T> ペイロード型
+ */
+public final class PacketBehaviorBinding<T> {
+
+    private final String targetId;
+    private final String resourceId;
+    private final String phase;
+    private final Map<String, Object> metadata;
+    private final PacketBehaviorConnector<T> connector;
+
+    public PacketBehaviorBinding(
+            String targetId,
+            String resourceId,
+            String phase,
+            Map<String, Object> metadata,
+            PacketBehaviorConnector<T> connector
+    ) {
+        this.targetId = targetId;
+        this.resourceId = resourceId;
+        this.phase = phase;
+        this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
+        this.connector = connector;
+    }
+
+    public String targetId() {
+        return targetId;
+    }
+
+    public String resourceId() {
+        return resourceId;
+    }
+
+    public String phase() {
+        return phase;
+    }
+
+    public Map<String, Object> metadata() {
+        return metadata;
+    }
+
+    public void execute(T payload) {
+        connector.execute(
+                new BehaviorContext(BehaviorBindingType.PACKET, targetId, resourceId, phase, metadata),
+                payload
+        );
+    }
+}

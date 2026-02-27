@@ -1,0 +1,68 @@
+package com.yuyuto.infinitymaxapi.api.libs.behavior;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 振る舞い接続DSLの1エントリを保持する内部モデル。
+ *
+ * <p>登録オブジェクトの生成は行わず、ID・リソース・実行ロジックの
+ * 「接続定義」のみを保持する。</p>
+ */
+public final class BehaviorBinding {
+
+    private final BehaviorBindingType type;
+    private final String targetId;
+    private final String resourceId;
+    private final String phase;
+    private final Map<String, Object> metadata;
+    private final BehaviorConnector connector;
+
+    public BehaviorBinding(
+            BehaviorBindingType type,
+            String targetId,
+            String resourceId,
+            String phase,
+            Map<String, Object> metadata,
+            BehaviorConnector connector
+    ) {
+        this.type = type;
+        this.targetId = targetId;
+        this.resourceId = resourceId;
+        this.phase = phase;
+        this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
+        this.connector = connector;
+    }
+
+    public BehaviorBindingType type() {
+        return type;
+    }
+
+    public String targetId() {
+        return targetId;
+    }
+
+    public String resourceId() {
+        return resourceId;
+    }
+
+    public String phase() {
+        return phase;
+    }
+
+    public Map<String, Object> metadata() {
+        return metadata;
+    }
+
+    public BehaviorConnector connector() {
+        return connector;
+    }
+
+    /**
+     * バインディングを実行する。
+     */
+    public void execute() {
+        connector.execute(new BehaviorContext(type, targetId, resourceId, phase, metadata));
+    }
+}
