@@ -35,16 +35,18 @@ class RegistryScope {
         return template
     }
 
+    // Block の修正
     fun <T : Any> block(id: String, template: T, block: BlockRegistration<T>.() -> Unit = {}): T {
-        val definition = BlockRegistration(template).apply(block)
-        ModRegistries.registerBlock(id, template, definition.strength, definition.noOcclusion)
+        val reg = BlockRegistration(template).apply(block)
+        ModRegistries.registerBlock(id, template, reg.strength, reg.noOcclusion)
         return template
     }
 
+    // Entity の修正
     fun <T : Any, C : Any> entity(id: String, template: T, block: EntityRegistration<C>.() -> Unit): T {
-        val definition = EntityRegistration<C>().apply(block)
-        val category = requireNotNull(definition.category) { "entity category is required" }
-        ModRegistries.registerEntity(id, template, category, definition.width, definition.height)
+        val reg = EntityRegistration<C>().apply(block)
+        val category = requireNotNull(reg.category) { "Entity category is required" }
+        ModRegistries.registerEntity(id, template, category, reg.width, reg.height)
         return template
     }
 

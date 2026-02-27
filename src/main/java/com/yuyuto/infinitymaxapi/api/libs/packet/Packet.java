@@ -6,6 +6,15 @@ import java.util.function.Function;
 
 public final class Packet {
 
+package com.yuyuto.infinitymaxapi.api.libs.packet;
+
+import com.yuyuto.infinitymaxapi.loader.Platform;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
     private Packet() {}
 
     public static <T> void register(
@@ -16,6 +25,19 @@ public final class Packet {
             PacketHandler<T> handler
     ) {
         PacketRegistry.register(new SimplePacket<>(id, direction, decoder, encoder, handler));
+    }
+
+    public static void register(SimplePacket<?> packet) {
+        if (PACKETS.containsKey(packet.id)) {
+            throw new IllegalStateException(
+                "Packet ID '" + packet.id + "' is already registered"
+            );
+        }
+        PACKETS.put(packet.id, packet);
+    }
+
+    public static List<SimplePacket<?>> packets() {
+        return new ArrayList<>(PACKETS.values());
     }
 
     public static <T> void sendToServer(T packet) {

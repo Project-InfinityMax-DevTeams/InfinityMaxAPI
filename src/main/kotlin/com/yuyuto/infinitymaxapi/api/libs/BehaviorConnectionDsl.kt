@@ -36,6 +36,11 @@ object BehaviorApi {
 @RegistryDsl
 class BehaviorScope {
 
+    // 検証用のプライベート関数を追加
+    private fun requireTargetId(id: String) {
+        require(id.isNotBlank()) { "target id must not be blank" }
+    }
+
     /** ブロックIDとロジックを接続する。 */
     fun block(id: String, block: BehaviorBindingScope.() -> Unit) {
         register(BehaviorBindingType.BLOCK, id, block)
@@ -62,7 +67,7 @@ class BehaviorScope {
     }
 
     /** パケットIDとロジックを接続する。 */
-    fun <T : Any> packet(id: String, block: PacketBehaviorBindingScope<T>.() -> Unit) {
+    inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
 
@@ -72,13 +77,15 @@ class BehaviorScope {
                 definition.resourceId,
                 definition.phase,
                 definition.metadata,
-                connector
+                connector,
+                T::class.java
             )
         )
     }
 
     /** 共通接続ロジック。 */
     private fun register(type: BehaviorBindingType, id: String, block: BehaviorBindingScope.() -> Unit) {
+        requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
 

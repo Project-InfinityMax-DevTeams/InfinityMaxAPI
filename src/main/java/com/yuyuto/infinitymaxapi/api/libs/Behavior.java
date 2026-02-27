@@ -1,6 +1,7 @@
 package com.yuyuto.infinitymaxapi.api.libs;
 
 import java.util.function.Consumer;
+import java.util.Objects;
 
 /**
  * 振る舞い接続DSLの Java 呼び出し入口。
@@ -12,6 +13,6 @@ public final class Behavior {
     private Behavior() {}
 
     public static void connect(Consumer<BehaviorScope> block) {
-        BehaviorApi.behaviorJava(block);
+        BehaviorApi.behaviorJava(Objects.requireNonNull(block, "block"));
     }
 }
