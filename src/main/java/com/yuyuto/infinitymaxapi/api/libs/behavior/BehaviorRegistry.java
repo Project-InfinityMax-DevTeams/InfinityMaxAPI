@@ -1,6 +1,6 @@
 package com.yuyuto.infinitymaxapi.api.libs.behavior;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
