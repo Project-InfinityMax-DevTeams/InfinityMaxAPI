@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
  */
 public final class BehaviorRegistry {
 
-    private static final List<BehaviorBinding> BINDINGS = new ArrayList<>();
-    private static final List<PacketBehaviorBinding<?>> PACKET_BINDINGS = new ArrayList<>();
+    private static final List<BehaviorBinding> BINDINGS = new CopyOnWriteArrayList<>();
+    private static final List<PacketBehaviorBinding<?>> PACKET_BINDINGS = new CopyOnWriteArrayList<>();
 
     private BehaviorRegistry() {}
 
