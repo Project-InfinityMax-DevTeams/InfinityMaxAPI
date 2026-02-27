@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.Objects;
+
 public final class Packet {
 
     private Packet() {}
+    private static final Map<String, SimplePacket<?>> PACKETS = new HashMap<>();
 
     public static <T> void register(
             String id,
