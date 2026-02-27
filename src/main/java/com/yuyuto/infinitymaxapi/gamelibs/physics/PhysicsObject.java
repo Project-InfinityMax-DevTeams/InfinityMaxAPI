@@ -21,7 +21,7 @@ public abstract class PhysicsObject {
     protected abstract void onPhysicsUpdate(double deltaTime);
 
     public Vector3d getPosition() {
-        return new Vector3d(position);
+        return motionComponent.getPosition();
     }
 
     public PhysicalState getPhysicalState() {
