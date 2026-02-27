@@ -25,11 +25,11 @@ public final class BehaviorContext {
             String phase,
             Map<String, Object> metadata
     ) {
-        this.type = type;
-        this.targetId = targetId;
-        this.resourceId = resourceId;
-        this.phase = phase;
-        this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
+        this.type = Objects.requireNonNull(type, "type");
+        this.targetId = Objects.requireNonNull(targetId, "targetId");
+        this.resourceId = Objects.requireNonNull(resourceId, "resourceId");
+        this.phase = Objects.requireNonNull(phase, "phase");
+        this.metadata = Collections.unmodifiableMap(new HashMap<>(Objects.requireNonNull(metadata, "metadata")));
     }
 
     public BehaviorBindingType type() {

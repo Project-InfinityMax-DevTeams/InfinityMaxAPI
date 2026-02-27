@@ -50,5 +50,6 @@ sourceSets {
         kotlin {
             srcDir "../src/main/kotlin"
         }
-    } as String
+    }
+}
 }

@@ -27,12 +27,12 @@ public final class BehaviorBinding {
             Map<String, Object> metadata,
             BehaviorConnector connector
     ) {
-        this.type = type;
-        this.targetId = targetId;
-        this.resourceId = resourceId;
-        this.phase = phase;
-        this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
-        this.connector = connector;
+        this.type = Objects.requireNonNull(type, "type");
+        this.targetId = Objects.requireNonNull(targetId, "targetId");
+        this.resourceId = Objects.requireNonNull(resourceId, "resourceId");
+        this.phase = Objects.requireNonNull(phase, "phase");
+        this.metadata = Collections.unmodifiableMap(new HashMap<>(Objects.requireNonNull(metadata, "metadata")));
+        this.connector = Objects.requireNonNull(connector, "connector");
     }
 
     public BehaviorBindingType type() {
