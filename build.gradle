@@ -36,6 +36,10 @@ subprojects {
     group = rootProject.group
     version = rootProject.version
 
+		dependencies {
+		    implementation 'org.joml:joml:1.10.5'
+		}
+
     // サブプロジェクト側の Java toolchain 設定
     def spJavaVer = rootProject.hasProperty('java_version') ? rootProject.property('java_version') : '17'
     java {
