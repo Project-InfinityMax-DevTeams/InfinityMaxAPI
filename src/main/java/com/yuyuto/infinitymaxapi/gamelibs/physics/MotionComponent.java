@@ -1,6 +1,6 @@
 package com.yuyuto.infinitymaxapi.gamelibs.physics;
 
-import org.jmol.vector3d;
+import org.joml.Vector3d;
 
 public class MotionComponent {
 
@@ -12,13 +12,13 @@ public class MotionComponent {
     public MotionComponent(Vector3d position, Vector3d velocity, MovementType movementType) {
 
         this.position = new Vector3d(position);
-        this.velocity = new Vectior3d(velocity);
+        this.velocity = new Vector3d(velocity);
         this.movementType = movementType;
 
         if (movementType == MovementType.PROJECTILE) {
-            this.acceleration = new Vector3(0, -9.81, 0); // 重力
+            this.acceleration = new Vector3d(0, -9.81, 0); // 重力
         } else {
-            this.acceleration = new Vector3(0, 0, 0);
+            this.acceleration = new Vector3d(0, 0, 0);
         }
     }
 
