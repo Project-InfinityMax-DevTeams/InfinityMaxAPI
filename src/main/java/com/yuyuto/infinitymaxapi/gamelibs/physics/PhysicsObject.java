@@ -1,5 +1,7 @@
 package com.yuyuto.infinitymaxapi.gamelibs.physics;
 
+import org.joml.Vector3d;
+
 public abstract class PhysicsObject {
 
     protected MotionComponent motion;
@@ -18,8 +20,8 @@ public abstract class PhysicsObject {
 
     protected abstract void onPhysicsUpdate(double deltaTime);
 
-    public Vector3 getPosition() {
-        return motion.getPosition();
+    public Vector3d getPosition() {
+        return new Vector3d(position);
     }
 
     public PhysicalState getPhysicalState() {
