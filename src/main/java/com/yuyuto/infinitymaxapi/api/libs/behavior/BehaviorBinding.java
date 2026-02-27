@@ -1,5 +1,6 @@
 package com.yuyuto.infinitymaxapi.api.libs.behavior;
 
+import java.util.Objects;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
