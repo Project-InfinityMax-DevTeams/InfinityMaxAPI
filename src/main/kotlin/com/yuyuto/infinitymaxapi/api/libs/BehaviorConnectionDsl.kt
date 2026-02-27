@@ -38,7 +38,6 @@ class BehaviorScope {
 
     // 検証用のプライベート関数を追加
     private fun requireTargetId(id: String) {
-        requireTargetId(id)  // ← ここで検証
         require(id.isNotBlank()) { "target id must not be blank" }
     }
 

@@ -6,8 +6,15 @@ import java.util.function.Function;
 
 public final class Packet {
 
-    private static final Map<String, SimplePacket<?>> PACKETS = new HashMap<>();
+package com.yuyuto.infinitymaxapi.api.libs.packet;
 
+import com.yuyuto.infinitymaxapi.loader.Platform;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
     private Packet() {}
 
     public static <T> void register(
