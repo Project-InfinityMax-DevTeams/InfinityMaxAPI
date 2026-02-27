@@ -53,7 +53,7 @@ public final class BehaviorRegistry {
                 .filter(it -> Objects.equals(it.targetId(), targetId))
                 .filter(it -> it.payloadType().isAssignableFrom(payloadClass))
                 .forEach(it -> {
-                    `@SuppressWarnings`("unchecked")
+                    @SuppressWarnings("unchecked")
                     PacketBehaviorBinding<T> binding = (PacketBehaviorBinding<T>) it;
                     binding.execute(payload);
                 });

@@ -202,7 +202,7 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext;
 public final class PacketLogic {
 
     private PacketLogic() {}
-    +// SyncEnergyPacket はユーザー定義のパケットクラス（例）
+    // SyncEnergyPacket はユーザー定義のパケットクラス（例）
     public static void onSyncEnergyPacket(BehaviorContext context, SyncEnergyPacket packet) {
         // packet logic
     }

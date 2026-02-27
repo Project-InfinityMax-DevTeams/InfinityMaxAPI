@@ -43,37 +43,31 @@ class BehaviorScope {
 
     /** ブロックIDとロジックを接続する。 */
     fun block(id: String, block: BehaviorBindingScope.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.BLOCK, id, block)
     }
 
     /** アイテムIDとロジックを接続する。 */
     fun item(id: String, block: BehaviorBindingScope.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.ITEM, id, block)
     }
 
     /** エンティティIDとロジックを接続する。 */
     fun entity(id: String, block: BehaviorBindingScope.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.ENTITY, id, block)
     }
 
     /** キーバインドIDとロジックを接続する。 */
     fun keybind(id: String, block: BehaviorBindingScope.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.KEYBIND, id, block)
     }
 
     /** UI IDとロジックを接続する。 */
     fun ui(id: String, block: BehaviorBindingScope.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         register(BehaviorBindingType.UI, id, block)
     }
 
     /** パケットIDとロジックを接続する。 */
     inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
-        requireTargetId(id)  // ← ここで検証
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
 
