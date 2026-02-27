@@ -21,33 +21,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
 
       - name: Grant execute permission
         run: chmod +x gradlew
 
       - name: Run Gradle Build
-        run: |
-          set +e
-          ./gradlew build --stacktrace --info > gradle-log.txt 2>&1
-          echo "EXIT_CODE=$?" >> $GITHUB_ENV
-        continue-on-error: true
+        run: ./gradlew clean build --stacktrace --info
 
-      - name: Create Issue with Gradle Log
-        if: env.EXIT_CODE != '0'
-        uses: actions/github-script@v7
+      - name: Upload Gradle Log on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            const fs = require('fs');
-            const log = fs.readFileSync('gradle-log.txt', 'utf8');
-            const trimmed = log.length > 60000 ? log.slice(-60000) : log;
-
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: "CI Build Failed",
-              body: "Gradle build failed.\n\n```\n" + trimmed + "\n```"
-            });
-
-      - name: Fail job if build failed
-        if: env.EXIT_CODE != '0'
-        run: exit 1
+          name: gradle-log
+          path: build/reports
