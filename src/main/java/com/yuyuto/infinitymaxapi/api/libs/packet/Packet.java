@@ -2,19 +2,13 @@ package com.yuyuto.infinitymaxapi.api.libs.packet;
 
 import com.yuyuto.infinitymaxapi.loader.Platform;
 
-import java.util.function.Function;
-
-public final class Packet {
-
-package com.yuyuto.infinitymaxapi.api.libs.packet;
-
-import com.yuyuto.infinitymaxapi.loader.Platform;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+public final class Packet {
+
     private Packet() {}
 
     public static <T> void register(
