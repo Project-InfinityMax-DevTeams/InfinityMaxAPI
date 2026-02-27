@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.25' apply false
 }
 
 // プロパティ取得ヘルパ
@@ -32,13 +33,15 @@ repositories {
 // サブプロジェクト共通の設定をここで行う
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
 
     group = rootProject.group
     version = rootProject.version
 
-		dependencies {
-		    implementation 'org.joml:joml:1.10.5'
-		}
+    dependencies {
+        implementation 'org.joml:joml:1.10.5'
+        implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+    }
 
     // サブプロジェクト側の Java toolchain 設定
     def spJavaVer = rootProject.hasProperty('java_version') ? rootProject.property('java_version') : '17'
@@ -46,6 +49,10 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(Integer.parseInt(spJavaVer.toString()))
         }
+    }
+
+    kotlin {
+        jvmToolchain(Integer.parseInt(spJavaVer.toString()))
     }
 
     // サブプロジェクトにも同じリポジトリを追加
@@ -57,7 +64,7 @@ subprojects {
 }
 
 // Root build should produce both platform jars.
- tasks.named('build') {
+tasks.named('build') {
     dependsOn(':fabric:build', ':forge:build')
 }
 
@@ -66,4 +73,3 @@ tasks.withType(JavaCompile).configureEach {
         enabled = false
     }
 }
-
