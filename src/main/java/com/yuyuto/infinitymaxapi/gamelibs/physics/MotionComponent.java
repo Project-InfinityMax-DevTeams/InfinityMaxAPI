@@ -1,18 +1,18 @@
 package com.yuyuto.infinitymaxapi.gamelibs.physics;
 
+import org.jmol.vector3d;
+
 public class MotionComponent {
 
-    private Vector3 position;
-    private Vector3 velocity;
-    private Vector3 acceleration;
+    private Vector3d position;
+    private Vector3d velocity;
+    private Vector3d acceleration;
     private MovementType movementType;
 
-    public MotionComponent(Vector3 position,
-                           Vector3 velocity,
-                           MovementType movementType) {
+    public MotionComponent(Vector3d position, Vector3d velocity, MovementType movementType) {
 
-        this.position = position;
-        this.velocity = velocity;
+        this.position = new Vector3d(position);
+        this.velocity = new Vectior3d(velocity);
         this.movementType = movementType;
 
         if (movementType == MovementType.PROJECTILE) {
@@ -24,7 +24,15 @@ public class MotionComponent {
 
     public void update(double deltaTime) {
 
-        velocity = velocity.add(acceleration.multiply(deltaTime));
-        position = position.add(velocity.multiply(deltaTime));
+        velocity = velocity.add(new Vector3d(acceleration).mul(deltaTime));
+        position = position.add(new Vector3d(velocity).mul(deltaTime));
+    }
+
+    public Vector3d getPosition(){
+        return new Vector3d(position);
+    }
+
+    public Vector3d getVelocity() {
+        return new Vector3d(velocity);
     }
 }
