@@ -35,10 +35,9 @@ public class SpellEngine {
         double baseEffect = structure.getKappa() * flow * Math.exp(-WorldConstants.GAMMA * target.getState().getRhoNegative());
 
         // ③ 術式情報と対象情報の相性（内積）
-        double compatibility = structure.getInfo().dot(targetResponse);
+        double compatibility = Math.max(0, structure.getInfo().dot(targetResponse));
 
         // ④ 情報増幅 Φ_final = Φ × (1 + log(1 + Iκ))
-        double compatibility = Math.max(0, structure.getInfo().dot(targetResponse));
         double amplification = 1 + Math.log(1 + structure.getKappa() * compatibility);
 
         return baseEffect * amplification;
