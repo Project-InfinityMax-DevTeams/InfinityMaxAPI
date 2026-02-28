@@ -59,6 +59,6 @@ subprojects {
 /*
   rootではJava成果物を作らない
  */
-tasks.named('build') {
+tasks.register('build') {
     dependsOn(':forge:build', ':fabric:build')
 }
