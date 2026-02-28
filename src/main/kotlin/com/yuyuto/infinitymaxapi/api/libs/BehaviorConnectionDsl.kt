@@ -111,7 +111,7 @@ class BehaviorBindingScope {
     var resourceId: String = ""
 
     /** 任意の実行フェーズ。例: init / tick / interact */
-    var phase: String = "default"
+    var phase: Phase = Phase.INIT
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
@@ -134,7 +134,7 @@ class PacketBehaviorBindingScope<T : Any> {
     var resourceId: String = ""
 
     /** 実行フェーズ。 */
-    var phase: String = "default"
+    var phase: Phase = Phase.INIT
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
