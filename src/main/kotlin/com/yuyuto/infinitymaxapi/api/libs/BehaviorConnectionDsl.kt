@@ -75,7 +75,7 @@ class BehaviorScope {
             PacketBehaviorBinding(
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase,
+                definition.phase.name.lowercase(),
                 definition.metadata,
                 connector,
                 T::class.java
@@ -94,7 +94,7 @@ class BehaviorScope {
                 type,
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase,
+                definition.phase.name.lowercase(),
                 definition.metadata,
                 connector
             )
