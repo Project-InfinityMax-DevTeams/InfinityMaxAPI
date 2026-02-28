@@ -80,9 +80,22 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+
             groupId = 'com.yuyuto'
             artifactId = 'infinitymaxapi'
-            version = '0.1.0'
+            version = project.version
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Yuyuto000/InfinityMaxAPI")
+
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
         }
     }
 }
