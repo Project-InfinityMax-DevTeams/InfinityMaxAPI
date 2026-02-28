@@ -4,6 +4,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'org.jetbrains.kotlin.jvm' version '1.9.25' apply false
+    id 'maven-publish'
 }
 
 // プロパティ取得ヘルパ
@@ -71,5 +72,17 @@ tasks.named('build') {
 tasks.withType(JavaCompile).configureEach {
     if (project == rootProject) {
         enabled = false
+    }
+}
+
+// API特別設計
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'com.yuyuto'
+            artifactId = 'infinitymaxapi'
+            version = '0.1.0'
+        }
     }
 }
