@@ -1,0 +1,52 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    archiveBaseName.set("infinitymaxapi-common")
+}
+
+/*
+  build時にはcommonのjarを作らない
+ */
+tasks.named("jar") {
+    enabled = false
+}
+
+/*
+  publishするときだけjarを有効化
+ */
+tasks.withType(AbstractPublishToMaven).configureEach {
+    dependsOn(tasks.named("jar").configure {
+        enabled = true
+    })
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = "infinitymaxapi"
+            version = project.version
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Project-InfinityMax-DevTeams/InfinityMaxAPI")
+
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}

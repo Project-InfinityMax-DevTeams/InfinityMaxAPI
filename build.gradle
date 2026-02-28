@@ -1,107 +1,64 @@
-// ルート共通設定
 plugins {
-    id 'java'
     id 'eclipse'
     id 'idea'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.25' apply false
     id 'maven-publish'
-}
-
-// プロパティ取得ヘルパ
-def prop = { String name, def defaultVal = null ->
-    project.hasProperty(name) ? project.property(name) : defaultVal
+    id 'org.jetbrains.kotlin.jvm' version '1.9.25' apply false
 }
 
 group = 'com.yuyuto'
 
 def refName = System.getenv("GITHUB_REF_NAME")
+version = (refName != null && refName.startsWith("v"))
+        ? refName.substring(1)
+        : "1.0.0-SNAPSHOT"
 
-if (refName != null && refName.startsWith("v")) {
-    version = refName.substring(1)
-} else {
-    version = "1.0.0-SNAPSHOT"
+def prop = { String name, def defaultVal = null ->
+    project.hasProperty(name) ? project.property(name) : defaultVal
 }
 
-// Java toolchain を共通設定
-def javaVer = prop('java_version', '17')
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(Integer.parseInt(javaVer.toString()))
-    }
-}
-
-// ルートで利用するリポジトリを宣言（サブプロジェクトからも参照される）
-repositories {
-    mavenCentral()
-    maven { url = 'https://maven.minecraftforge.net/' }
-    maven { url = 'https://maven.fabricmc.net/' }
-}
-
-// サブプロジェクト共通の設定をここで行う
 subprojects {
+
     apply plugin: 'java'
     apply plugin: 'org.jetbrains.kotlin.jvm'
 
     group = rootProject.group
     version = rootProject.version
 
-    dependencies {
-        implementation 'org.joml:joml:1.10.5'
-        implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-    }
-
-    // サブプロジェクト側の Java toolchain 設定
-    def spJavaVer = rootProject.hasProperty('java_version') ? rootProject.property('java_version') : '17'
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(Integer.parseInt(spJavaVer.toString()))
+            languageVersion = JavaLanguageVersion.of(
+                    Integer.parseInt(prop('java_version', '17').toString())
+            )
         }
+        withSourcesJar()
     }
 
     kotlin {
-        jvmToolchain(Integer.parseInt(spJavaVer.toString()))
+        jvmToolchain(
+                Integer.parseInt(prop('java_version', '17').toString())
+        )
     }
 
-    // サブプロジェクトにも同じリポジトリを追加
     repositories {
         mavenCentral()
         maven { url = 'https://maven.fabricmc.net/' }
         maven { url = 'https://maven.minecraftforge.net/' }
     }
+
+    dependencies {
+        implementation 'org.joml:joml:1.10.5'
+        implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = Integer.parseInt(prop('java_version', '17').toString())
+    }
 }
 
-// Root build should produce both platform jars.
+/*
+  rootではJava成果物を作らない
+ */
 tasks.named('build') {
-    dependsOn(':fabric:build', ':forge:build')
-}
-
-tasks.withType(JavaCompile).configureEach {
-    if (project == rootProject) {
-        enabled = false
-    }
-}
-
-// API特別設計
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
-            groupId = 'com.yuyuto'
-            artifactId = 'infinitymaxapi'
-            version = project.version
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Project-InfinityMax-DevTeams/InfinityMaxAPI")
-
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
+    dependsOn(':forge:build', ':fabric:build')
 }
