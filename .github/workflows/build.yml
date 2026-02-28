@@ -1,4 +1,4 @@
-name: CI & Publish
+name: Build & Publish
 
 on:
   push:
@@ -56,8 +56,12 @@ jobs:
           cache: gradle
 
       - run: chmod +x gradlew
-      - run: ./gradlew publish
 
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # -----------------
   # 3. GitHub Release (Tag push時)
   # -----------------
