@@ -12,9 +12,15 @@ def prop = { String name, def defaultVal = null ->
     project.hasProperty(name) ? project.property(name) : defaultVal
 }
 
-// グループ／バージョンを root から設定
-group = prop('mod_group', 'com.yuyuto')
-version = prop('mod_version', '0.1.0')
+group = 'com.yuyuto'
+
+def refName = System.getenv("GITHUB_REF_NAME")
+
+if (refName != null && refName.startsWith("v")) {
+    version = refName.substring(1)
+} else {
+    version = "1.0.0-SNAPSHOT"
+}
 
 // Java toolchain を共通設定
 def javaVer = prop('java_version', '17')
