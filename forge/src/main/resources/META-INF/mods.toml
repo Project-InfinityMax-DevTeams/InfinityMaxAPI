@@ -11,9 +11,4 @@ ${mod_description}
 '''
 authors="${mod_authors}"
 
-[[dependencies.${mod_id}]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[${minecraft_version}]"
-    ordering="NONE"
-    side="BOTH"
+# APIは前提にされる側なので依存は基本なし
