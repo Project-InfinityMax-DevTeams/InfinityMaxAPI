@@ -100,39 +100,39 @@ import com.yuyuto.infinitymaxapi.logic.PacketLogic
 behavior {
     block("copper_block") {
         resourceId = "models/block/copper_block"
-        phase = "interact"
+        phase = Phase.INTERACT
         meta("power_cost", 20)
         connector = BlockLogic::onCopperBlockInteract
     }
 
     item("copper_wand") {
         resourceId = "textures/item/copper_wand"
-        phase = "use"
+        phase = Phase.USE
         meta("cooldown", 40)
         connector = BlockLogic::onCopperWandUse
     }
 
     entity("copper_golem") {
         resourceId = "entities/copper_golem"
-        phase = "tick"
+        phase = Phase.TICK
         connector = BlockLogic::onCopperGolemTick
     }
 
     keybind("open_energy_ui") {
         resourceId = "keybind/open_energy_ui"
-        phase = "press"
+        phase = Phase.PRESS
         connector = BlockLogic::onOpenEnergyUiKey
     }
 
     ui("energy_screen") {
         resourceId = "ui/energy_screen"
-        phase = "render"
+        phase = Phase.RENDER
         connector = BlockLogic::onEnergyScreenRender
     }
 
     packet<SyncEnergyPacket>("sync_energy") {
         resourceId = "network/sync_energy"
-        phase = "receive"
+        phase = Phase.RECEIVE
         connector = PacketLogic::onSyncEnergyPacket
     }
 }
