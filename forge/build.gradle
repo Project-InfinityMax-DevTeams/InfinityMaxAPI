@@ -29,7 +29,7 @@ processResources {
     filesMatching('META-INF/mods.toml') {
         expand(
             mod_id: prop('mod_id', 'infinitymaxapi'),
-            mod_name: prop('mod_name', 'Your Mod Name'),
+            mod_name: prop('mod_name', 'InfinityMax API'),
             mod_version: prop('mod_version', '0.1.0'),
             mod_description: prop('mod_description', ''),
             mod_authors: prop('mod_authors', ''),
