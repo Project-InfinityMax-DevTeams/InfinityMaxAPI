@@ -79,7 +79,7 @@ tasks.register("assembleModArtifacts") {
         def outputDir = artifactOutputDir.get().asFile
         outputDir.mkdirs()
 
-        defdef forgeJar = project(":forge").tasks.named("remapJar").get().archiveFile
+        def forgeJar = project(":forge").tasks.named("remapJar").get().archiveFile
         def fabricJar = project(":fabric").tasks.named("remapJar").get().archiveFile
 
         copy {
