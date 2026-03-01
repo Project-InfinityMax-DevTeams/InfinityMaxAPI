@@ -18,17 +18,8 @@ java {
 
 jar {
     archiveBaseName.set("infinitymaxapi-common")
-}
-// build 時には jar を作らない
-tasks.named("jar") {
-    enabled = false
-}
-
-// publish 時にだけ jar を有効化
-tasks.withType(AbstractPublishToMaven).configureEach {
-    doFirst {
-        tasks.named("jar").get().enabled = true
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    enabled = true
 }
 
 publishing {
@@ -36,7 +27,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             groupId = project.group
-            artifactId = "infinitymaxapi"
+            artifactId = "infinitymaxapi-common"
             version = project.version
         }
     }
@@ -52,4 +43,8 @@ publishing {
             }
         }
     }
+}
+
+tasks.named("build") {
+    dependsOn("jar")
 }
