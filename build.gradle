@@ -63,11 +63,21 @@ tasks.register("build") {
 tasks.register("collectJars") {
     dependsOn(":forge:jar", ":fabric:jar", ":common:jar")
     doLast {
+        def outputDir = file("$buildDir/libs")
+
         copy {
-            from(project(":forge").tasks.named("jar").get().outputs.files)
-            from(project(":fabric").tasks.named("jar").get().outputs.files)
-            from(project(":common").tasks.named("jar").get().outputs.files)
-            into("$buildDir/libs")
+            from(project(":forge").tasks.named("jar").get().archiveFile)
+            into(outputDir)
+        }
+
+        copy {
+            from(project(":fabric").tasks.named("jar").get().archiveFile)
+            into(outputDir)
+        }
+
+        copy {
+            from(project(":common").tasks.named("jar").get().archiveFile)
+            into(outputDir)
         }
     }
 }
