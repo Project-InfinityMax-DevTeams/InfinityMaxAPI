@@ -40,12 +40,12 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.named("reobfJar") {
+tasks.named("remapJar") {
     archiveBaseName.set("infinitymaxapi-forge")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("")
 }
 
 tasks.named("build") {
-    dependsOn("reobfJar")
+    dependsOn("remapJar")
 }
