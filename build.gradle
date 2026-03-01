@@ -71,7 +71,7 @@ tasks.register("assembleModArtifacts") {
     description = "Builds Forge and Fabric distributable jars and gathers them into build/artifacts/."
 
     dependsOn(
-            ":forge:reobfJar",
+            ":forge:remapJar",
             ":fabric:remapJar"
     )
 
