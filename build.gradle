@@ -56,22 +56,22 @@ subprojects {
     }
 }
 
- // build/libs に Forge/Fabric の Jar をまとめる
+tasks.register("build") {
+    dependsOn(":forge:build", ":fabric:build")
+}
+
 tasks.register("collectJars") {
-    dependsOn(":forge:build", ":fabric:build", ":common:build")
+    dependsOn(":forge:jar", ":fabric:jar", ":common:jar")
     doLast {
         copy {
-            from(file(":forge/build/libs"))
-            from(file(":fabric/build/libs"))
+            from(project(":forge").tasks.named("jar").get().outputs.files)
+            from(project(":fabric").tasks.named("jar").get().outputs.files)
+            from(project(":common").tasks.named("jar").get().outputs.files)
             into("$buildDir/libs")
         }
     }
 }
 
-tasks.register("build") {
-    dependsOn(":forge:build", ":fabric:build")
-}
-// root build でまとめる
 tasks.named("build") {
     dependsOn("collectJars")
 }
