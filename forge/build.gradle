@@ -40,7 +40,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.named("remapJar") {
+tasks.named("jar") {
     archiveBaseName.set("infinitymaxapi-forge")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("")
