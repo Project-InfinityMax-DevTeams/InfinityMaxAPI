@@ -19,21 +19,16 @@ java {
 jar {
     archiveBaseName.set("infinitymaxapi-common")
 }
-
-/*
-  build時にはcommonのjarを作らない
- */
+// build 時には jar を作らない
 tasks.named("jar") {
     enabled = false
 }
 
-/*
-  publishするときだけjarを有効化
- */
+// publish 時にだけ jar を有効化
 tasks.withType(AbstractPublishToMaven).configureEach {
-    dependsOn(tasks.named("jar").configure {
-        enabled = true
-    })
+    doFirst {
+        tasks.named("jar").get().enabled = true
+    }
 }
 
 publishing {
