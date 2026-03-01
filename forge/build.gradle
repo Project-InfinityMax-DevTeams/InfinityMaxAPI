@@ -47,5 +47,5 @@ tasks.named("jar") {
 }
 
 tasks.named("build") {
-    dependsOn("remapJar")
+    dependsOn("jar")
 }
