@@ -56,9 +56,19 @@ subprojects {
     }
 }
 
-/*
-  rootではJava成果物を作らない
- */
-tasks.register('build') {
-    dependsOn(':forge:build', ':fabric:build')
+ // build/libs に Forge/Fabric の Jar をまとめる
+tasks.register("collectJars") {
+    dependsOn(":forge:build", ":fabric:build", ":common:build")
+    doLast {
+        copy {
+            from(file(":forge/build/libs"))
+            from(file(":fabric/build/libs"))
+            into("$buildDir/libs")
+        }
+    }
+}
+
+// root build でまとめる
+tasks.named("build") {
+    dependsOn("collectJars")
 }

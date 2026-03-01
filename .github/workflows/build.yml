@@ -30,7 +30,7 @@ jobs:
       - name: Upload Jar
         uses: actions/upload-artifact@v4
         with:
-          name: infinitymaxapi-jar
+          name: infinitymaxapi-jars
           path: build/libs/*.jar
 
   # -----------------
