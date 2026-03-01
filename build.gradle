@@ -68,6 +68,9 @@ tasks.register("collectJars") {
     }
 }
 
+tasks.register("build") {
+    dependsOn(":forge:build", ":fabric:build")
+}
 // root build でまとめる
 tasks.named("build") {
     dependsOn("collectJars")
