@@ -8,7 +8,7 @@ on:
 jobs:
 
   # -----------------
-  # 1. Build Check
+  # 1. Build Check + Artifact Packaging
   # -----------------
   build:
     runs-on: ubuntu-latest
@@ -25,13 +25,22 @@ jobs:
           cache: gradle
 
       - run: chmod +x gradlew
-      - run: ./gradlew clean build
+      - name: Build all modules and collect distributable jars
+        run: ./gradlew --stacktrace clean build assembleModArtifacts
 
-      - name: Upload Jar
+      - name: Upload Forge jar
         uses: actions/upload-artifact@v4
         with:
-          name: infinitymaxapi-jars
-          path: build/libs/*.jar
+          name: infinitymaxapi-forge-jar
+          path: build/artifacts/*forge*.jar
+          if-no-files-found: error
+
+      - name: Upload Fabric jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: infinitymaxapi-fabric-jar
+          path: build/artifacts/*fabric*.jar
+          if-no-files-found: error
 
   # -----------------
   # 2. Publish Maven
@@ -78,9 +87,14 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: infinitymaxapi-jar
-          path: build/libs
+          name: infinitymaxapi-forge-jar
+          path: build/release
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: infinitymaxapi-fabric-jar
+          path: build/release
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: build/libs/*.jar
+          files: build/release/*.jar

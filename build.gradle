@@ -56,32 +56,48 @@ subprojects {
     }
 }
 
-tasks.register("build") {
-    dependsOn(":forge:build", ":fabric:build")
+def artifactOutputDir = layout.buildDirectory.dir("artifacts")
+
+tasks.register("cleanModArtifacts", Delete) {
+    group = "build"
+    description = "Deletes generated Forge/Fabric mod artifacts from the root build directory."
+    delete artifactOutputDir
 }
 
-tasks.register("collectJars") {
-    dependsOn(":forge:jar", ":fabric:jar", ":common:jar")
+tasks.register("assembleModArtifacts") {
+    group = "build"
+    description = "Builds Forge and Fabric distributable jars and gathers them into build/artifacts/."
+
+    dependsOn(
+            ":forge:reobfJar",
+            ":fabric:remapJar"
+    )
+
     doLast {
-        def outputDir = file("$buildDir/libs")
+        def outputDir = artifactOutputDir.get().asFile
+        outputDir.mkdirs()
+
+        def forgeJar = project(":forge").tasks.named("reobfJar").get().outputJar
+        def fabricJar = project(":fabric").tasks.named("remapJar").get().archiveFile
 
         copy {
-            from(project(":forge").tasks.named("jar").get().archiveFile)
-            into(outputDir)
+            from forgeJar
+            into outputDir
         }
 
         copy {
-            from(project(":fabric").tasks.named("jar").get().archiveFile)
-            into(outputDir)
+            from fabricJar
+            into outputDir
         }
 
-        copy {
-            from(project(":common").tasks.named("jar").get().archiveFile)
-            into(outputDir)
-        }
+        logger.lifecycle("Mod artifacts assembled at: ${outputDir}")
     }
 }
 
+tasks.named("clean") {
+    dependsOn("cleanModArtifacts")
+}
+
 tasks.named("build") {
-    dependsOn("collectJars")
+    dependsOn("assembleModArtifacts")
 }

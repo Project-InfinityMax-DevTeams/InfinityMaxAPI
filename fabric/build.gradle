@@ -35,3 +35,13 @@ jar {
     archiveVersion.set(project.version.toString())
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+tasks.named("remapJar") {
+    archiveBaseName.set("infinitymaxapi-fabric")
+    archiveVersion.set(project.version.toString())
+    archiveClassifier.set("")
+}
+
+tasks.named("build") {
+    dependsOn("remapJar")
+}
