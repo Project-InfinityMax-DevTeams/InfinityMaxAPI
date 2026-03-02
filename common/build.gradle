@@ -12,23 +12,17 @@ dependencies {
     // SLF4J
     implementation 'org.slf4j:slf4j-api:2.0.7'
 
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib'
 }
 
 java {
     withSourcesJar()
 }
 
-
 jar {
     archiveBaseName.set("infinitymaxapi-common")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     enabled = true
-}
-
-shadowJar {
-    archiveClassifier.set('')
-    relocate 'kotlin', 'com.yuyuto.shaded.kotlin'
 }
 
 publishing {
