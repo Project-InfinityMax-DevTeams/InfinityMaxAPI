@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 dependencies {
@@ -50,8 +49,4 @@ publishing {
 
 tasks.named("build") {
     dependsOn("jar")
-}
-
-tasks.build {
-    dependsOn shadowJar
 }
