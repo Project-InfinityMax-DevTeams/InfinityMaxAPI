@@ -32,13 +32,13 @@ processResources {
 
 jar {
     archiveBaseName.set("infinitymaxapi")
-    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-fabric")
+    archiveVersion.set("${prop('mod_version')}-mc${prop('minecraft_version')}-fabric")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.named("remapJar") {
     archiveBaseName.set("infinitymaxapi")
-    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-fabric")
+    archiveVersion.set("${prop('mod_version')}-mc${prop('minecraft_version')}-fabric")
     archiveClassifier.set("")
 }
 

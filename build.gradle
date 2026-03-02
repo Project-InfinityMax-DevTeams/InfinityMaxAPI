@@ -11,7 +11,7 @@ def prop = { String name, def defaultVal = null ->
     project.hasProperty(name) ? project.property(name) : defaultVal
 }
 
-group = prop('maven_group', 'com.yuyuto.infinitymaxapi')
+group = prop('maven_group', 'com.yuyuto')
 version = prop('mod_version', '1.0.0-SNAPSHOT')
 
 // Subprojects共通設定
