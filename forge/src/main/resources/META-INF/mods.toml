@@ -11,4 +11,9 @@ ${mod_description}
 '''
 authors="${mod_authors}"
 
-# APIは前提にされる側なので依存は基本なし
+[[dependencies.infinitymaxapi]]
+    modId="kotlinforforge"
+    mandatory=true
+    versionRange="[4,)"
+    ordering="NONE"
+    side="BOTH"
