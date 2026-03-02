@@ -21,7 +21,6 @@ def prop = { String name, def defaultVal = null ->
 subprojects {
 
     apply plugin: 'java'
-    apply plugin: 'org.jetbrains.kotlin.jvm'
 
     group = rootProject.group
     version = rootProject.version
@@ -49,7 +48,6 @@ subprojects {
 
     dependencies {
         implementation 'org.joml:joml:1.10.5'
-        implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     }
 
     tasks.withType(JavaCompile).configureEach {
