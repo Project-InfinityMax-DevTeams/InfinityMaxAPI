@@ -31,17 +31,15 @@ processResources {
 }
 
 jar {
-    archiveBaseName.set("infinitymaxapi-fabric")
-    archiveVersion.set(project.version.toString())
+    archiveBaseName.set("infinitymaxapi")
+    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-fabric")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.named("remapJar") {
-    archiveBaseName.set("infinitymaxapi-fabric")
-    archiveVersion.set(project.version.toString())
+    archiveBaseName.set("infinitymaxapi")
+    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-fabric")
     archiveClassifier.set("")
 }
 
-tasks.named("build") {
-    dependsOn("remapJar")
-}
+tasks.named("build") { dependsOn("remapJar") }

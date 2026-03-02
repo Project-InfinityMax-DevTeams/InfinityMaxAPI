@@ -25,7 +25,7 @@ processResources {
         expand(
                 mod_id: prop('mod_id', 'infinitymaxapi'),
                 mod_name: prop('mod_name', 'InfinityMax API'),
-                mod_version: prop('mod_version','0.1.0'),
+                mod_version: project.version,
                 mod_description: prop('mod_description', ''),
                 mod_authors: prop('mod_authors', ''),
                 mod_license: prop('mod_license', ''),
@@ -35,17 +35,15 @@ processResources {
 }
 
 jar {
-    archiveBaseName.set("infinitymaxapi-forge")
-    archiveVersion.set(project.version.toString())
+    archiveBaseName.set("infinitymaxapi")
+    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-forge")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.named("jar") {
-    archiveBaseName.set("infinitymaxapi-forge")
-    archiveVersion.set(project.version.toString())
+    archiveBaseName.set("infinitymaxapi")
+    archiveVersion.set("${project.version}-mc${prop('minecraft_version')}-forge")
     archiveClassifier.set("")
 }
 
-tasks.named("build") {
-    dependsOn("jar")
-}
+tasks.named("build") { dependsOn("jar") }

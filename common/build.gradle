@@ -5,18 +5,12 @@ plugins {
 }
 
 dependencies {
-    // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
-
-    // SLF4J
     implementation 'org.slf4j:slf4j-api:2.0.7'
-
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib'
 }
 
-java {
-    withSourcesJar()
-}
+java { withSourcesJar() }
 
 jar {
     archiveBaseName.set("infinitymaxapi-common")
@@ -38,7 +32,6 @@ publishing {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Project-InfinityMax-DevTeams/InfinityMaxAPI")
-
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
                 password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
@@ -47,6 +40,4 @@ publishing {
     }
 }
 
-tasks.named("build") {
-    dependsOn("jar")
-}
+tasks.named("build") { dependsOn("jar") }

@@ -7,19 +7,15 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.25' apply false
 }
 
-group = 'com.yuyuto'
-
-def refName = System.getenv("GITHUB_REF_NAME")
-version = (refName != null && refName.startsWith("v"))
-        ? refName.substring(1)
-        : "1.0.0-SNAPSHOT"
-
 def prop = { String name, def defaultVal = null ->
     project.hasProperty(name) ? project.property(name) : defaultVal
 }
 
-subprojects {
+group = prop('maven_group', 'com.yuyuto.infinitymaxapi')
+version = prop('mod_version', '1.0.0-SNAPSHOT')
 
+// Subprojects共通設定
+subprojects {
     apply plugin: 'java'
     apply plugin: 'org.jetbrains.kotlin.jvm'
 
@@ -58,6 +54,7 @@ subprojects {
     }
 }
 
+// MOD Artifacts集約
 def artifactOutputDir = layout.buildDirectory.dir("artifacts")
 
 tasks.register("cleanModArtifacts", Delete) {
@@ -79,16 +76,12 @@ tasks.register("assembleModArtifacts") {
         def outputDir = artifactOutputDir.get().asFile
         outputDir.mkdirs()
 
-        def forgeJar = project(":forge").tasks.named("jar").get().archiveFile
-        def fabricJar = project(":fabric").tasks.named("remapJar").get().archiveFile
-
         copy {
-            from forgeJar
+            from project(":forge").tasks.named("jar").get().archiveFile
             into outputDir
         }
-
         copy {
-            from fabricJar
+            from project(":fabric").tasks.named("remapJar").get().archiveFile
             into outputDir
         }
 
@@ -96,10 +89,10 @@ tasks.register("assembleModArtifacts") {
     }
 }
 
-tasks.named("clean") {
-    dependsOn("cleanModArtifacts")
+tasks.named("clean") { 
+    dependsOn("cleanModArtifacts") 
 }
 
-tasks.named("build") {
-    dependsOn("assembleModArtifacts")
+tasks.named("build") {  
+    dependsOn("assembleModArtifacts") 
 }
