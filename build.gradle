@@ -35,9 +35,9 @@ subprojects {
         withSourcesJar()
     }
 
-    kotlin {
+    extensions.configure(org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension) {
         jvmToolchain(
-                Integer.parseInt(prop('java_version', '17').toString())
+            Integer.parseInt(prop('java_version', '17').toString())
         )
     }
 
