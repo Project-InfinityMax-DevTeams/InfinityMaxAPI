@@ -21,7 +21,7 @@ def prop = { String name, def defaultVal = null ->
 subprojects {
 
     apply plugin: 'java'
-		apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
 
     group = rootProject.group
     version = rootProject.version
@@ -35,9 +35,9 @@ subprojects {
         withSourcesJar()
     }
 
-    extensions.configure(org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension) {
+    kotlin {
         jvmToolchain(
-            Integer.parseInt(prop('java_version', '17').toString())
+                Integer.parseInt(prop('java_version', '17').toString())
         )
     }
 
@@ -49,7 +49,7 @@ subprojects {
 
     dependencies {
         implementation 'org.joml:joml:1.10.5'
-				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+        implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     }
 
     tasks.withType(JavaCompile).configureEach {
