@@ -64,8 +64,8 @@ public final class LogicRegistry {
     /**
      * LogicID からロジックを解決して実行する。
      *
-     * <p>実行責務はこのクラスに集約される。実行時には先に EventAPI へ通知し、
-     * その後に登録済みロジックを実行する。</p>
+     * <p>実行責務はこのクラスに集約される。登録済みロジックを実行した後、
+     * EventAPI へ通知する。</p>
      */
 public static void execute(String logicId, BehaviorContext context, Object payload) {
     Objects.requireNonNull(logicId, "logicId");
