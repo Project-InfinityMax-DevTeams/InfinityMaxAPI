@@ -5,12 +5,23 @@ import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Fabric 向けの登録実体。
+ *
+ * <p>現段階では「DSLから渡された定義を受け取り、Loader内で登録管理する」責務に限定。
+ * Fabric API への最終バインドはこのクラスに集約する。</p>
+ */
 public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registries {
 
     private final Map<String, Object> items = new HashMap<>();
     private final Map<String, Object> blocks = new HashMap<>();
     private final Map<String, Object> entities = new HashMap<>();
     private final Map<String, Object> blockEntities = new HashMap<>();
+    private final Map<String, Object> dataGens = new HashMap<>();
+    private final Map<String, Object> guis = new HashMap<>();
+    private final Map<String, Object> worlds = new HashMap<>();
+    private final Map<String, Object> networks = new HashMap<>();
+    private final Map<String, Object> packets = new HashMap<>();
 
     @Override
     public <T> void item(String name, T item) {
@@ -18,7 +29,7 @@ public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registri
     }
 
     @Override
-    public <T>  void block(String name, T block, float strength, boolean noOcclusion) {
+    public <T> void block(String name, T block, float strength, boolean noOcclusion) {
         blocks.put(name, block);
     }
 
@@ -30,5 +41,30 @@ public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registri
     @Override
     public <T, B> void blockEntity(String name, T blockEntityType, B... blocks) {
         blockEntities.put(name, blockEntityType);
+    }
+
+    @Override
+    public <T> void dataGen(String name, T dataGenDefinition) {
+        dataGens.put(name, dataGenDefinition);
+    }
+
+    @Override
+    public <T> void gui(String name, T guiDefinition) {
+        guis.put(name, guiDefinition);
+    }
+
+    @Override
+    public <T> void world(String name, T worldDefinition) {
+        worlds.put(name, worldDefinition);
+    }
+
+    @Override
+    public <T> void network(String name, T networkDefinition) {
+        networks.put(name, networkDefinition);
+    }
+
+    @Override
+    public <T> void packet(String name, T packetDefinition) {
+        packets.put(name, packetDefinition);
     }
 }

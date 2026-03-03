@@ -14,6 +14,21 @@ public interface LoaderExpectPlatform {
         <T> void block(String name, T block, float strength, boolean noOcclusion);
         <T, C> void entity(String name, T entityType, C category, float width, float height);
         <T, B> void blockEntity(String name, T blockEntityType, B... blocks);
+
+        /** DataGen登録。 */
+        default <T> void dataGen(String name, T dataGenDefinition) {}
+
+        /** GUI登録。 */
+        default <T> void gui(String name, T guiDefinition) {}
+
+        /** ワールド要素（ディメンション/バイオーム/構造物）登録。 */
+        default <T> void world(String name, T worldDefinition) {}
+
+        /** ネットワーク登録。 */
+        default <T> void network(String name, T networkDefinition) {}
+
+        /** パケット登録。 */
+        default <T> void packet(String name, T packetDefinition) {}
     }
 
     interface Network {

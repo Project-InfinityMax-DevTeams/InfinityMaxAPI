@@ -6,6 +6,7 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector
 import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorRegistry
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorBinding
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
+import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
 
 /**
  * 振る舞い接続 DSL のエントリポイント。
@@ -75,11 +76,18 @@ class BehaviorScope {
             PacketBehaviorBinding(
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase(),
+                definition.phase,
+                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
                 definition.metadata,
                 connector,
                 T::class.java
             )
+        )
+
+        LogicRegistry.registerPacket(
+            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+            connector,
+            T::class.java
         )
     }
 
@@ -88,6 +96,7 @@ class BehaviorScope {
         requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
+        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.register(
             BehaviorBinding(
@@ -95,10 +104,13 @@ class BehaviorScope {
                 id,
                 definition.resourceId,
                 definition.phase.name.lowercase(),
+                resolvedLogicId,
                 definition.metadata,
                 connector
             )
         )
+
+        LogicRegistry.registerBehavior(resolvedLogicId, connector)
     }
 }
 
@@ -115,6 +127,12 @@ class BehaviorBindingScope {
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
+
+    /**
+     * LogicID。
+     * この文字列を変更すると EventAPI 側で公開されるロジック識別子が変わる。
+     */
+    var logicId: String = ""
 
     /** 実行ロジック（Java メソッド参照を想定）。 */
     var connector: BehaviorConnector? = null
@@ -138,6 +156,12 @@ class PacketBehaviorBindingScope<T : Any> {
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
+
+    /**
+     * LogicID。
+     * この文字列を変更すると EventAPI 側で公開されるロジック識別子が変わる。
+     */
+    var logicId: String = ""
 
     /** パケット用ロジック（Java メソッド参照を想定）。 */
     var connector: PacketBehaviorConnector<T>? = null
