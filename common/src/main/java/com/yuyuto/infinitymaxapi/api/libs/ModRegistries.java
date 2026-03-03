@@ -1,28 +1,30 @@
 package com.yuyuto.infinitymaxapi.api.libs;
 
-import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
+import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
-public final class ModRegistries {
+/**
+ * ローダーごとの実登録を抽象化するインターフェース。
+ *
+ * <p>common はこのインターフェースのみを参照し、Forge/Fabric 実装は
+ * それぞれのローダー側クラスで行う。</p>
+ */
+public interface ModRegistries {
 
-    private static LoaderExpectPlatform.Registries platformRegistries;
+    <T> void registerItem(String id, T template, ItemSettings settings);
 
-    public ModRegistries(LoaderExpectPlatform.Registries platformRegistries) {
-        this.platformRegistries = platformRegistries;
-    }
+    <T> void registerBlock(String id, T template, BlockSettings settings);
 
-    public static <T> void registerItem(String id, T item) {
-        platformRegistries.item(id, item);
-    }
+    <T, C> void registerEntity(String id, T template, EntitySettings<C> settings);
 
-    public static <T> void registerBlock(String id, T block, float strength, boolean noOcclusion) {
-        platformRegistries.block(id, block,strength,noOcclusion);
-    }
+    <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings);
 
-    public static <T, C> void registerEntity(String id, T entityType, C category, float width, float height) {
-        platformRegistries.entity(id, entityType, category, width, height);
-    }
+    <T> void registerDataGen(String id, T template, DataGenSettings settings);
 
-    public static <T, B> void registerBlockEntity(String id, T blockEntityType, B... blocks) {
-        platformRegistries.blockEntity(id, blockEntityType, blocks);
-    }
+    <T> void registerPacket(String id, T template, PacketSettings settings);
+
+    <T> void registerNetwork(String id, T template, NetworkSettings settings);
+
+    <T> void registerGui(String id, T template, GuiSettings settings);
+
+    <T> void registerWorld(String id, T template, WorldSettings settings);
 }

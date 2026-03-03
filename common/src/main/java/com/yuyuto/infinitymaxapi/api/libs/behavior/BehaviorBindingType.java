@@ -12,5 +12,6 @@ public enum BehaviorBindingType {
     ENTITY,
     KEYBIND,
     UI,
-    PACKET
+    PACKET,
+    EVENT
 }

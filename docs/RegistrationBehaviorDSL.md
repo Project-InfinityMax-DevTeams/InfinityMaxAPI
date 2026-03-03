@@ -1,6 +1,6 @@
-# InfinityMaxAPI 登録DSL / 振る舞い接続DSL ガイド
+# InfinityMaxAPI Registration / Logic DSL ガイド
 
-このドキュメントは以下を説明します。
+このドキュメントは、次の3点を説明します。
 
 1. 書き方（基本構文）
 2. DSLで登録・接続できるもの一覧
@@ -8,137 +8,135 @@
 
 ---
 
-## 1) コンセプト
+## 1. 書き方（基本構文）
 
-InfinityMaxAPI は DSL を次の2層に分離します。
+InfinityMaxAPI の設計は以下です。
 
-- **登録DSL (`registry {}`)**
-  - オブジェクトそのものを登録する。
-  - 例: item / block / entity / event / packet
-- **振る舞い接続DSL (`behavior {}`)**
-  - 登録済みIDに対してロジックを紐づける。
-  - ロジック本体は Java のメソッド参照として渡す。
-  - 例: block / item / entity / keybind / ui / packet
+- `registry {}`: **静的データ定義層**（ゲーム要素の設定値を宣言するだけ）
+- `behavior {}`: **要素IDとLogicIDの接続層**（既存互換）
+- `logic {}`: **動的実行層**（Event → LogicID トリガー定義）
 
-この分離により、
-- データ定義（何を登録するか）
-- 実行ロジック（何をさせるか）
-を独立して保守できます。
+> 重要: Registry は設定値のみを扱います。event 定義は `logic {}` のみで行います。
 
----
-
-## 2) 登録DSL (`registry {}`) の書き方
+### 1-1. registry DSL（ゲーム要素登録）
 
 ```kotlin
 import com.yuyuto.infinitymaxapi.api.libs.registry
 
 registry {
-    item("copper_ingot", CopperIngot()) {
-        stack = 64
-        durability = 0
+    item("example_item", Any()) {
+        stack = 64          // 数値を変えると最大スタックが変わる
+        durability = 250    // 数値を変えると耐久値が変わる
+        tab = "materials"  // 文字列/オブジェクトを変えると分類が変わる
     }
 
-    block("copper_block", CopperBlock()) {
-        strength = 5.0f
-        noOcclusion = false
+    block("example_block", Any()) {
+        strength = 3.5f     // 数値を変えると硬さが変わる
+        noOcclusion = false // true にすると非遮蔽扱い
     }
 
-    entity<AnyEntityType, AnyCategory>("copper_golem", CopperGolemEntity()) {
-        category = AnyCategory.CREATURE
-        width = 0.8f
-        height = 2.2f
+    blockEntity("example_block_entity", Any(), Any()) {
+        profile = "default" // 文字列を変えると識別プロファイルが変わる
     }
 
-    event<SomeEvent> {
-        priority = com.yuyuto.infinitymaxapi.api.event.EventPriority.HIGH
-        async = false
-        handler = java.util.function.Consumer { event ->
-            // event handling
+    entity<Any, Any>("example_entity", Any()) {
+        category = Any()    // ここを差し替えるとカテゴリが変わる
+        width = 0.8f        // 当たり判定の横幅
+        height = 1.95f      // 当たり判定の高さ
+    }
+
+    dataGen("example_datagen", Any()) {
+        namespace = "examplemod" // 出力の識別子
+        overwrite = true           // 上書き可否
+    }
+
+    packet("example_packet", Any()) {
+        direction = com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection.C2S
+        channel = "main"          // チャネル識別子
+    }
+
+    network("example_network", Any()) {
+        protocol = "1"   // プロトコル文字列
+        clientSync = true // 同期要否
+    }
+
+    gui("example_screen", Any()) {
+        screenId = "ui/example_screen" // GUI識別ID
+        layer = 10                       // レイヤー優先度
+    }
+
+    world("example_dimension", Any()) {
+        kind = "dimension" // dimension / biome / structure
+        order = 100          // 生成順序調整
+    }
+}
+```
+
+### 1-2. behavior DSL（登録要素IDとLogicIDの接続）
+
+```kotlin
+import com.yuyuto.infinitymaxapi.api.libs.Phase
+import com.yuyuto.infinitymaxapi.api.libs.behavior
+import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector
+
+behavior {
+    item("example_item") {
+        resourceId = "textures/item/example_item"
+        phase = Phase.USE
+        logicId = "examplemod:item_use" // 文字列を変えると接続先LogicIDが変わる
+        meta("cooldown", 40)
+        connector = BehaviorConnector { ctx ->
+            // Java/Kotlin ロジック本体
         }
     }
 
-    packet<SyncEnergyPacket>("sync_energy") {
-        direction = com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection.S2C
-        decoder = { buf -> SyncEnergyPacket.decode(buf) }
-        encoder = com.yuyuto.infinitymaxapi.api.libs.packet.SimplePacket.PacketEncoder { packet, buf ->
-            packet.encode(buf)
-        }
-        handler = com.yuyuto.infinitymaxapi.api.libs.packet.PacketHandler { packet, ctx ->
-            packet.handle(ctx)
+    packet<Any>("example_packet") {
+        resourceId = "network/example_packet"
+        phase = Phase.RECEIVE
+        logicId = "examplemod:packet_receive"
+        connector = com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector<Any> { ctx, payload ->
+            // packet logic
         }
     }
 }
 ```
 
-### 登録DSLで扱える対象
+### 1-3. logic DSL（Event定義とトリガー）
 
-- `item`
-- `block`
-- `entity`
-- `event`
-- `packet`
+```kotlin
+import com.yuyuto.infinitymaxapi.api.libs.logic
+import com.yuyuto.infinitymaxapi.api.libs.Phase
+import com.yuyuto.infinitymaxapi.api.event.PlayerJoinEvent
 
-### 登録DSLで記述できる内容（概要）
-
-- `item`: `stack`, `durability`, `tab`
-- `block`: `strength`, `noOcclusion`
-- `entity`: `category`, `width`, `height`
-- `event`: `priority`, `async`, `handler`
-- `packet`: `direction`, `decoder`, `encoder`, `handler`
-
-> `build()` 呼び出しは不要です。DSL終了時に登録されます。
+logic {
+    event<PlayerJoinEvent> {
+        trigger("examplemod:item_use") // この文字列で起動LogicIDを指定
+        phase = Phase.INTERACT          // context phase の識別値
+        priority = com.yuyuto.infinitymaxapi.api.event.EventPriority.NORMAL
+        async = false
+        meta("source", "player_join")
+    }
+}
+```
 
 ---
 
-## 3) 振る舞い接続DSL (`behavior {}`) の書き方
+## 2. DSLで登録・接続できるもの一覧
 
-```kotlin
-import com.yuyuto.infinitymaxapi.api.libs.behavior
-import com.yuyuto.infinitymaxapi.logic.BlockLogic
-import com.yuyuto.infinitymaxapi.logic.PacketLogic
+### registry DSL（静的データ定義）
 
-behavior {
-    block("copper_block") {
-        resourceId = "models/block/copper_block"
-        phase = Phase.INTERACT
-        meta("power_cost", 20)
-        connector = BlockLogic::onCopperBlockInteract
-    }
+- アイテム (`item`)
+- ブロック (`block`)
+- ブロックエンティティ (`blockEntity`)
+- エンティティ (`entity`)
+- DataGen (`dataGen`)
+- パケット (`packet`)
+- ネットワーク (`network`)
+- GUI (`gui`)
+- ワールド要素 (`world`)
+  - `kind` に `dimension` / `biome` / `structure` を指定
 
-    item("copper_wand") {
-        resourceId = "textures/item/copper_wand"
-        phase = Phase.USE
-        meta("cooldown", 40)
-        connector = BlockLogic::onCopperWandUse
-    }
-
-    entity("copper_golem") {
-        resourceId = "entities/copper_golem"
-        phase = Phase.TICK
-        connector = BlockLogic::onCopperGolemTick
-    }
-
-    keybind("open_energy_ui") {
-        resourceId = "keybind/open_energy_ui"
-        phase = Phase.PRESS
-        connector = BlockLogic::onOpenEnergyUiKey
-    }
-
-    ui("energy_screen") {
-        resourceId = "ui/energy_screen"
-        phase = Phase.RENDER
-        connector = BlockLogic::onEnergyScreenRender
-    }
-
-    packet<SyncEnergyPacket>("sync_energy") {
-        resourceId = "network/sync_energy"
-        phase = Phase.RECEIVE
-        connector = PacketLogic::onSyncEnergyPacket
-    }
-}
-```
-
-### 振る舞い接続DSLで扱える対象
+### behavior DSL（接続定義）
 
 - `block`
 - `item`
@@ -147,137 +145,62 @@ behavior {
 - `ui`
 - `packet`
 
-### 振る舞い接続DSLで記述できる内容（共通）
+### logic DSL（動的実行定義）
 
-- `resourceId`: 外部リソース識別子
-- `phase`: 実行タイミング識別子（文字列）
-- `meta(key, value)`: 任意メタデータ
-- `connector`: Java 側メソッド参照（必須）
-
-### packet スコープで記述できる内容
-
-- 共通項目 + `connector`（`PacketBehaviorConnector<T>` 型）
+- `event<T : ModEvent>`
+  - Event発火時に `trigger("logic_id")` で LogicID を起動
 
 ---
 
-## 4) Java ロジック実装例（メソッド参照先）
+## 3. 各スコープで記述できる内容
 
-```java
-package com.yuyuto.infinitymaxapi.logic;
+### registry スコープ
 
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext;
-import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector;
+- `item(id, template) { ... }`
+  - `stack`, `durability`, `tab`
+- `block(id, template) { ... }`
+  - `strength`, `noOcclusion`
+- `blockEntity(id, template, vararg blocks) { ... }`
+  - `profile`
+- `entity(id, template) { ... }`
+  - `category`, `width`, `height`
+- `dataGen(id, template) { ... }`
+  - `namespace`, `overwrite`
+- `packet(id, template) { ... }`
+  - `direction`, `channel`
+- `network(id, template) { ... }`
+  - `protocol`, `clientSync`
+- `gui(id, template) { ... }`
+  - `screenId`, `layer`
+- `world(id, template) { ... }`
+  - `kind`, `order`
 
-public final class BlockLogic {
+### behavior スコープ
 
-    private BlockLogic() {}
+- 共通 (`block/item/entity/keybind/ui`)
+  - `resourceId`（文字列変更で参照先変更）
+  - `phase`（実行フェーズ）
+  - `logicId`（実行ロジック識別子）
+  - `meta(key, value)`（追加情報）
+  - `connector`（ロジック本体）
+- `packet<T>`
+  - 共通項目 + `PacketBehaviorConnector<T>`
 
-    public static void onCopperBlockInteract(BehaviorContext context) {
-        // context.targetId(), context.resourceId(), context.metadata() などを使用
-    }
+### logic スコープ
 
-    public static void onCopperWandUse(BehaviorContext context) {
-        // item logic
-    }
+- `event<T : ModEvent> { ... }`
+  - `trigger(logicId)`（必須）
+  - `phase`
+  - `priority`
+  - `async`
+  - `meta(key, value)`
 
-    public static void onCopperGolemTick(BehaviorContext context) {
-        // entity logic
-    }
-
-    public static void onOpenEnergyUiKey(BehaviorContext context) {
-        // keybind logic
-    }
-
-    public static void onEnergyScreenRender(BehaviorContext context) {
-        // ui logic
-    }
-}
-```
-
-```java
-package com.yuyuto.infinitymaxapi.logic;
-
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext;
-
-public final class PacketLogic {
-
-    private PacketLogic() {}
-    // SyncEnergyPacket はユーザー定義のパケットクラス（例）
-    public static void onSyncEnergyPacket(BehaviorContext context, SyncEnergyPacket packet) {
-        // packet logic
-    }
-}
-```
-
-```java
-package com.yuyuto.infinitymaxapi.example;
-
-import com.yuyuto.infinitymaxapi.api.libs.Behavior;
-import com.yuyuto.infinitymaxapi.logic.BlockLogic;
-import com.yuyuto.infinitymaxapi.logic.PacketLogic;
-
-public final class MyModInitializer {
-
-    // mod初期化時（例: FabricならonInitialize、ForgeならFMLCommonSetupEvent）に呼び出す
-    public static void init() {
-        // Behavior.connect() でKotlin DSLにブリッジ
-        Behavior.connect(scope -> {
-            // block: BehaviorConnector を使用
-            scope.block("copper_block", binding -> {
-                binding.setResourceId("models/block/copper_block");
-                binding.setPhase("interact");
-                binding.meta("power_cost", 20);
-                // BlockLogic::onCopperBlockInteract が BehaviorContext を受け取る
-                binding.setConnector(BlockLogic::onCopperBlockInteract);
-            });
-
-            // item: 同様にメソッド参照を渡す
-            scope.item("copper_wand", binding -> {
-                binding.setResourceId("textures/item/copper_wand");
-                binding.setPhase("use");
-                binding.meta("cooldown", 40);
-                binding.setConnector(BlockLogic::onCopperWandUse);
-            });
-
-            // entity
-            scope.entity("copper_golem", binding -> {
-                binding.setResourceId("entities/copper_golem");
-                binding.setPhase("tick");
-                binding.setConnector(BlockLogic::onCopperGolemTick);
-            });
-
-            // keybind
-            scope.keybind("open_energy_ui", binding -> {
-                binding.setResourceId("keybind/open_energy_ui");
-                binding.setPhase("press");
-                binding.setConnector(BlockLogic::onOpenEnergyUiKey);
-            });
-
-            // ui
-            scope.ui("energy_screen", binding -> {
-                binding.setResourceId("ui/energy_screen");
-                binding.setPhase("render");
-                binding.setConnector(BlockLogic::onEnergyScreenRender);
-            });
-
-            // packet: PacketBehaviorConnector<T> を使用
-            scope.packet("sync_energy", binding -> {
-                binding.setResourceId("network/sync_energy");
-                binding.setPhase("receive");
-                // PacketLogic::onSyncEnergyPacket は (BehaviorContext, SyncEnergyPacket) を受け取る
-                binding.setConnector(PacketLogic::onSyncEnergyPacket);
-            });
-        });
-    }
-}
-```
 ---
 
-## 5) 設計ルール（推奨）
+## 実装のコツ
 
-- 登録DSLには生成・登録のみを書く。
-- 振る舞い接続DSLにはIDとロジックの紐づけのみを書く。
-- ロジック本体は Java クラスに寄せる。
-- 外部リソースとの対応関係は `resourceId` で明示する。
-- `phase` は用途別にチーム内命名規約を決める（`init` / `tick` / `interact` など）。
+- **IDを変えるだけで差し替え可能**: `"example_item"` や `"examplemod:item_use"` を変更。
+- **数値を変えるだけで調整可能**: `stack`, `durability`, `strength`, `width`, `height`, `layer`, `order`。
+- **コピペ運用がしやすい構造**: まず `registry` で全要素を宣言し、その後 `behavior` と `logic` を足していく。
 
+この手順で、要素定義（静的）と実行（動的）を分離したまま安全に拡張できます。

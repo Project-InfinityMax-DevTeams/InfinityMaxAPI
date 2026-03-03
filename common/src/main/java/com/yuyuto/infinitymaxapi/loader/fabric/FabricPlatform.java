@@ -6,7 +6,7 @@ public final class FabricPlatform implements LoaderExpectPlatform {
 
     private static final String MOD_ID = "infinitymaxapi";
 
-    private final Registries registries = new FabricRegistriesImpl();
+    private final com.yuyuto.infinitymaxapi.api.libs.ModRegistries registries = new FabricRegistriesImpl();
     private final Network network = new FabricNetworkImpl();
     private final Events events = new FabricEventsImpl();
 
@@ -21,7 +21,7 @@ public final class FabricPlatform implements LoaderExpectPlatform {
     }
 
     @Override
-    public Registries registries() {
+    public com.yuyuto.infinitymaxapi.api.libs.ModRegistries registries() {
         return registries;
     }
 

@@ -1,34 +1,52 @@
 package com.yuyuto.infinitymaxapi.loader.fabric;
 
-import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
+import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
+import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registries {
+/**
+ * Fabric 向けの登録実体。
+ *
+ * <p>DSL で定義された Settings と template を保持し、最終的な Fabric API 登録に橋渡しする。</p>
+ */
+public final class FabricRegistriesImpl implements ModRegistries {
 
     private final Map<String, Object> items = new HashMap<>();
     private final Map<String, Object> blocks = new HashMap<>();
     private final Map<String, Object> entities = new HashMap<>();
     private final Map<String, Object> blockEntities = new HashMap<>();
+    private final Map<String, Object> dataGens = new HashMap<>();
+    private final Map<String, Object> guis = new HashMap<>();
+    private final Map<String, Object> worlds = new HashMap<>();
+    private final Map<String, Object> networks = new HashMap<>();
+    private final Map<String, Object> packets = new HashMap<>();
 
     @Override
-    public <T> void item(String name, T item) {
-        items.put(name, item);
-    }
+    public <T> void registerItem(String id, T template, ItemSettings settings) { items.put(id, template); }
 
     @Override
-    public <T>  void block(String name, T block, float strength, boolean noOcclusion) {
-        blocks.put(name, block);
-    }
+    public <T> void registerBlock(String id, T template, BlockSettings settings) { blocks.put(id, template); }
 
     @Override
-    public <T, C> void entity(String name, T entityType, C category, float width, float height) {
-        entities.put(name, entityType);
-    }
+    public <T, C> void registerEntity(String id, T template, EntitySettings<C> settings) { entities.put(id, template); }
 
     @Override
-    public <T, B> void blockEntity(String name, T blockEntityType, B... blocks) {
-        blockEntities.put(name, blockEntityType);
-    }
+    public <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings) { blockEntities.put(id, template); }
+
+    @Override
+    public <T> void registerDataGen(String id, T template, DataGenSettings settings) { dataGens.put(id, template); }
+
+    @Override
+    public <T> void registerPacket(String id, T template, PacketSettings settings) { packets.put(id, template); }
+
+    @Override
+    public <T> void registerNetwork(String id, T template, NetworkSettings settings) { networks.put(id, template); }
+
+    @Override
+    public <T> void registerGui(String id, T template, GuiSettings settings) { guis.put(id, template); }
+
+    @Override
+    public <T> void registerWorld(String id, T template, WorldSettings settings) { worlds.put(id, template); }
 }
