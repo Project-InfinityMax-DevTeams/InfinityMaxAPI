@@ -39,6 +39,13 @@ public final class Events {
      * <p>このメソッドは通知専用であり、ロジック実行は行わない。</p>
      */
     public static void dispatchLogic(String logicId, BehaviorContext context, Object payload) {
+        if (logicId == null || logicId.isBlank()) {
+            throw new IllegalArgumentException("logicId must not be null or blank");
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null");
+        }
         InfinityEventBus.post(new LogicExecutionEvent(logicId, context, payload));
+    }
     }
 }
