@@ -36,7 +36,8 @@ public final class FabricRegistriesImpl implements ModRegistries {
 
     @Override
     public <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings) {  
-        putUnique(blockEntities, id, new BlockEntityEntry<>(template, blocks, settings));  
+        B[] blocksCopy = blocks == null ? null : blocks.clone();
+        putUnique(blockEntities, id, new BlockEntityEntry<>(template, blocksCopy, settings));  
     }
 
     @Override
@@ -61,7 +62,6 @@ public final class FabricRegistriesImpl implements ModRegistries {
         if (map.putIfAbsent(id, value) != null) {
             throw new IllegalStateException("Duplicate registry id: " + id);
         }
-    }
     }
 
 }
