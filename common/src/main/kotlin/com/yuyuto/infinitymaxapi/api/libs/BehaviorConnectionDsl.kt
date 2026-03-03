@@ -8,8 +8,6 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorBinding
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
 import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
 
-import java.util.Locale
-
 /**
  * 振る舞い接続 DSL のエントリポイント。
  *
@@ -71,15 +69,17 @@ class BehaviorScope {
 
     /** パケットIDとロジックを接続する。 */
     inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
+        requireTargetId(id)
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
+        val resolvedLogicId = definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.registerPacket(
             PacketBehaviorBinding(
                 id,
                 definition.resourceId,
                 definition.phase,
-                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" },
+                resolvedLogicId,
                 definition.metadata,
                 connector,
                 T::class.java
@@ -87,7 +87,7 @@ class BehaviorScope {
         )
 
         LogicRegistry.registerPacket(
-            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" },
+            resolvedLogicId,
             connector,
             T::class.java
         )
@@ -98,14 +98,14 @@ class BehaviorScope {
         requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
-        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" }
+        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.register(
             BehaviorBinding(
                 type,
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase(Locale.ROOT),
+                definition.phase,
                 resolvedLogicId,
                 definition.metadata,
                 connector

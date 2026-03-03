@@ -2,6 +2,7 @@ package com.yuyuto.infinitymaxapi.api.libs.logic;
 
 import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext;
 import com.yuyuto.infinitymaxapi.gamelibs.event.InfinityEvent;
+import java.util.Objects;
 
 /**
  * EventAPI(gamelibs/event) 経由で LogicID 実行を公開するイベント。

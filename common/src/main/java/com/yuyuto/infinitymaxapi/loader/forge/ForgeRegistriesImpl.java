@@ -1,6 +1,7 @@
 package com.yuyuto.infinitymaxapi.loader.forge;
 
-import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
+import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
+import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +9,9 @@ import java.util.Map;
 /**
  * Forge 向けの登録実体。
  *
- * <p>現段階では「DSLから渡された定義を受け取り、Loader内で登録管理する」責務に限定。
- * Forge API への最終バインドはこのクラスに集約する。</p>
+ * <p>DSL で定義された Settings と template を保持し、最終的な Forge API 登録に橋渡しする。</p>
  */
-public final class ForgeRegistriesImpl implements LoaderExpectPlatform.Registries {
+public final class ForgeRegistriesImpl implements ModRegistries {
 
     private final Map<String, Object> items = new HashMap<>();
     private final Map<String, Object> blocks = new HashMap<>();
@@ -24,47 +24,29 @@ public final class ForgeRegistriesImpl implements LoaderExpectPlatform.Registrie
     private final Map<String, Object> packets = new HashMap<>();
 
     @Override
-    public <T> void item(String name, T item) {
-        items.put(name, item);
-    }
+    public <T> void registerItem(String id, T template, ItemSettings settings) { items.put(id, template); }
 
     @Override
-    public <T> void block(String name, T block, float strength, boolean noOcclusion) {
-        blocks.put(name, block);
-    }
+    public <T> void registerBlock(String id, T template, BlockSettings settings) { blocks.put(id, template); }
 
     @Override
-    public <T, C> void entity(String name, T entityType, C category, float width, float height) {
-        entities.put(name, entityType);
-    }
+    public <T, C> void registerEntity(String id, T template, EntitySettings<C> settings) { entities.put(id, template); }
 
     @Override
-    public <T, B> void blockEntity(String name, T blockEntityType, B... blocks) {
-        blockEntities.put(name, blockEntityType);
-    }
+    public <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings) { blockEntities.put(id, template); }
 
     @Override
-    public <T> void dataGen(String name, T dataGenDefinition) {
-        dataGens.put(name, dataGenDefinition);
-    }
+    public <T> void registerDataGen(String id, T template, DataGenSettings settings) { dataGens.put(id, template); }
 
     @Override
-    public <T> void gui(String name, T guiDefinition) {
-        guis.put(name, guiDefinition);
-    }
+    public <T> void registerPacket(String id, T template, PacketSettings settings) { packets.put(id, template); }
 
     @Override
-    public <T> void world(String name, T worldDefinition) {
-        worlds.put(name, worldDefinition);
-    }
+    public <T> void registerNetwork(String id, T template, NetworkSettings settings) { networks.put(id, template); }
 
     @Override
-    public <T> void network(String name, T networkDefinition) {
-        networks.put(name, networkDefinition);
-    }
+    public <T> void registerGui(String id, T template, GuiSettings settings) { guis.put(id, template); }
 
     @Override
-    public <T> void packet(String name, T packetDefinition) {
-        packets.put(name, packetDefinition);
-    }
+    public <T> void registerWorld(String id, T template, WorldSettings settings) { worlds.put(id, template); }
 }

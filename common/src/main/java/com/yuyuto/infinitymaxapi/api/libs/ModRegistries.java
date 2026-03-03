@@ -1,35 +1,30 @@
 package com.yuyuto.infinitymaxapi.api.libs;
 
-import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
-import com.yuyuto.infinitymaxapi.loader.Platform;
+import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 /**
- * 登録 DSL から Loader 実装へ橋渡しするレジストリ集約クラス。
+ * ローダーごとの実登録を抽象化するインターフェース。
  *
- * <p>Core 側は Loader 具体型に依存せず、Platform 抽象のみを参照する。</p>
+ * <p>common はこのインターフェースのみを参照し、Forge/Fabric 実装は
+ * それぞれのローダー側クラスで行う。</p>
  */
-public final class ModRegistries {
+public interface ModRegistries {
 
-    private ModRegistries() {
-    }
+    <T> void registerItem(String id, T template, ItemSettings settings);
 
-    private static LoaderExpectPlatform.Registries registries() {
-        return Platform.get().registries();
-    }
+    <T> void registerBlock(String id, T template, BlockSettings settings);
 
-    public static <T> void registerItem(String id, T item) {
-        registries().item(id, item);
-    }
+    <T, C> void registerEntity(String id, T template, EntitySettings<C> settings);
 
-    public static <T> void registerBlock(String id, T block, float strength, boolean noOcclusion) {
-        registries().block(id, block, strength, noOcclusion);
-    }
+    <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings);
 
-    public static <T, C> void registerEntity(String id, T entityType, C category, float width, float height) {
-        registries().entity(id, entityType, category, width, height);
-    }
+    <T> void registerDataGen(String id, T template, DataGenSettings settings);
 
-    public static <T, B> void registerBlockEntity(String id, T blockEntityType, B... blocks) {
-        registries().blockEntity(id, blockEntityType, blocks);
-    }
+    <T> void registerPacket(String id, T template, PacketSettings settings);
+
+    <T> void registerNetwork(String id, T template, NetworkSettings settings);
+
+    <T> void registerGui(String id, T template, GuiSettings settings);
+
+    <T> void registerWorld(String id, T template, WorldSettings settings);
 }

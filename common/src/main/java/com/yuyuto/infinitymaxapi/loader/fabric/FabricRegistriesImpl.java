@@ -1,6 +1,7 @@
 package com.yuyuto.infinitymaxapi.loader.fabric;
 
-import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
+import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
+import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,70 +9,59 @@ import java.util.Map;
 /**
  * Fabric 向けの登録実体。
  *
- * <p>現段階では「DSLから渡された定義を受け取り、Loader内で登録管理する」責務に限定。
- * Fabric API への最終バインドはこのクラスに集約する。</p>
+ * <p>DSL で定義された Settings と template を保持し、最終的な Fabric API 登録に橋渡しする。</p>
  */
-public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registries {
+public final class FabricRegistriesImpl implements ModRegistries {
+    private record Entry<T, S>(T template, S settings) {} 
+    private record BlockEntityEntry<T, B>(T template, B[] blocks, BlockEntitySettings settings) {}
 
-    private final Map<String, Object> items = new HashMap<>();
-    private final Map<String, Object> blocks = new HashMap<>();
-    private final Map<String, Object> entities = new HashMap<>();
-    private final Map<String, Object> blockEntities = new HashMap<>();
-    private final Map<String, Object> dataGens = new HashMap<>();
-    private final Map<String, Object> guis = new HashMap<>();
-    private final Map<String, Object> worlds = new HashMap<>();
-    private final Map<String, Object> networks = new HashMap<>();
-    private final Map<String, Object> packets = new HashMap<>();
+    private final Map<String, Entry<?, ItemSettings>> items = new HashMap<>();  
+    private final Map<String, Entry<?, BlockSettings>> blocks = new HashMap<>();  
+    private final Map<String, Entry<?, EntitySettings<?>>> entities = new HashMap<>();  
+    private final Map<String, BlockEntityEntry<?, ?>> blockEntities = new HashMap<>();  
+    private final Map<String, Entry<?, DataGenSettings>> dataGens = new HashMap<>();  
+    private final Map<String, Entry<?, GuiSettings>> guis = new HashMap<>();  
+    private final Map<String, Entry<?, WorldSettings>> worlds = new HashMap<>();  
+    private final Map<String, Entry<?, NetworkSettings>> networks = new HashMap<>();  
+    private final Map<String, Entry<?, PacketSettings>> packets = new HashMap<>();
 
     @Override
-    public <T> void item(String name, T item) {
-        items.put(name, item);
+    public <T> void registerItem(String id, T template, ItemSettings settings) { putUnique(items, id, new Entry<>(template, settings)); }
+
+    @Override
+    public <T> void registerBlock(String id, T template, BlockSettings settings) { putUnique(blocks, id, new Entry<>(template, settings)); }  
+
+    @Override
+    public <T, C> void registerEntity(String id, T template, EntitySettings<C> settings) { putUnique(entities, id, new Entry<>(template, settings)); }
+
+    @Override
+    public <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings) {  
+        B[] blocksCopy = blocks == null ? null : blocks.clone();
+        putUnique(blockEntities, id, new BlockEntityEntry<>(template, blocksCopy, settings));  
     }
 
     @Override
-    public <T> void block(String name, T block, float strength, boolean noOcclusion) {
-        blocks.put(name, block);
-    }
+    public <T> void registerDataGen(String id, T template, DataGenSettings settings) { putUnique(dataGens, id, new Entry<>(template, settings)); }  
 
     @Override
-    public <T, C> void entity(String name, T entityType, C category, float width, float height) {
-        entities.put(name, entityType);
-    }
+    public <T> void registerPacket(String id, T template, PacketSettings settings) { putUnique(packets, id, new Entry<>(template, settings)); }
 
     @Override
-    public <T, B> void blockEntity(String name, T blockEntityType, B... blocks) {
-        blockEntities.put(name, blockEntityType);
-    }
+    public <T> void registerNetwork(String id, T template, NetworkSettings settings) { putUnique(networks, id, new Entry<>(template, settings)); }
 
-    private static <T> void putUnique(Map<String, Object> map, String name, T value, String kind) {
-        Object prev = map.putIfAbsent(name, value);
-        if (prev != null) {
-            throw new IllegalStateException(kind + " already registered: " + name);
+    @Override
+    public <T> void registerGui(String id, T template, GuiSettings settings) { putUnique(guis, id, new Entry<>(template, settings)); }
+
+    @Override
+    public <T> void registerWorld(String id, T template, WorldSettings settings) { putUnique(worlds, id, new Entry<>(template, settings)); }
+    private static <V> void putUnique(Map<String, V> map, String id, V value) {
+        Objects.requireNonNull(id, "registry id must not be null");
+        if (id.isBlank()) {
+            throw new IllegalArgumentException("registry id must not be blank");
+        }
+        if (map.putIfAbsent(id, value) != null) {
+            throw new IllegalStateException("Duplicate registry id: " + id);
         }
     }
-    
-    @Override
-    public <T> void dataGen(String name, T dataGenDefinition) {
-        putUnique(dataGens, name, dataGenDefinition, "dataGen");
-    }
 
-    @Override
-    public <T> void gui(String name, T guiDefinition) {
-        putUnique(guis, name, guiDefinition, "gui");
-    }
-
-    @Override
-    public <T> void world(String name, T worldDefinition) {
-        putUnique(worlds, name, worldDefinition, "world");
-    }
-
-    @Override
-    public <T> void network(String name, T networkDefinition) {
-        putUnique(networks, name, networkDefinition, "network");
-    }
-
-    @Override
-    public <T> void packet(String name, T packetDefinition) {
-        putUnique(packets, name, packetDefinition, "packet");
-    }
 }
