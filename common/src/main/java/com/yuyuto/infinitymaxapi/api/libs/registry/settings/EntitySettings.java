@@ -12,6 +12,6 @@ public final class EntitySettings<C> {
     public float height = 1.8f;
 
     public EntitySettings(C category) {
-        this.category = requireNonNull(category, "category");
+        this.category = Objects.requireNonNull(category, "category");
     }
 }
