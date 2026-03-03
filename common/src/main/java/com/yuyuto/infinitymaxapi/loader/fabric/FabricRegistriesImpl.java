@@ -54,9 +54,14 @@ public final class FabricRegistriesImpl implements ModRegistries {
     @Override
     public <T> void registerWorld(String id, T template, WorldSettings settings) { putUnique(worlds, id, new Entry<>(template, settings)); }
     private static <V> void putUnique(Map<String, V> map, String id, V value) {
+        Objects.requireNonNull(id, "registry id must not be null");
+        if (id.isBlank()) {
+            throw new IllegalArgumentException("registry id must not be blank");
+        }
         if (map.putIfAbsent(id, value) != null) {
             throw new IllegalStateException("Duplicate registry id: " + id);
         }
+    }
     }
 
 }

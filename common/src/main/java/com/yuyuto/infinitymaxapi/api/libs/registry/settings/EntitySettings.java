@@ -13,4 +13,3 @@ public final class EntitySettings<C> {
         this.category = java.util.Objects.requireNonNull(category, "category");
     }
 }
-}

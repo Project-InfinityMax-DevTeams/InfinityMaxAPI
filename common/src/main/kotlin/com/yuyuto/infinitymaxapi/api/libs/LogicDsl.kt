@@ -41,10 +41,10 @@ class LogicScope {
             val context = BehaviorContext(
                 BehaviorBindingType.EVENT,
                 eventId,
-                "event/seventId",
-                "event/${type.simpleName ?: "event"}",
+                "event/$eventId",
                 definition.phase,
                 definition.metadata
+            )
             )
             LogicRegistry.execute(resolvedLogicId, context, it)
         }, definition.priority, definition.async)

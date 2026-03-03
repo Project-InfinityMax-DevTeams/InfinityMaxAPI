@@ -69,9 +69,10 @@ class BehaviorScope {
 
     /** パケットIDとロジックを接続する。 */
     inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
+        requireTargetId(id)
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
-        val resolvedLogicId = definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" }  
+        val resolvedLogicId = definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.registerPacket(
             PacketBehaviorBinding(
