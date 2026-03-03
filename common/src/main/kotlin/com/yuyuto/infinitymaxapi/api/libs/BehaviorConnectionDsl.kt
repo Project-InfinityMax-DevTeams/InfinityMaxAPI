@@ -6,6 +6,7 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector
 import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorRegistry
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorBinding
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
+import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
 
 /**
  * 振る舞い接続 DSL のエントリポイント。
@@ -66,7 +67,17 @@ class BehaviorScope {
         register(BehaviorBindingType.UI, id, block)
     }
 
-    /** パケットIDとロジックを接続する。 */
+    /**
+     * パケット識別子と対応するロジックを登録する。
+     *
+     * 指定された `id` と `block` の内容から `PacketBehaviorBinding` を BehaviorRegistry に登録し、
+     * 同じ論理識別子で LogicRegistry にパケットコネクタを登録する。
+     * `block` 内で設定された `connector` は必須で、`logicId` が空の場合は `packet:<id>:<phase>` の形式で既定値が使用される。
+     *
+     * @param id 登録するパケットの識別子。
+     * @param block PacketBehaviorBindingScope を構成するビルダーブロック。
+     * @throws IllegalArgumentException `block` 内で `connector` が設定されていない場合。
+     */
     inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
@@ -75,19 +86,37 @@ class BehaviorScope {
             PacketBehaviorBinding(
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase(),
+                definition.phase,
+                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
                 definition.metadata,
                 connector,
                 T::class.java
             )
         )
+
+        LogicRegistry.registerPacket(
+            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+            connector,
+            T::class.java
+        )
     }
 
-    /** 共通接続ロジック。 */
+    /**
+     * 指定した種類とIDでBehaviorおよび対応するLogicを登録する。
+     *
+     * 与えられたブロックでBehaviorBindingScopeを構築し、connector と logicId を確定して
+     * BehaviorRegistry に BehaviorBinding を登録し、同一の logicId を LogicRegistry に登録する。
+     *
+     * @param type 登録するバインディングの種類
+     * @param id バインディングの識別子（空文字は許容されない）
+     * @param block バインディング設定を行うDSLブロック
+     * @throws IllegalArgumentException id が空文字の場合、またはブロック内で connector が未設定の場合
+     */
     private fun register(type: BehaviorBindingType, id: String, block: BehaviorBindingScope.() -> Unit) {
         requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
+        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.register(
             BehaviorBinding(
@@ -95,10 +124,13 @@ class BehaviorScope {
                 id,
                 definition.resourceId,
                 definition.phase.name.lowercase(),
+                resolvedLogicId,
                 definition.metadata,
                 connector
             )
         )
+
+        LogicRegistry.registerBehavior(resolvedLogicId, connector)
     }
 }
 
@@ -115,6 +147,12 @@ class BehaviorBindingScope {
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
+
+    /**
+     * LogicID。
+     * この文字列を変更すると EventAPI 側で公開されるロジック識別子が変わる。
+     */
+    var logicId: String = ""
 
     /** 実行ロジック（Java メソッド参照を想定）。 */
     var connector: BehaviorConnector? = null
@@ -138,6 +176,12 @@ class PacketBehaviorBindingScope<T : Any> {
 
     /** Java ロジックへ渡す任意メタデータ。 */
     val metadata: MutableMap<String, Any> = linkedMapOf()
+
+    /**
+     * LogicID。
+     * この文字列を変更すると EventAPI 側で公開されるロジック識別子が変わる。
+     */
+    var logicId: String = ""
 
     /** パケット用ロジック（Java メソッド参照を想定）。 */
     var connector: PacketBehaviorConnector<T>? = null
