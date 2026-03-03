@@ -45,7 +45,6 @@ class LogicScope {
                 definition.phase,
                 definition.metadata
             )
-            )
             LogicRegistry.execute(resolvedLogicId, context, it)
         }, definition.priority, definition.async)
     }

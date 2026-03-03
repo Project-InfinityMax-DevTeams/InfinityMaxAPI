@@ -38,7 +38,7 @@ object BehaviorApi {
 class BehaviorScope {
 
     // 検証用のプライベート関数を追加
-    private fun requireTargetId(id: String) {
+    @PublishedApi internal fun requireTargetId(id: String) {
         require(id.isNotBlank()) { "target id must not be blank" }
     }
 

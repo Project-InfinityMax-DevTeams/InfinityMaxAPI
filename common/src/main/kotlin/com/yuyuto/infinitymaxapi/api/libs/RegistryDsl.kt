@@ -38,20 +38,20 @@ object RegistryApi {
 @RegistryDsl
 class RegistryScope {
 
-    fun <T : Any> item(id: String, template: T, block: ItemSettings.() -> Unit = {}): T {
-        val settings = ItemSettings().apply(block)
+    fun <T : Any> item(id: String, template: T, block: ItemSettings<T>.() -> Unit = {}): T {
+        val settings = ItemSettings<T>().apply(block)
         ModRegistriesProvider.get().registerItem(id, template, settings)
         return template
     }
 
-    fun <T : Any> block(id: String, template: T, block: BlockSettings.() -> Unit = {}): T {
-        val settings = BlockSettings().apply(block)
+    fun <T : Any> block(id: String, template: T, block: BlockSettings<T>.() -> Unit = {}): T {
+        val settings = BlockSettings<T>().apply(block)
         ModRegistriesProvider.get().registerBlock(id, template, settings)
         return template
     }
 
-    fun <T : Any, C : Any> entity(id: String, template: T, block: EntitySettings<C>.() -> Unit): T {
-        val settings = EntitySettings<C>().apply(block)
+    fun <T : Any, C : Any> entity(id: String, template: T, block: EntitySettings<T>.() -> Unit): T {
+        val settings = EntitySettings<T>().apply(block)
         requireNotNull(settings.category) { "Entity category is required" }
         ModRegistriesProvider.get().registerEntity(id, template, settings)
         return template
