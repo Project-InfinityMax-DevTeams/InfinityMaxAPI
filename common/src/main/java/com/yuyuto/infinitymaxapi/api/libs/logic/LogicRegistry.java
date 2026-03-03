@@ -49,9 +49,13 @@ public final class LogicRegistry {
         Objects.requireNonNull(payloadType, "payloadType");
 
         final LogicExecutor executor = (context, payload) -> {
-            if (payloadType.isInstance(payload)) {
-                connector.execute(context, payloadType.cast(payload));
+            if (!payloadType.isInstance(payload)) {
+                throw new IllegalArgumentException(
+                        "Payload type mismatch for logicId. expected=" + payloadType.getName()
+                                 ", actual=" + (payload == null ? "null" : payload.getClass().getName())
+                );
             }
+            connector.execute(context, payloadType.cast(payload));
         };
 
         LOGICS.put(logicId, executor);
