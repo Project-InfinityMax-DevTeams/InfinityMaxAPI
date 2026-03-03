@@ -31,13 +31,7 @@ object RegistryApi {
 class RegistryScope {
     fun <T : Any> item(id: String, template: T, block: ItemRegistration<T>.() -> Unit = {}): T {
         val reg = ItemRegistration(template).apply(block)  
-        ModRegistries.registerItem<T>(  
-            id,  
-            template,  
-            reg.stack,  
-            reg.durability,  
-            reg.tab  
-        )
+        ModRegistries.registerItem<T>(id,template,reg.stack,reg.durability,reg.tab)
         return template
     }
 
