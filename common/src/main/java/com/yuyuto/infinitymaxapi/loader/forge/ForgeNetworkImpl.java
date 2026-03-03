@@ -23,6 +23,6 @@ public final class ForgeNetworkImpl implements LoaderExpectPlatform.Network {
     }
 
     @Override
-    public <T> void sendToPlayer(T player, T packet) {
+    public <P, T> void sendToPlayer(P player, T packet) {
     }
 }
