@@ -11,9 +11,14 @@ public final class ModItems {
         return register(id, item, new ItemSettings());
     }
 
+    public static <T> T register(String id, T item) {
+        return register(id, item, new ItemSettings());
+    }
+
     public static <T> T register(String id, T item, ItemSettings settings) {
         ModRegistriesProvider.get().registerItem(id, item, settings);
         return item;
+    }
     }
     }
 }
