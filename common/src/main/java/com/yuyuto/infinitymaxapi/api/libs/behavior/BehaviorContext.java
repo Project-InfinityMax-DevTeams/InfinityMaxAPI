@@ -16,14 +16,14 @@ public final class BehaviorContext {
     private final BehaviorBindingType type;
     private final String targetId;
     private final String resourceId;
-    private final String phase;
+    private final Phase phase;
     private final Map<String, Object> metadata;
 
     public BehaviorContext(
             BehaviorBindingType type,
             String targetId,
             String resourceId,
-            String phase,
+            Phase phase,
             Map<String, Object> metadata
     ) {
         this.type = Objects.requireNonNull(type, "type");
@@ -45,11 +45,23 @@ public final class BehaviorContext {
         return resourceId;
     }
 
-    public String phase() {
+    public Phase phase() {
         return phase;
     }
 
     public Map<String, Object> metadata() {
         return metadata;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Class<T> type) {
+        Object value = metadata.get(key);
+        if (value == null) {
+            return null;
+        }
+        if (!type.isInstance(value)) {
+            throw new IllegalStateException("Metadata key '" + key + "' is not of type " + type.getName());
+        }
+        return (T) value;
     }
 }

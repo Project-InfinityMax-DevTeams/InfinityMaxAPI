@@ -14,7 +14,7 @@ public final class PacketBehaviorBinding<T> {
 
     private final String targetId;
     private final String resourceId;
-    private final String phase;
+    private final Phase phase;
     private final Map<String, Object> metadata;
     private final PacketBehaviorConnector<T> connector;
     private final Class<T> payloadType;
@@ -23,7 +23,7 @@ public final class PacketBehaviorBinding<T> {
     public PacketBehaviorBinding(
             String targetId,
             String resourceId,
-            String phase,
+            Phase phase,
             Map<String, Object> metadata,
             PacketBehaviorConnector<T> connector,
             Class<T> payloadType
@@ -47,7 +47,7 @@ public final class PacketBehaviorBinding<T> {
         return resourceId;
     }
 
-    public String phase() {
+    public Phase phase() {
         return phase;
     }
 
