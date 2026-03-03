@@ -105,17 +105,6 @@ behavior {
 
 ### 1-3. logic DSL（Event定義とトリガー）
 
-```kotlin
-import com.yuyuto.infinitymaxapi.api.libs.logic
-import com.yuyuto.infinitymaxapi.api.libs.Phase
-import com.yuyuto.infinitymaxapi.api.event.PlayerJoinEvent
-
-logic {
-    event<PlayerJoinEvent> {
-        trigger("examplemod:item_use") // この文字列で起動LogicIDを指定
-        phase = Phase.INTERACT          // context phase の識別値
-        priority = com.yuyuto.infinitymaxapi.api.event.EventPriority.NORMAL
-        async = false
         meta("source", "player_join")
     }
 }
