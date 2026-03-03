@@ -19,11 +19,11 @@ public final class FabricNetworkImpl implements LoaderExpectPlatform.Network {
 
     @Override
     public <T> void sendToServer(T packet) {
-        // 実送信は Fabric networking API 実装時にこの箇所へ追加する。
+        throw new UnsupportedOperationException("Fabric network sendToServer is not implemented yet.");
     }
 
     @Override
     public <P, T> void sendToPlayer(P player, T packet) {
-        // 実送信は Fabric networking API 実装時にこの箇所へ追加する。
+        throw new UnsupportedOperationException("Fabric network sendToPlayer is not implemented yet.");
     }
 }

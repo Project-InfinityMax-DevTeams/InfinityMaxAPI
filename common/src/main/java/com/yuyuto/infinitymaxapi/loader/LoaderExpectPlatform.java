@@ -27,7 +27,7 @@ public interface LoaderExpectPlatform {
 
         /** ワールド要素（ディメンション/バイオーム/構造物）登録。 */
         default <T> void world(String name, T worldDefinition) {
-            throw new UnsupportedOperationException("dataGen is not implemented on this platform");
+            throw new UnsupportedOperationException("world is not implemented on this platform");
         }
 
         /** ネットワーク登録。 */

@@ -48,6 +48,8 @@ public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registri
         if (prev != null) {
             throw new IllegalStateException(kind + " already registered: " + name);
         }
+    }
+    
     @Override
     public <T> void dataGen(String name, T dataGenDefinition) {
         putUnique(dataGens, name, dataGenDefinition, "dataGen");
