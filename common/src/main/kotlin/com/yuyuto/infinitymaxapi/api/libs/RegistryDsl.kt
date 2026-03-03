@@ -50,9 +50,9 @@ class RegistryScope {
         return template
     }
 
-    fun <T : Any, C : Any> entity(id: String, template: T, category: C, block: EntitySettings<C>.() -> Unit): T {
-        val settings = EntitySettings<C>(category).apply(block)
-        val category = requireNotNull(settings.category) { "Entity category is required" }
+    fun <T : Any, C : Any> entity(id: String, template: T, block: EntitySettings<C>.() -> Unit): T {
+        val settings = EntitySettings<C>().apply(block)
+        requireNotNull(settings.category) { "Entity category is required" }
         ModRegistriesProvider.get().registerEntity(id, template, settings)
         return template
     }
