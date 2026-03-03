@@ -30,8 +30,14 @@ object RegistryApi {
 @RegistryDsl
 class RegistryScope {
     fun <T : Any> item(id: String, template: T, block: ItemRegistration<T>.() -> Unit = {}): T {
-        ItemRegistration(template).apply(block)
-        ModRegistries.registerItem(id, template)
+        val reg = ItemRegistration(template).apply(block)  
+        ModRegistries.registerItem(  
+            id = id,  
+            template = template,  
+            stack = reg.stack,  
+            durability = reg.durability,  
+            tab = reg.tab  
+        )
         return template
     }
 
@@ -46,6 +52,8 @@ class RegistryScope {
     fun <T : Any, C : Any> entity(id: String, template: T, block: EntityRegistration<C>.() -> Unit): T {
         val reg = EntityRegistration<C>().apply(block)
         val category = requireNotNull(reg.category) { "Entity category is required" }
+        require(reg.width > 0f) { "Entity width must be > 0" }
+        require(reg.height > 0f) { "Entity height must be > 0" }
         ModRegistries.registerEntity(id, template, category, reg.width, reg.height)
         return template
     }
@@ -72,21 +80,28 @@ class RegistryScope {
 
 @RegistryDsl
 class ItemRegistration<T : Any>(val template: T) {
+    /** スタック上限。ここを変更するとアイテムの最大保持数が変わる。 */
     var stack: Int = 64
+    /** 耐久値。ここを変更するとアイテムの耐久性が変わる。 */
     var durability: Int = 0
     var tab: Any? = null
 }
 
 @RegistryDsl
 class BlockRegistration<T : Any>(val template: T) {
+    /** 強度。ここを変更するとブロックの硬さが変わる。 */
     var strength: Float = 1.0f
+    /** 遮蔽判定。true にすると透過/非遮蔽扱い。 */
     var noOcclusion: Boolean = false
 }
 
 @RegistryDsl
 class EntityRegistration<C : Any> {
+    /** カテゴリ。ここを変更するとエンティティの分類が変わる。 */
     var category: C? = null
+    /** 幅。ここを変更すると当たり判定の横幅が変わる。 */
     var width: Float = 0.6f
+    /** 高さ。ここを変更すると当たり判定の高さが変わる。 */
     var height: Float = 1.8f
 }
 
