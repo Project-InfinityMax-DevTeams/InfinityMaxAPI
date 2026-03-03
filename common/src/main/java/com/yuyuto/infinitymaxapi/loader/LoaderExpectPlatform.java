@@ -14,7 +14,7 @@ public interface LoaderExpectPlatform {
     interface Network {
         void register();
         <T> void sendToServer(T packet);
-        <T> void sendToPlayer(T player, T packet);
+        <P, T> void sendToPlayer(P player, T packet);
     }
 
     interface Events {

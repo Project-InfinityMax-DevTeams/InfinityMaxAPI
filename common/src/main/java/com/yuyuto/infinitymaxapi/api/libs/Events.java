@@ -47,5 +47,4 @@ public final class Events {
         }
         InfinityEventBus.post(new LogicExecutionEvent(logicId, context, payload));
     }
-    }
 }
