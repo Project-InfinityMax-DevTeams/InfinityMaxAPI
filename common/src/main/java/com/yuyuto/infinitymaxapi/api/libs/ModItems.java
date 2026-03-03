@@ -8,7 +8,12 @@ public final class ModItems {
     private ModItems() {}
 
     public static <T> T register(String id, T item) {
-        ModRegistriesProvider.get().registerItem(id, item, new ItemSettings());
+        return register(id, item, new ItemSettings());
+    }
+
+    public static <T> T register(String id, T item, ItemSettings settings) {
+        ModRegistriesProvider.get().registerItem(id, item, settings);
         return item;
+    }
     }
 }

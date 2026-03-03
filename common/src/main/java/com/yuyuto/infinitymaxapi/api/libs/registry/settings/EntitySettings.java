@@ -2,10 +2,15 @@ package com.yuyuto.infinitymaxapi.api.libs.registry.settings;
 
 /** エンティティ登録用の静的設定。 */
 public final class EntitySettings<C> {
-    /** ここを変更するとエンティティカテゴリが変わる。 */
-    public C category;
+    /** エンティティカテゴリ（必須）。 */
+    public final C category;
     /** ここを変更すると当たり判定の横幅が変わる。 */
     public float width = 0.6f;
     /** ここを変更すると当たり判定の高さが変わる。 */
     public float height = 1.8f;
+
+    public EntitySettings(C category) {
+        this.category = java.util.Objects.requireNonNull(category, "category");
+    }
+}
 }

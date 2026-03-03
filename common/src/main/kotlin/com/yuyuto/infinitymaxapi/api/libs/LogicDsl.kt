@@ -33,8 +33,9 @@ class LogicScope {
 
     fun <T : ModEvent> event(type: KClass<T>, block: EventLogicBindingScope<T>.() -> Unit) {
         val definition = EventLogicBindingScope<T>().apply(block)
-        val resolvedLogicId = requireNotNull(definition.logicId) { "trigger(logicId) is required" }
-
+        val resolvedLogicId = definition.logicId
+            ?.takeIf { it.isNotBlank() }
+            ?: throw IllegalArgumentException("trigger(logicId) is required and must not be blank")
         ModEventBus.listen(type.java, {
             val context = BehaviorContext(
                 BehaviorBindingType.EVENT,
