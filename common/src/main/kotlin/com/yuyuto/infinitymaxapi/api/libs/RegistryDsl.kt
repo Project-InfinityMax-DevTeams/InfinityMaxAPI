@@ -30,8 +30,14 @@ object RegistryApi {
 @RegistryDsl
 class RegistryScope {
     fun <T : Any> item(id: String, template: T, block: ItemRegistration<T>.() -> Unit = {}): T {
-        ItemRegistration(template).apply(block)
-        ModRegistries.registerItem(id, template)
+        val reg = ItemRegistration(template).apply(block)  
+        ModRegistries.registerItem(  
+            id = id,  
+            template = template,  
+            stack = reg.stack,  
+            durability = reg.durability,  
+            tab = reg.tab  
+        )
         return template
     }
 
@@ -46,6 +52,8 @@ class RegistryScope {
     fun <T : Any, C : Any> entity(id: String, template: T, block: EntityRegistration<C>.() -> Unit): T {
         val reg = EntityRegistration<C>().apply(block)
         val category = requireNotNull(reg.category) { "Entity category is required" }
+        require(reg.width > 0f) { "Entity width must be > 0" }
+        require(reg.height > 0f) { "Entity height must be > 0" }
         ModRegistries.registerEntity(id, template, category, reg.width, reg.height)
         return template
     }

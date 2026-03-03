@@ -8,6 +8,8 @@ import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorBinding
 import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
 import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
 
+import java.util.Locale
+
 /**
  * 振る舞い接続 DSL のエントリポイント。
  *
@@ -77,7 +79,7 @@ class BehaviorScope {
                 id,
                 definition.resourceId,
                 definition.phase,
-                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" },
                 definition.metadata,
                 connector,
                 T::class.java
@@ -85,7 +87,7 @@ class BehaviorScope {
         )
 
         LogicRegistry.registerPacket(
-            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" },
             connector,
             T::class.java
         )
@@ -96,14 +98,14 @@ class BehaviorScope {
         requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
-        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
+        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase(Locale.ROOT)}" }
 
         BehaviorRegistry.register(
             BehaviorBinding(
                 type,
                 id,
                 definition.resourceId,
-                definition.phase.name.lowercase(),
+                definition.phase.name.lowercase(Locale.ROOT),
                 resolvedLogicId,
                 definition.metadata,
                 connector

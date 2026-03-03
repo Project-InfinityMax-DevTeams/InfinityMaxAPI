@@ -19,11 +19,11 @@ public final class ForgeNetworkImpl implements LoaderExpectPlatform.Network {
 
     @Override
     public <T> void sendToServer(T packet) {
-        // 実送信は Forge networking API 実装時にこの箇所へ追加する。
+        throw new UnsupportedOperationException("Forge network sendToServer is not implemented yet.");
     }
 
     @Override
-    public <T> void sendToPlayer(T player, T packet) {
-        // 実送信は Forge networking API 実装時にこの箇所へ追加する。
+    public <P, T> void sendToPlayer(P player, T packet) {
+        throw new UnsupportedOperationException("Forge network sendToPlayer is not implemented yet.");
     }
 }

@@ -43,28 +43,33 @@ public final class FabricRegistriesImpl implements LoaderExpectPlatform.Registri
         blockEntities.put(name, blockEntityType);
     }
 
+    private static <T> void putUnique(Map<String, Object> map, String name, T value, String kind) {
+        Object prev = map.putIfAbsent(name, value);
+        if (prev != null) {
+            throw new IllegalStateException(kind + " already registered: " + name);
+        }
     @Override
     public <T> void dataGen(String name, T dataGenDefinition) {
-        dataGens.put(name, dataGenDefinition);
+        putUnique(dataGens, name, dataGenDefinition, "dataGen");
     }
 
     @Override
     public <T> void gui(String name, T guiDefinition) {
-        guis.put(name, guiDefinition);
+        putUnique(guis, name, guiDefinition, "gui");
     }
 
     @Override
     public <T> void world(String name, T worldDefinition) {
-        worlds.put(name, worldDefinition);
+        putUnique(worlds, name, worldDefinition, "world");
     }
 
     @Override
     public <T> void network(String name, T networkDefinition) {
-        networks.put(name, networkDefinition);
+        putUnique(networks, name, networkDefinition, "network");
     }
 
     @Override
     public <T> void packet(String name, T packetDefinition) {
-        packets.put(name, packetDefinition);
+        putUnique(packets, name, packetDefinition, "packet");
     }
 }

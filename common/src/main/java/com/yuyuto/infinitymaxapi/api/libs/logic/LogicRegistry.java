@@ -32,7 +32,10 @@ public final class LogicRegistry {
         Objects.requireNonNull(connector, "connector");
 
         final LogicExecutor executor = (context, payload) -> connector.execute(context);
-        LOGICS.put(logicId, executor);
+        LogicExecutor prev = LOGICS.putIfAbsent(logicId, executor);
+        if (prev != null) {
+            throw new IllegalStateException("LogicID already registered: " + logicId);
+        }
     }
 
     /**
@@ -43,6 +46,7 @@ public final class LogicRegistry {
      * @param payloadType ペイロード型。
      * @param <T> パケット型。
      */
+
     public static <T> void registerPacket(String logicId, PacketBehaviorConnector<T> connector, Class<T> payloadType) {
         Objects.requireNonNull(logicId, "logicId");
         Objects.requireNonNull(connector, "connector");
@@ -52,13 +56,16 @@ public final class LogicRegistry {
             if (!payloadType.isInstance(payload)) {
                 throw new IllegalArgumentException(
                         "Payload type mismatch for logicId. expected=" + payloadType.getName()
-                                 ", actual=" + (payload == null ? "null" : payload.getClass().getName())
+                                + ", actual=" + (payload == null ? "null" : payload.getClass().getName())
                 );
             }
             connector.execute(context, payloadType.cast(payload));
         };
 
-        LOGICS.put(logicId, executor);
+        LogicExecutor prev = LOGICS.putIfAbsent(logicId, executor);
+        if (prev != null) {
+            throw new IllegalStateException("LogicID already registered: " + logicId);
+        }
     }
 
     /**
@@ -67,23 +74,23 @@ public final class LogicRegistry {
      * <p>実行責務はこのクラスに集約される。登録済みロジックを実行した後、
      * EventAPI へ通知する。</p>
      */
-public static void execute(String logicId, BehaviorContext context, Object payload) {
-    Objects.requireNonNull(logicId, "logicId");
-    Objects.requireNonNull(context, "context");
+    public static void execute(String logicId, BehaviorContext context, Object payload) {
+        Objects.requireNonNull(logicId, "logicId");
+        Objects.requireNonNull(context, "context");
 
-    LogicExecutor executor = LOGICS.get(logicId);
-    if (executor == null) {
-        throw new IllegalStateException("Unregistered logicId: " + logicId);
+        LogicExecutor executor = LOGICS.get(logicId);
+        if (executor == null) {
+            throw new IllegalStateException("Unregistered logicId: " + logicId);
+        }
+
+        executor.execute(context,payload);
+
+        Events.dispatchLogic(new LogicExecutionEvent(logicId, context, payload));
     }
 
-    executor.execute(context, payload);
-
-    Events.dispatchLogic(logicId, context, payload);
-}
-
-public static void execute(String logicId, BehaviorContext context) {
-    execute(logicId, context, null);
-}
+    public static void execute(String logicId, BehaviorContext context) {  
+        execute(logicId, context, null);
+    }
 
     @FunctionalInterface
     public interface LogicExecutor {

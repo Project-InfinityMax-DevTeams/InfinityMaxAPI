@@ -13,8 +13,8 @@ public final class LogicExecutionEvent extends InfinityEvent {
     private final Object payload;
 
     public LogicExecutionEvent(String logicId, BehaviorContext context, Object payload) {
-        this.logicId = logicId;
-        this.context = context;
+        this.logicId = Objects.requireNonNull(logicId, "logicId");
+        this.context = Objects.requireNonNull(context, "context");
         this.payload = payload;
     }
 

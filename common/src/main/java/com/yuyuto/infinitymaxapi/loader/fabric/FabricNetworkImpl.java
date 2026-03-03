@@ -23,7 +23,7 @@ public final class FabricNetworkImpl implements LoaderExpectPlatform.Network {
     }
 
     @Override
-    public <T> void sendToPlayer(T player, T packet) {
+    public <P, T> void sendToPlayer(P player, T packet) {
         // 実送信は Fabric networking API 実装時にこの箇所へ追加する。
     }
 }
