@@ -19,6 +19,4 @@ public final class ModItems {
         ModRegistriesProvider.get().registerItem(id, item, settings);
         return item;
     }
-    }
-    }
 }
