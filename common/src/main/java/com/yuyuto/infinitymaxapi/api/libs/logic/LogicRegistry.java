@@ -67,7 +67,7 @@ public final class LogicRegistry {
      * <p>実行責務はこのクラスに集約される。実行時には先に EventAPI へ通知し、
      * その後に登録済みロジックを実行する。</p>
      */
-public static void execute(String logicId, LogicContext context) {
+public static void execute(String logicId, BehaviorContext context, Object payload) {
     Objects.requireNonNull(logicId, "logicId");
     Objects.requireNonNull(context, "context");
 
@@ -76,9 +76,13 @@ public static void execute(String logicId, LogicContext context) {
         throw new IllegalStateException("Unregistered logicId: " + logicId);
     }
 
-    executor.execute(context);
+    executor.execute(context, payload);
 
-    Events.dispatchLogic(new LogicExecutionEvent(logicId, context));
+    Events.dispatchLogic(logicId, context, payload);
+}
+
+public static void execute(String logicId, BehaviorContext context) {
+    execute(logicId, context, null);
 }
 
     @FunctionalInterface
