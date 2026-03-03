@@ -46,7 +46,7 @@ public final class PacketBehaviorBinding<T> {
         this.connector = connector;
         this.payloadType = payloadType;
         this.context = new BehaviorContext(
-            BehaviorBindingType.PACKET, targetId, resourceId, phase.name().toLowerCase(java.util.Locale.ROOT), this.metadata
+            BehaviorBindingType.PACKET, targetId, resourceId, phase, this.metadata
         );
     }
 

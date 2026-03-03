@@ -5,6 +5,7 @@ import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Fabric 向けの登録実体。
