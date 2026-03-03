@@ -44,16 +44,16 @@ class RegistryScope {
         return template
     }
 
-    fun <T : Any> block(id: String, template: T, block: BlockSettings<T>.() -> Unit = {}): T {
-        val settings = BlockSettings<T>().apply(block)
+    fun <T : Any> block(id: String, template: T, block: BlockSettings.() -> Unit = {}): T {
+        val settings = BlockSettings().apply(block)
         ModRegistriesProvider.get().registerBlock(id, template, settings)
         return template
     }
 
-    fun <T : Any, C : Any> entity(id: String, template: T, block: EntitySettings<T>.() -> Unit): T {
-        val settings = EntitySettings<T>().apply(block)
-        requireNotNull(settings.category) { "Entity category is required" }
-        ModRegistriesProvider.get().registerEntity(id, template, settings)
+    fun <T : Any, C : Any> entity(id: String, template: T, block: EntitySettings<C>.() -> Unit): T {
+        val settings = EntitySettings<C>().apply(block)
+        val category = requireNotNull(settings.category) { "Entity category is required" }
+        ModRegistriesProvider.get().registerEntity(id, template, category, settings.width, settings.height)
         return template
     }
 
