@@ -59,7 +59,7 @@ class RegistryScope {
 
     fun <T : Any, B : Any> blockEntity(id: String, template: T, vararg blocks: B, block: BlockEntitySettings.() -> Unit = {}): T {
         val settings = BlockEntitySettings().apply(block)
-        ModRegistriesProvider.get().registerBlockEntity(id, template, blocks, Array<B>, settings)
+        ModRegistriesProvider.get().registerBlockEntity(id, template, *blocks, settings)
         return template
     }
 
