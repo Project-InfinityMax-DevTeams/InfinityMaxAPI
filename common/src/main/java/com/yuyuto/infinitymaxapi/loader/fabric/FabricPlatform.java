@@ -1,12 +1,13 @@
 package com.yuyuto.infinitymaxapi.loader.fabric;
 
+import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
 import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
 
 public final class FabricPlatform implements LoaderExpectPlatform {
 
     private static final String MOD_ID = "infinitymaxapi";
 
-    private final com.yuyuto.infinitymaxapi.api.libs.ModRegistries registries = new FabricRegistriesImpl();
+    private final ModRegistries registries = new FabricRegistriesImpl();
     private final Network network = new FabricNetworkImpl();
     private final Events events = new FabricEventsImpl();
 

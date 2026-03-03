@@ -22,6 +22,7 @@ InfinityMaxAPI の設計は以下です。
 
 ```kotlin
 import com.yuyuto.infinitymaxapi.api.libs.registry
+import com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection 
 
 registry {
     item("example_item", Any()) {
@@ -51,7 +52,7 @@ registry {
     }
 
     packet("example_packet", Any()) {
-        direction = com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection.C2S
+        direction = PacketDirection.C2S
         channel = "main"          // チャネル識別子
     }
 
@@ -78,6 +79,7 @@ registry {
 import com.yuyuto.infinitymaxapi.api.libs.Phase
 import com.yuyuto.infinitymaxapi.api.libs.behavior
 import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector
+import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
 
 behavior {
     item("example_item") {
@@ -94,7 +96,7 @@ behavior {
         resourceId = "network/example_packet"
         phase = Phase.RECEIVE
         logicId = "examplemod:packet_receive"
-        connector = com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector<Any> { ctx, payload ->
+        connector = PacketBehaviorConnector<Any> { ctx, payload ->
             // packet logic
         }
     }

@@ -37,9 +37,11 @@ class LogicScope {
             ?.takeIf { it.isNotBlank() }
             ?: throw IllegalArgumentException("trigger(logicId) is required and must not be blank")
         ModEventBus.listen(type.java, {
+            val eventId = type.qualifiedName ?: type.simpleName ?: "event" 
             val context = BehaviorContext(
                 BehaviorBindingType.EVENT,
-                type.simpleName ?: "event",
+                eventId,
+                "event/seventId",
                 "event/${type.simpleName ?: "event"}",
                 definition.phase,
                 definition.metadata

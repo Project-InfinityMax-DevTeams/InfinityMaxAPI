@@ -65,6 +65,8 @@ public final class LogicRegistry {
      */
     public static void execute(String logicId, BehaviorContext context, Object payload) {
         Events.dispatchLogic(logicId, context, payload);
+        Objects.requireNonNull(logicId, "logicId");
+        Objects.requireNonNull(context, "context");
 
         final LogicExecutor executor = LOGICS.get(logicId);
         if (executor != null) {

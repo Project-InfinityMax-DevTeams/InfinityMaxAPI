@@ -71,13 +71,14 @@ class BehaviorScope {
     inline fun <reified T : Any> packet(id: String, noinline block: PacketBehaviorBindingScope<T>.() -> Unit) {
         val definition = PacketBehaviorBindingScope<T>().apply(block)
         val connector = requireNotNull(definition.connector) { "packet connector is required" }
+        val resolvedLogicId = definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" }  
 
         BehaviorRegistry.registerPacket(
             PacketBehaviorBinding(
                 id,
                 definition.resourceId,
                 definition.phase,
-                definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+                resolvedLogicId,
                 definition.metadata,
                 connector,
                 T::class.java
@@ -85,7 +86,7 @@ class BehaviorScope {
         )
 
         LogicRegistry.registerPacket(
-            definition.logicId.ifBlank { "packet:${id}:${definition.phase.name.lowercase()}" },
+            resolvedLogicId,
             connector,
             T::class.java
         )

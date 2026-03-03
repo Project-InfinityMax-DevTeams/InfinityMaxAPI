@@ -11,19 +11,24 @@ import java.util.Objects;
  */
 public final class ModRegistriesProvider {
 
-    private static ModRegistries instance;
+    private static volatile ModRegistries instance;
 
     private ModRegistriesProvider() {
     }
 
-    public static void set(ModRegistries registries) {
-        instance = Objects.requireNonNull(registries, "registries");
+    public static synchronized void set(ModRegistries registries) {
+        Objects.requireNonNull(registries, "registries");
+        if (instance != null) {
+            throw new IllegalStateException("ModRegistries is already initialized.");
+        }
+        instance = registries;
     }
 
     public static ModRegistries get() {
-        if (instance == null) {
+        final ModRegistries registries = instance;
+        if (registries == null) {
             throw new IllegalStateException("ModRegistries is not initialized. Loader must call ModRegistriesProvider.set(...)");
         }
-        return instance;
+        return registries;
     }
 }
