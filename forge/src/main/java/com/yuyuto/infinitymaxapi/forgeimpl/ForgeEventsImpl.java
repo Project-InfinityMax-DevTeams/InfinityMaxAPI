@@ -1,9 +1,9 @@
-package com.yuyuto.infinitymaxapi.loader.fabric;
+package com.yuyuto.infinitymaxapi.forgeimpl;
 
 import com.yuyuto.infinitymaxapi.api.event.CommonEvents;
 import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
 
-public final class FabricEventsImpl implements LoaderExpectPlatform.Events {
+public final class ForgeEventsImpl implements LoaderExpectPlatform.Events {
 
     @Override
     public void register() {

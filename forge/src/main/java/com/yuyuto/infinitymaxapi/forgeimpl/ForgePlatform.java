@@ -1,15 +1,16 @@
-package com.yuyuto.infinitymaxapi.loader.fabric;
+package com.yuyuto.infinitymaxapi.forgeimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
 import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
+import com.yuyuto.infinitymaxapi.forgeimpl.*;
 
-public final class FabricPlatform implements LoaderExpectPlatform {
+public final class ForgePlatform implements LoaderExpectPlatform {
 
     private static final String MOD_ID = "infinitymaxapi";
 
-    private final ModRegistries registries = new FabricRegistriesImpl();
-    private final Network network = new FabricNetworkImpl();
-    private final Events events = new FabricEventsImpl();
+    private final ModRegistries registries = new ForgeRegistriesImpl();
+    private final Network network = new ForgeNetworkImpl();
+    private final Events events = new ForgeEventsImpl();
 
     @Override
     public String id(String path) {

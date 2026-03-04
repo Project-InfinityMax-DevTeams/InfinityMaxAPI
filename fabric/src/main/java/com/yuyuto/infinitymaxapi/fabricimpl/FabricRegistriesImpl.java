@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.loader.fabric;
+package com.yuyuto.infinitymaxapi.fabricimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;

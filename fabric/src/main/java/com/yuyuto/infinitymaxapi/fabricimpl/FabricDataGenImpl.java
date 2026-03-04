@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.loader.fabric;
+package com.yuyuto.infinitymaxapi.fabricimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.datagen.BlockGen;
 import com.yuyuto.infinitymaxapi.api.libs.datagen.DataGen;

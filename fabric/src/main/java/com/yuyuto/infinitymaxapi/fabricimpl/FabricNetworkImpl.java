@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.loader.forge;
+package com.yuyuto.infinitymaxapi.fabricimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.packet.PacketRegistry;
 import com.yuyuto.infinitymaxapi.api.libs.packet.SimplePacket;
@@ -6,8 +6,8 @@ import com.yuyuto.infinitymaxapi.api.libs.registry.settings.PacketSettings;
 import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
 import com.yuyuto.infinitymaxapi.loader.Platform;
 
-/** Forge 向けネットワークブリッジ。 */
-public final class ForgeNetworkImpl implements LoaderExpectPlatform.Network {
+/** Fabric 向けネットワークブリッジ。 */
+public final class FabricNetworkImpl implements LoaderExpectPlatform.Network {
 
     @Override
     public void register() {

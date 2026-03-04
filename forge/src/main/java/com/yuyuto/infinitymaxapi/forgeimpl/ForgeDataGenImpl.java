@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.loader.forge;
+package com.yuyuto.infinitymaxapi.forgeimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.datagen.Loot;
 import com.yuyuto.infinitymaxapi.api.libs.datagen.Model;
