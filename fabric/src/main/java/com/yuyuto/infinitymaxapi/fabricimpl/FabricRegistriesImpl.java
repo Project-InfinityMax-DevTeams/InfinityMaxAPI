@@ -65,4 +65,29 @@ public final class FabricRegistriesImpl implements ModRegistries {
         }
     }
 
+    @override
+    public void commit(){
+        item.forEach((id, template) -> {
+            Registries.registerItem(Registries.ITEM, new Identifer(modId, id), (item) template);
+        });
+
+        block.forEach((id, template) -> {
+            Registries.registerBlock(Registries.BLOCK, new Identifer(modId, id), (block) template);
+        });
+
+        entity.forEach((id, template) -> {
+            Registries.registerEntity(Registries.ENTITY, new Identifer(modId, id), (entity) template);
+        });
+
+        blockEntity.forEach((id, entry) -> {
+            Registries.registerBlockEntity(Registries.BLOCK_ENTITY, new Identifer(modId, id), (blockEntity) entry.template);
+            if (entry.blocks != null) {
+                for (var block : entry.blocks) {
+                    // ブロックとブロックエンティティの関連付け
+                    Registries.registerBlockEntityAssociation(block, (blockEntity) entry.template);
+                }
+            }
+        });
+    }
+
 }

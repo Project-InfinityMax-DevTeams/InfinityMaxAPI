@@ -27,4 +27,6 @@ public interface ModRegistries {
     <T> void registerGui(String id, T template, GuiSettings settings);
 
     <T> void registerWorld(String id, T template, WorldSettings settings);
+
+    void commit();
 }
