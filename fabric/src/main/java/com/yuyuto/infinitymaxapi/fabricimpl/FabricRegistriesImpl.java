@@ -65,28 +65,62 @@ public final class FabricRegistriesImpl implements ModRegistries {
         }
     }
 
-    @override
-    public void commit(){
-        item.forEach((id, template) -> {
-            Registries.registerItem(Registries.ITEM, new Identifer(modId, id), (item) template);
+    @Override
+    public void commit() {
+        // ---- Item ----
+        items.forEach((id, entry) -> {
+            Registries.registerItem(Registries.ITEM, new Identifier(modId, id), entry.template);
         });
 
-        block.forEach((id, template) -> {
-            Registries.registerBlock(Registries.BLOCK, new Identifer(modId, id), (block) template);
+        // ---- Block ----
+        blocks.forEach((id, entry) -> {
+            Registries.registerBlock(Registries.BLOCK, new Identifier(modId, id), entry.template);
         });
 
-        entity.forEach((id, template) -> {
-            Registries.registerEntity(Registries.ENTITY, new Identifer(modId, id), (entity) template);
+        // ---- Entity ----
+        entities.forEach((id, entry) -> {
+            Registries.registerEntity(Registries.ENTITY, new Identifier(modId, id), entry.template);
         });
 
-        blockEntity.forEach((id, entry) -> {
-            Registries.registerBlockEntity(Registries.BLOCK_ENTITY, new Identifer(modId, id), (blockEntity) entry.template);
+        // ---- BlockEntity ----
+        blockEntities.forEach((id, entry) -> {
+            Registries.registerBlockEntity(Registries.BLOCK_ENTITY, new Identifier(modId, id), entry.template);
             if (entry.blocks != null) {
                 for (var block : entry.blocks) {
-                    // ブロックとブロックエンティティの関連付け
-                    Registries.registerBlockEntityAssociation(block, (blockEntity) entry.template);
+                    Registries.registerBlockEntityAssociation(block, entry.template);
                 }
             }
+        });
+
+        // ---- Packet ----
+        packets.forEach((id, entry) -> {
+            var settings = entry.settings;
+            // 例: C2S / S2C 方向で登録
+            ServerPlayNetworking.registerGlobalReceiver(
+                new Identifier(modId, settings.channel),
+                (server, player, handler, buf, responseSender) -> {
+                    if (settings.direction == PacketDirection.C2S) {
+                        entry.template.handleC2S(server, player, buf);
+                    } else {
+                        entry.template.handleS2C(server, player, buf);
+                    }
+                }
+            );
+        });
+
+        // ---- Network ----
+        networks.forEach((id, entry) -> {
+            // Networkは実装がどうなるか不明
+        });
+
+        // ---- Gui ----
+        guis.forEach((id, entry) -> {
+            ScreenRegistry.register(new Identifier(modId, entry.settings.screenId), entry.template);
+        });
+
+        // ---- World ----
+        worlds.forEach((id, entry) -> {
+            // Worldは実装がどうなるか不明
         });
     }
 
