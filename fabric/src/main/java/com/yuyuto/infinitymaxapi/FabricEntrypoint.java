@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.loader.fabric;
+package com.yuyuto.infinitymaxapi;
 
 import com.yuyuto.infinitymaxapi.InfinityMaxAPI;
 import com.yuyuto.infinitymaxapi.loader.Platform;
