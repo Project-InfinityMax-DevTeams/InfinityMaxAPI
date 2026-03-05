@@ -240,7 +240,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
 
                 // ★ここが重要★
                 Optional.of(
-                    template.flow() == PacketFlow.C2S
+                    template.flow() == PacketDirection.C2S
                         ? NetworkDirection.PLAY_TO_SERVER
                         : NetworkDirection.PLAY_TO_CLIENT
                 )
