@@ -250,7 +250,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                 },
 
                 // ★ここが重要★
-                NetworlDirection direction =
+                NetworkDirection direction =
                     template.flow() == PacketDirection.C2S
                         ? NetworkDirection.PLAY_TO_SERVER
                         : NetworkDirection.PLAY_TO_CLIENT;
