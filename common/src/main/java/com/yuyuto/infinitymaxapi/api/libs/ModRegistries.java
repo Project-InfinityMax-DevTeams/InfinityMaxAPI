@@ -1,12 +1,14 @@
 package com.yuyuto.infinitymaxapi.api.libs;
 
+import com.yuyuto.infinitymaxapi.api.libs.packet.Packet;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 
 /**
  * ローダーごとの実登録を抽象化するインターフェース。
  *
- * <p>common はこのインターフェースのみを参照し、Forge/Fabric 実装は
- * それぞれのローダー側クラスで行う。</p>
+ * <p>責務:
+ * common は「何を登録したいか」をこの API に渡すだけにし、
+ * 実際のローダー API 呼び出しは Fabric / Forge 側の commit() に集約する。</p>
  */
 public interface ModRegistries {
 
@@ -20,7 +22,7 @@ public interface ModRegistries {
 
     <T> void registerDataGen(String id, T template, DataGenSettings settings);
 
-    <T> void registerPacket(String id, T template, PacketSettings settings);
+    void registerPacket(String id, Packet template, PacketSettings settings);
 
     <T> void registerNetwork(String id, T template, NetworkSettings settings);
 
@@ -28,5 +30,8 @@ public interface ModRegistries {
 
     <T> void registerWorld(String id, T template, WorldSettings settings);
 
+    /**
+     * ため込んだ登録情報(Map)をローダーの実 Registry / Network API へ反映する。
+     */
     void commit();
 }

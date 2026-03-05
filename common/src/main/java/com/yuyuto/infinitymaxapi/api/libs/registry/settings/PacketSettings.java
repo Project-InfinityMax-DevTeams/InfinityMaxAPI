@@ -1,11 +1,12 @@
 package com.yuyuto.infinitymaxapi.api.libs.registry.settings;
 
-import com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection;
-
-/** パケット登録用の静的設定。 */
+/**
+ * パケット登録用の最小静的設定。
+ */
 public final class PacketSettings {
-    /** ここを変更するとパケット方向が変わる。 */
-    public PacketDirection direction = PacketDirection.C2S;
-    /** ここを変更すると互換性確認用のチャネル名が変わる。 */
+    /** パケットの logical channel。 */
     public String channel = "main";
+
+    /** チャネル互換性判定用。 */
+    public String protocolVersion = "1";
 }

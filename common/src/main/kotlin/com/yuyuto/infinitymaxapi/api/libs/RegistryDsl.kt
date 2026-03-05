@@ -1,5 +1,6 @@
 package com.yuyuto.infinitymaxapi.api.libs
 
+import com.yuyuto.infinitymaxapi.api.libs.packet.Packet
 import com.yuyuto.infinitymaxapi.api.libs.registry.ModRegistriesProvider
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*
 
@@ -68,7 +69,7 @@ class RegistryScope {
         return template
     }
 
-    fun <T : Any> packet(id: String, template: T, block: PacketSettings.() -> Unit = {}): T {
+    fun <T : Packet> packet(id: String, template: T, block: PacketSettings.() -> Unit = {}): T {
         val settings = PacketSettings().apply(block)
         ModRegistriesProvider.get().registerPacket(id, template, settings)
         return template

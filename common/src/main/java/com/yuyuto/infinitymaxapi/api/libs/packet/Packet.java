@@ -1,47 +1,31 @@
 package com.yuyuto.infinitymaxapi.api.libs.packet;
 
-import com.yuyuto.infinitymaxapi.loader.Platform;
+/**
+ * common 側で完結する最小パケット契約。
+ *
+ * <p>Fabric / Forge の型はここで import しない。
+ * 実バッファ型は各ローダー実装側で Object として渡す。</p>
+ */
+public interface Packet {
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.Objects;
-
-public final class Packet {
-
-    private Packet() {}
-    private static final Map<String, SimplePacket<?>> PACKETS = new HashMap<>();
-
-    public static <T> void register(
-            String id,
-            PacketDirection direction,
-            Function<PacketBuffer, T> decoder,
-            SimplePacket.PacketEncoder<T> encoder,
-            PacketHandler<T> handler
-    ) {
-        PacketRegistry.register(new SimplePacket<>(id, direction, decoder, encoder, handler));
+    enum Flow {
+        C2S,
+        S2C
     }
 
-    public static void register(SimplePacket<?> packet) {
-        if (PACKETS.containsKey(packet.id)) {
-            throw new IllegalStateException(
-                "Packet ID '" + packet.id + "' is already registered"
-            );
-        }
-        PACKETS.put(packet.id, packet);
+    Flow flow();
+
+    /** 実送信用にパケット内容を書き込む。 */
+    void encode(Object buffer);
+
+    /** 受信したバッファから新しいパケット実体を復元する。 */
+    Packet decode(Object buffer);
+
+    /** サーバー受信時の処理。flow が C2S のパケットで利用する。 */
+    default void handleC2S(Object server, Object player) {
     }
 
-    public static List<SimplePacket<?>> packets() {
-        return new ArrayList<>(PACKETS.values());
-    }
-
-    public static <T> void sendToServer(T packet) {
-        Platform.get().network().sendToServer(packet);
-    }
-
-    public static <T> void sendToPlayer(Object player, T packet) {
-        Platform.get().network().sendToPlayer(player, packet);
+    /** クライアント受信時の処理。flow が S2C のパケットで利用する。 */
+    default void handleS2C(Object client, Object player) {
     }
 }
