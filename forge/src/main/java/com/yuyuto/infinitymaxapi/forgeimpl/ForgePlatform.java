@@ -36,4 +36,9 @@ public final class ForgePlatform implements LoaderExpectPlatform {
     public Events events() {
         return events;
     }
+
+    @Override
+    public void commit() {
+        registries.commit();
+    }
 }

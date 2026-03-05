@@ -2,6 +2,16 @@ package com.yuyuto.infinitymaxapi.fabricimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,5 +105,61 @@ public final class FabricRegistriesImpl implements ModRegistries {
 
     public Map<String, Entry<?, NetworkSettings>> networks() {
         return networks;
+    }
+
+    @Override
+    public void commit() {
+
+        items.forEach((id, entry) ->
+            Registry.register(
+                Registries.ITEM,
+                new Identifier(MOD_ID, id),
+                (Item) entry.template()
+            )
+        );
+
+        blocks.forEach((id, entry) ->
+            Registry.register(
+                Registries.BLOCK,
+                new Identifier(MOD_ID, id),
+                (Block) entry.template()
+            )
+        );
+
+        entities.forEach((id, entry) ->
+            Registry.register(
+                Registries.ENTITY_TYPE,
+                new Identifier(MOD_ID, id),
+                (EntityType<?>) entry.template()
+            )
+        );
+
+        blockEntities.forEach((id, entry) ->
+            Registry.register(
+                Registries.BLOCK_ENTITY_TYPE,
+                new Identifier(MOD_ID, id),
+                (BlockEntityType<?>) entry.template()
+            )
+        );
+
+        packets.forEach((id, entry) -> {
+            PacketSettings settings = entry.settings();
+            Identifier channelId = new Identifier(MOD_ID, settings.channel);
+
+            if (settings.direction == PacketDirection.C2S) {
+                ServerPlayNetworking.registerGlobalReceiver(
+                    channelId,
+                    (server, player, handler, buf, responseSender) ->
+                        ((C2SPacket) entry.template()).handleC2S(server, player, buf)
+                );
+            } 
+        });
+
+        guis.forEach((id, entry) ->
+            ScreenRegistry.register(
+                new Identifier(MOD_ID, entry.settings().screenId),
+                (ScreenHandlerType<?>) entry.template()
+            )
+        );
     }
 }
