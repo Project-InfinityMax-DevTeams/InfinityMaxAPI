@@ -1,6 +1,7 @@
 package com.yuyuto.infinitymaxapi.forgeimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
+import com.yuyuto.infinitymaxapi.api.libs.network.PacketDirection;
 import com.yuyuto.infinitymaxapi.api.libs.packet.Packet;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 import net.minecraft.resources.ResourceLocation;
@@ -159,13 +160,6 @@ public final class ForgeRegistriesImpl implements ModRegistries {
         if (map.putIfAbsent(id, value) != null) throw new IllegalStateException("Duplicate registry id: " + id);
     }
 
-    /**
-     * 保持している登録情報を反映し、登録されたパケット用のネットワークチャネルとメッセージハンドラを構成する。
-     *
-     * <p>内部に蓄えられたパケット登録をチャネル単位で SimpleChannel にまとめて作成し、
-     * 各登録に対して一意の識別子を割り当てて PacketEnvelope のエンコード／デコードおよび
-     * パケット処理の委譲を登録する。</p>
-     */
     @Override
     public void commit() {
         // ---- Item ----
@@ -194,7 +188,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
 
         // ---- BlockEntity ----
         blockEntities.forEach((id, entry) -> {
-            ForgeRegistries.BLOCK_ENTITIES.register(
+            ForgeRegistries.BLOCK_ENTITY_TYPES.register(
                 new ResourceLocation(MOD_ID, id),
                 (BlockEntityType<?>) entry.template()
             );
@@ -203,7 +197,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
         guis.forEach((id, entry) -> {
             ForgeRegistries.MENU_TYPES.register(
                 new ResourceLocation(MOD_ID, id),
-                (Gui) entry.template()
+                (MenuType<?>) entry.template()
             );
         });
 
@@ -228,7 +222,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                     template.flow() == PacketDirection.C2S
                         ? NetworkDirection.PLAY_TO_SERVER
                         : NetworkDirection.PLAY_TO_CLIENT;
-                        
+
             channel.registerMessage(
                 discriminator.getAndIncrement(),
                 PacketEnvelope.class,
