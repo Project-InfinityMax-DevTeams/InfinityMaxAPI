@@ -207,7 +207,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
             );
         });
 
-        // Packet / Network / World は今は触らない
+        // Network / World は今は触らない
             Map<String, SimpleChannel> channels = new HashMap<>();
             AtomicInteger discriminator = new AtomicInteger(0);
 
@@ -253,7 +253,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                 NetworlDirection direction =
                     template.flow() == PacketDirection.C2S
                         ? NetworkDirection.PLAY_TO_SERVER
-                        : NetworkDirection.PLAY_TO_CLIENT
+                        : NetworkDirection.PLAY_TO_CLIENT;
             );
         });
     }
