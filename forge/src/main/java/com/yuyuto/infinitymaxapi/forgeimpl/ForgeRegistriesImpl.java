@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -168,33 +169,43 @@ public final class ForgeRegistriesImpl implements ModRegistries {
     @Override
     public void commit() {
         // ---- Item ----
-        ForgeRegistries.ITEMS.register(
-            new ResourceLocation(MOD_ID, id),
-            (item) entry.template()
-        );
+        items.forEach((id, entry) -> {
+            ForgeRegistries.ITEMS.register(
+                new ResourceLocation(MOD_ID, id),
+                (Item) entry.template()
+            );
+        });
 
         // ---- Block ----
-        ForgeRegistries.BLOCKS.register(
-            new ResourceLocation(MOD_ID, id),
-            (block) entry.template()
-        );
+        blocks.forEach((id, entry) -> {
+            ForgeRegistries.BLOCKS.register(
+                new ResourceLocation(MOD_ID, id),
+                (Block) entry.template()
+            );
+        });
 
         // ---- Entity ----
-        ForgeRegistries.ENTITIES.register(
-            new ResourceLocation(MOD_ID, id),
-            (EntityType<?>) entry.template()
-        );
+        entities.forEach((id, entry) -> {
+            ForgeRegistries.ENTITY_TYPES.register(
+                new ResourceLocation(MOD_ID, id),
+                (EntityType<?>) entry.template()
+            );
+        });
 
         // ---- BlockEntity ----
-        ForgeRegistries.BLOCK_ENTITIES.register(
-            new ResourceLocation(MOD_ID, id),
-            (BlockEntityType<?>) entry.template()
-        );
+        blockEntities.forEach((id, entry) -> {
+            ForgeRegistries.BLOCK_ENTITIES.register(
+                new ResourceLocation(MOD_ID, id),
+                (BlockEntityType<?>) entry.template()
+            );
+        });
 
-        ForgeRegistries.GUIS.register(
-            new ResourceLocation(MOD_ID, id),
-            (gui) entry.template()
-        );
+        guis.forEach((id, entry) -> {
+            ForgeRegistries.MENU_TYPES.register(
+                new ResourceLocation(MOD_ID, id),
+                (Gui) entry.template()
+            );
+        });
 
         // Packet / Network / World は今は触らない
             Map<String, SimpleChannel> channels = new HashMap<>();
@@ -239,11 +250,10 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                 },
 
                 // ★ここが重要★
-                Optional.of(
+                NetworlDirection direction =
                     template.flow() == PacketDirection.C2S
                         ? NetworkDirection.PLAY_TO_SERVER
                         : NetworkDirection.PLAY_TO_CLIENT
-                )
             );
         });
     }
