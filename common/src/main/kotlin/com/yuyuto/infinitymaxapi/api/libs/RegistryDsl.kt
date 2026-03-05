@@ -1,5 +1,6 @@
 package com.yuyuto.infinitymaxapi.api.libs
 
+import com.yuyuto.infinitymaxapi.api.libs.packet.Packet
 import com.yuyuto.infinitymaxapi.api.libs.registry.ModRegistriesProvider
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*
 
@@ -62,13 +63,31 @@ class RegistryScope {
         return template
     }
 
+    /**
+     * 指定した ID でデータ生成器を登録する。
+     *
+     * @param id 登録に使用する一意の識別子。
+     * @param template 登録するデータ生成器のテンプレートインスタンス。
+     * @param block 生成器の設定を行うための設定ブロック。
+     * @return 登録した `template` をそのまま返す。
+     */
     fun <T : Any> dataGen(id: String, template: T, block: DataGenSettings.() -> Unit = {}): T {
         val settings = DataGenSettings().apply(block)
         ModRegistriesProvider.get().registerDataGen(id, template, settings)
         return template
     }
 
-    fun <T : Any> packet(id: String, template: T, block: PacketSettings.() -> Unit = {}): T {
+    /**
+     * 指定したIDでパケットをレジストリに登録する。
+     *
+     * 指定した設定ブロックで PacketSettings を構成し、ModRegistriesProvider を通じてパケットを登録します。
+     *
+     * @param id レジストリ内で使用する識別子
+     * @param template 登録するパケットのテンプレートインスタンス
+     * @param block パケットの設定を行うためのブロック
+     * @return 登録に使用したパケットのテンプレートインスタンス (`template`)
+     */
+    fun <T : Packet> packet(id: String, template: T, block: PacketSettings.() -> Unit = {}): T {
         val settings = PacketSettings().apply(block)
         ModRegistriesProvider.get().registerPacket(id, template, settings)
         return template

@@ -1,23 +1,24 @@
 package com.yuyuto.infinitymaxapi.fabricimpl;
 
-import com.yuyuto.infinitymaxapi.api.libs.packet.PacketRegistry;
-import com.yuyuto.infinitymaxapi.api.libs.packet.SimplePacket;
-import com.yuyuto.infinitymaxapi.api.libs.registry.settings.PacketSettings;
 import com.yuyuto.infinitymaxapi.loader.LoaderExpectPlatform;
-import com.yuyuto.infinitymaxapi.loader.Platform;
 
 /** Fabric 向けネットワークブリッジ。 */
 public final class FabricNetworkImpl implements LoaderExpectPlatform.Network {
 
+    /**
+     * ネットワークパケットの登録を担うエントリポイント。ただし Fabric 実装では登録処理をここで行わず、
+     * 別箇所に集約されているためこの実装は空となる。
+     */
     @Override
     public void register() {
-        for (SimplePacket<?> packet : PacketRegistry.packets()) {
-            PacketSettings settings = new PacketSettings();
-            settings.direction = packet.direction;
-            Platform.get().registries().registerPacket(packet.id, packet, settings);
-        }
+        // Packet の実登録は FabricRegistriesImpl#commit() に集約する。
     }
 
+    /**
+     * 指定したパケットをサーバーへ送信する。
+     *
+     * @param packet 送信するパケットオブジェクト
+     */
     @Override
     public <T> void sendToServer(T packet) {
     }
