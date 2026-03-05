@@ -224,6 +224,11 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                 )
             );
 
+            NetworkDirection direction =
+                    template.flow() == PacketDirection.C2S
+                        ? NetworkDirection.PLAY_TO_SERVER
+                        : NetworkDirection.PLAY_TO_CLIENT;
+                        
             channel.registerMessage(
                 discriminator.getAndIncrement(),
                 PacketEnvelope.class,
@@ -250,10 +255,7 @@ public final class ForgeRegistriesImpl implements ModRegistries {
                 },
 
                 // ★ここが重要★
-                NetworkDirection direction =
-                    template.flow() == PacketDirection.C2S
-                        ? NetworkDirection.PLAY_TO_SERVER
-                        : NetworkDirection.PLAY_TO_CLIENT;
+                Optional.of(direction)
             );
         });
     }
