@@ -151,7 +151,7 @@ public final class FabricRegistriesImpl implements ModRegistries {
         blocks.forEach((id, entry) -> Registry.register(Registries.BLOCK, new Identifier(MOD_ID, id), (Block) entry.template()));
         entities.forEach((id, entry) -> Registry.register(Registries.ENTITY_TYPE, new Identifier(MOD_ID, id), (EntityType<?>) entry.template()));
         blockEntities.forEach((id, entry) -> Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, id), (BlockEntityType<?>) entry.template()));
-        guis.forEach((id, entry) -> Registry.register(Registries.SCREEN_HANDLER, new Identifier(MOD_ID, id), (Object) entry.template()));
+        guis.forEach((id, entry) -> Registry.register(Registries.SCREEN_HANDLER, new Identifier(MOD_ID, id), (ScreenHandlerType<?>) entry.template()));
 
         // 責務: Packet Flow(C2S/S2C) に応じて Fabric networking の受信口を張る
         packets.forEach((id, entry) -> {

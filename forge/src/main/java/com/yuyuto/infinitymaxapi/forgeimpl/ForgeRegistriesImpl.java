@@ -5,6 +5,14 @@ import com.yuyuto.infinitymaxapi.api.libs.packet.Packet;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -13,6 +21,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -159,40 +168,32 @@ public final class ForgeRegistriesImpl implements ModRegistries {
     @Override
     public void commit() {
         // ---- Item ----
-        items.forEach((id, entry) -> {
-            Registry.register(
-                ForgeRegistries.ITEMS,
-                new ResourceLocation(modId, id),
-                (Item) entry.template()
-            );
-        });
+        ForgeRegistries.ITEMS.registerAll(
+            items.entrySet().stream()
+                .map(entry -> new ItemEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
+                .toArray(ItemEntry[]::new)
+        );
 
         // ---- Block ----
-        blocks.forEach((id, entry) -> {
-            Registry.register(
-                ForgeRegistries.BLOCKS,
-                new ResourceLocation(modId, id),
-                (Block) entry.template()
-            );
-        });
+        ForgeRegistries.BLOCKS.registerAll(
+            blocks.entrySet().stream()
+                .map(entry -> new BlockEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
+                .toArray(BlockEntry[]::new)
+        );
 
         // ---- Entity ----
-        entities.forEach((id, entry) -> {
-            Registry.register(
-                ForgeRegistries.ENTITY_TYPES,
-                new ResourceLocation(modId, id),
-                (EntityType<?>) entry.template()
-            );
-        });
+        ForgeRegistries.ENTITIES.registerAll(
+            entities.entrySet().stream()
+                .map(entry -> new EntityEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
+                .toArray(EntityEntry[]::new)
+        );
 
         // ---- BlockEntity ----
-        blockEntities.forEach((id, entry) -> {
-            Registry.register(
-                ForgeRegistries.BLOCK_ENTITY_TYPES,
-                new ResourceLocation(modId, id),
-                (BlockEntityType<?>) entry.template()
-            );
-        });
+        ForgeRegistries.BLOCK_ENTITIES.registerAll(
+            blockEntities.entrySet().stream()
+                .map(entry -> new BlockEntityEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
+                .toArray(BlockEntityEntry[]::new)
+        );
 
         // Packet / Network / World は今は触らない
             Map<String, SimpleChannel> channels = new HashMap<>();
