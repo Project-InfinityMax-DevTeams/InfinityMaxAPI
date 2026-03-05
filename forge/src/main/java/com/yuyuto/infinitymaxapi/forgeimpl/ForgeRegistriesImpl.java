@@ -219,9 +219,9 @@ public final class ForgeRegistriesImpl implements ModRegistries {
             );
 
             NetworkDirection direction =
-                    template.flow() == PacketDirection.C2S
-                        ? NetworkDirection.PLAY_TO_SERVER
-                        : NetworkDirection.PLAY_TO_CLIENT;
+                template.flow() == Packet.Flow.C2S
+                    ? NetworkDirection.PLAY_TO_SERVER
+                    : NetworkDirection.PLAY_TO_CLIENT;
 
             channel.registerMessage(
                 discriminator.getAndIncrement(),
