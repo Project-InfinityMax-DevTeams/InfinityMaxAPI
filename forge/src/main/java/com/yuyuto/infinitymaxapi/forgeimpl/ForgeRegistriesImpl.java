@@ -179,18 +179,34 @@ public final class ForgeRegistriesImpl implements ModRegistries {
             channel.registerMessage(
                 discriminator.getAndIncrement(),
                 PacketEnvelope.class,
+
+                // encode
                 (msg, buf) -> {
                     buf.writeUtf(msg.id());
                     msg.payload().encode(buf);
                 },
+
+                // decode
                 buf -> {
                     String receivedId = buf.readUtf();
                     Entry<Packet, PacketSettings> reg = packets.get(receivedId);
                     if (reg == null) return new PacketEnvelope(receivedId, null);
                     return new PacketEnvelope(receivedId, reg.template().decode(buf));
                 },
-                (msg, ctxSupplier) -> handlePacketMessage(msg, ctxSupplier, template.flow()),
-                OptionalDirection.from(template.flow())
+
+                // handle
+                (msg, ctxSupplier) -> {
+                    var ctx = ctxSupplier.get();
+                    ctx.enqueueWork(() -> handlePacketMessage(msg, ctxSupplier, template.flow()));
+                    ctx.setPacketHandled(true);
+                },
+
+                // ★ここが重要★
+                Optional.of(
+                    template.flow() == PacketFlow.C2S
+                        ? NetworkDirection.PLAY_TO_SERVER
+                        : NetworkDirection.PLAY_TO_CLIENT
+                )
             );
         });
     }

@@ -10,6 +10,7 @@ public interface LoaderExpectPlatform {
     ModRegistries registries();
     Network network();
     Events events();
+    void commit();
 
     interface Network {
         void register();
