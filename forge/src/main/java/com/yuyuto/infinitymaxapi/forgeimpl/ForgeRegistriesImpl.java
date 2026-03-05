@@ -168,31 +168,32 @@ public final class ForgeRegistriesImpl implements ModRegistries {
     @Override
     public void commit() {
         // ---- Item ----
-        ForgeRegistries.ITEMS.registerAll(
-            items.entrySet().stream()
-                .map(entry -> new ItemEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
-                .toArray(ItemEntry[]::new)
+        ForgeRegistries.ITEMS.register(
+            new ResourceLocation(MOD_ID, id),
+            (item) entry.template()
         );
 
         // ---- Block ----
-        ForgeRegistries.BLOCKS.registerAll(
-            blocks.entrySet().stream()
-                .map(entry -> new BlockEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
-                .toArray(BlockEntry[]::new)
+        ForgeRegistries.BLOCKS.register(
+            new ResourceLocation(MOD_ID, id),
+            (block) entry.template()
         );
 
         // ---- Entity ----
-        ForgeRegistries.ENTITIES.registerAll(
-            entities.entrySet().stream()
-                .map(entry -> new EntityEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
-                .toArray(EntityEntry[]::new)
+        ForgeRegistries.ENTITIES.register(
+            new ResourceLocation(MOD_ID, id),
+            (EntityType<?>) entry.template()
         );
 
         // ---- BlockEntity ----
-        ForgeRegistries.BLOCK_ENTITIES.registerAll(
-            blockEntities.entrySet().stream()
-                .map(entry -> new BlockEntityEntry(new ResourceLocation(modId, entry.getKey()), entry.getValue().template))
-                .toArray(BlockEntityEntry[]::new)
+        ForgeRegistries.BLOCK_ENTITIES.register(
+            new ResourceLocation(MOD_ID, id),
+            (BlockEntityType<?>) entry.template()
+        );
+
+        ForgeRegistries.GUIS.register(
+            new ResourceLocation(MOD_ID, id),
+            (gui) entry.template()
         );
 
         // Packet / Network / World は今は触らない
