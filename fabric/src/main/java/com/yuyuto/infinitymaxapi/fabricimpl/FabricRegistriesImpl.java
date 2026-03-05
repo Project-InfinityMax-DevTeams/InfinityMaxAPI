@@ -65,63 +65,35 @@ public final class FabricRegistriesImpl implements ModRegistries {
         }
     }
 
-    @Override
-    public void commit() {
-        // ---- Item ----
-        items.forEach((id, entry) -> {
-            Registries.registerItem(Registries.ITEM, new Identifier(modId, id), entry.template);
-        });
-
-        // ---- Block ----
-        blocks.forEach((id, entry) -> {
-            Registries.registerBlock(Registries.BLOCK, new Identifier(modId, id), entry.template);
-        });
-
-        // ---- Entity ----
-        entities.forEach((id, entry) -> {
-            Registries.registerEntity(Registries.ENTITY, new Identifier(modId, id), entry.template);
-        });
-
-        // ---- BlockEntity ----
-        blockEntities.forEach((id, entry) -> {
-            Registries.registerBlockEntity(Registries.BLOCK_ENTITY, new Identifier(modId, id), entry.template);
-            if (entry.blocks != null) {
-                for (var block : entry.blocks) {
-                    Registries.registerBlockEntityAssociation(block, entry.template);
-                }
-            }
-        });
-
-        // ---- Packet ----
-        packets.forEach((id, entry) -> {
-            var settings = entry.settings;
-            // 例: C2S / S2C 方向で登録
-            ServerPlayNetworking.registerGlobalReceiver(
-                new Identifier(modId, settings.channel),
-                (server, player, handler, buf, responseSender) -> {
-                    if (settings.direction == PacketDirection.C2S) {
-                        entry.template.handleC2S(server, player, buf);
-                    } else {
-                        entry.template.handleS2C(server, player, buf);
-                    }
-                }
-            );
-        });
-
-        // ---- Network ----
-        networks.forEach((id, entry) -> {
-            // Networkは実装がどうなるか不明
-        });
-
-        // ---- Gui ----
-        guis.forEach((id, entry) -> {
-            ScreenRegistry.register(new Identifier(modId, entry.settings.screenId), entry.template);
-        });
-
-        // ---- World ----
-        worlds.forEach((id, entry) -> {
-            // Worldは実装がどうなるか不明
-        });
+    public Map<String, Entry<?, ItemSettings>> items() {
+        return items;
     }
 
+    public Map<String, Entry<?, BlockSettings>> blocks() {
+        return blocks;
+    }
+
+    public Map<String, Entry<?, EntitySettings<?>>> entities() {
+        return entities;
+    }
+
+    public Map<String, BlockEntityEntry<?, ?>> blockEntities() {
+        return blockEntities;
+    }
+
+    public Map<String, Entry<?, PacketSettings>> packets() {
+        return packets;
+    }
+
+    public Map<String, Entry<?, GuiSettings>> guis() {
+        return guis;
+    }
+
+    public Map<String, Entry<?, WorldSettings>> worlds() {
+        return worlds;
+    }
+
+    public Map<String, Entry<?, NetworkSettings>> networks() {
+        return networks;
+    }
 }
