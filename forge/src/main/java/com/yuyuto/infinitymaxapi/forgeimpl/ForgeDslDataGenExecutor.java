@@ -12,7 +12,9 @@ public final class ForgeDslDataGenExecutor implements DataGenExecutor {
 
     @Override
     public void execute(DataGenSpec spec) {
-        // Intentionally definition-only in this repository.
-        // MDK Forge module should replace this with GatherDataEvent provider wiring.
+        java.util.Objects.requireNonNull(spec, "spec");
+        throw new UnsupportedOperationException(
+                "ForgeDslDataGenExecutor is a placeholder. Wire GatherDataEvent providers in the MDK Forge module."
+        );
     }
 }
