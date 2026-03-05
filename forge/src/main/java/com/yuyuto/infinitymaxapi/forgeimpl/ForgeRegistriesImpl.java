@@ -1,7 +1,7 @@
 package com.yuyuto.infinitymaxapi.forgeimpl;
 
 import com.yuyuto.infinitymaxapi.api.libs.ModRegistries;
-import com.yuyuto.infinitymaxapi.api.libs.network.PacketDirection;
+import com.yuyuto.infinitymaxapi.api.libs.packet.PacketDirection;
 import com.yuyuto.infinitymaxapi.api.libs.packet.Packet;
 import com.yuyuto.infinitymaxapi.api.libs.registry.settings.*;
 import net.minecraft.resources.ResourceLocation;
