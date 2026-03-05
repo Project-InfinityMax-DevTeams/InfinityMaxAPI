@@ -4,6 +4,8 @@ import com.yuyuto.infinitymaxapi.InfinityMaxAPI;
 import com.yuyuto.infinitymaxapi.loader.Platform;
 import com.yuyuto.infinitymaxapi.api.libs.registry.ModRegistriesProvider;
 import com.yuyuto.infinitymaxapi.forgeimpl.ForgePlatform;
+import com.yuyuto.infinitymaxapi.forgeimpl.ForgeDslDataGenExecutor;
+import com.yuyuto.infinitymaxapi.api.libs.datagen.runtime.DataGenBridge;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("infinitymaxapi")
@@ -14,5 +16,8 @@ public final class ForgeEntrypoint {
         ModRegistriesProvider.set(Platform.get().registries());
         Platform.get().network().register();
         InfinityMaxAPI.init();
+        if (Boolean.getBoolean("infinitymaxapi.runDatagen")) {
+            DataGenBridge.run(new ForgeDslDataGenExecutor());
+        }
     }
 }
