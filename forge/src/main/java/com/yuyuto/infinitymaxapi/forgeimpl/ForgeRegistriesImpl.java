@@ -158,10 +158,45 @@ public final class ForgeRegistriesImpl implements ModRegistries {
      */
     @Override
     public void commit() {
-        // 責務: アイテム/ブロック等は既存の Forge 登録経路で扱う（この最小実装では保持のみ）。
-        // 責務: channel 単位で SimpleChannel を作成し、受信時に Packet.handle* へ委譲
-        Map<String, SimpleChannel> channels = new HashMap<>();
-        AtomicInteger discriminator = new AtomicInteger(0);
+        // ---- Item ----
+        items.forEach((id, entry) -> {
+            Registry.register(
+                ForgeRegistries.ITEMS,
+                new ResourceLocation(modId, id),
+                (Item) entry.template()
+            );
+        });
+
+        // ---- Block ----
+        blocks.forEach((id, entry) -> {
+            Registry.register(
+                ForgeRegistries.BLOCKS,
+                new ResourceLocation(modId, id),
+                (Block) entry.template()
+            );
+        });
+
+        // ---- Entity ----
+        entities.forEach((id, entry) -> {
+            Registry.register(
+                ForgeRegistries.ENTITY_TYPES,
+                new ResourceLocation(modId, id),
+                (EntityType<?>) entry.template()
+            );
+        });
+
+        // ---- BlockEntity ----
+        blockEntities.forEach((id, entry) -> {
+            Registry.register(
+                ForgeRegistries.BLOCK_ENTITY_TYPES,
+                new ResourceLocation(modId, id),
+                (BlockEntityType<?>) entry.template()
+            );
+        });
+
+        // Packet / Network / World は今は触らない
+            Map<String, SimpleChannel> channels = new HashMap<>();
+            AtomicInteger discriminator = new AtomicInteger(0);
 
         packets.forEach((packetId, entry) -> {
             PacketSettings settings = entry.settings();
