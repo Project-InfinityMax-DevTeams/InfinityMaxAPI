@@ -1,5 +1,4 @@
 package com.yuyuto.infinitymaxapi;
-
 import com.yuyuto.infinitymaxapi.InfinityMaxAPI;
 import com.yuyuto.infinitymaxapi.loader.Platform;
 import net.minecraftforge.fml.common.Mod;

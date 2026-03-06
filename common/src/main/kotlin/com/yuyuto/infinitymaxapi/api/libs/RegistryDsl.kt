@@ -2,20 +2,19 @@ package com.yuyuto.infinitymaxapi.api.libs
 
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition
 import com.yuyuto.infinitymaxapi.api.registry.ItemDefinition
+import com.yuyuto.infinitymaxapi.api.registry.RegistryDefinition
 
 @DslMarker
 annotation class RegistryDsl
 
-fun  registry(block: RegistryScope.() ->  Unit): RegistryDefinition{
+fun  registry(block: RegistryScope.() ->  Unit): RegistryDefinition {
     val def = RegistryDefinition()
     RegistryScope(def).apply(block)
     return def
 }
 
 @RegistryDsl
-class RegistryScope(
-    privare val def: RegistryDefinition
-) {
+class RegistryScope(private val def: RegistryDefinition) {
     fun <T:Any> item(
         id:String,
         template:T,

@@ -21,5 +21,16 @@ public class RegistryLoader {
                 lootProvider.add(block);
             }
         }
+
+        for(ItemDefinition<?> item : def.getItems().values()){
+            provider.registerItem(
+                    item.getId(),
+                    item.getTemplate()
+            );
+
+            if(item.getModel() != null){
+                modelprovider.add(item);
+            }
+        }
     }
 }

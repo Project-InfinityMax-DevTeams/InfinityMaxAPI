@@ -3,7 +3,7 @@ package com.yuyuto.infinitymaxapi.api.registry;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegistryCollector {
+public class RegistryDefinition {
 
     private final Map<String, BlockDefinition<?>> blocks = new HashMap<>();
     private final Map<String, ItemDefinition<?>> items = new HashMap<>();

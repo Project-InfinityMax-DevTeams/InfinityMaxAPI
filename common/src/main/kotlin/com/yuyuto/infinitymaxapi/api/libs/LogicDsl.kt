@@ -2,9 +2,9 @@ package com.yuyuto.infinitymaxapi.api.libs
 
 import com.yuyuto.infinitymaxapi.api.event.EventPriority
 import com.yuyuto.infinitymaxapi.api.event.ModEvent
-import com.yuyuto.infinitymaxapi.api.event.ModEventBus
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorContext
+import com.yuyuto.infinitymaxapi.api.event.ModEventBus.listen
 import com.yuyuto.infinitymaxapi.api.logic.LogicRegistry
 import kotlin.reflect.KClass
 
@@ -36,7 +36,7 @@ class LogicScope {
         val resolvedLogicId = definition.logicId
             ?.takeIf { it.isNotBlank() }
             ?: throw IllegalArgumentException("trigger(logicId) is required and must not be blank")
-        ModEventBus.listen(type.java, {
+        listen(type.java, {
             val eventId = type.qualifiedName ?: type.simpleName ?: "event" 
             val context = BehaviorContext(
                 BehaviorBindingType.EVENT,

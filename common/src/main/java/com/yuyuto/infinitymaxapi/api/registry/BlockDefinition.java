@@ -32,6 +32,10 @@ public class BlockDefinition {
         return id;
     }
 
+    public T getTemplate() {
+        return template;
+    }
+
     public float getHardness(){
         return hardness;
     }
@@ -66,13 +70,5 @@ public class BlockDefinition {
 
     public List<String> getTags() {
         return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public T getTemplate() {
-        return template;
     }
 }
