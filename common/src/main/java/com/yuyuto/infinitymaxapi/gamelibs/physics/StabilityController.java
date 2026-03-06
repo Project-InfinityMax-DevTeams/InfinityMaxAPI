@@ -16,8 +16,7 @@ package com.yuyuto.infinitymaxapi.gamelibs.physics;
  * これを防ぐために CFL条件 を使います。
  *
  * 【CFL条件とは？】
- * 「1ステップの間に、情報（音速）が
- * 1セル以上進んではいけない」
+ * 「1ステップの間に、情報（音速）が1セル以上進んではいけない」
  *
  * 数式：
  *
@@ -33,6 +32,7 @@ package com.yuyuto.infinitymaxapi.gamelibs.physics;
  * 音速は圧力の変化が伝わる速さ。
  * これを超える時間刻みは物理的に破綻します。
  */
+@SuppressWarnings("GrazieInspection")
 public final class StabilityController {
 
     /** セルの大きさ（メートル） */

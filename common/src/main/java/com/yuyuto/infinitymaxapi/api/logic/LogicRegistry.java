@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.logic;
+package com.yuyuto.infinitymaxapi.api.logic;
 
 import com.yuyuto.infinitymaxapi.api.libs.Events;
 import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector;

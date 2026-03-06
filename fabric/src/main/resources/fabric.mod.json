@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.yuyuto.infinitymaxapi.loader.fabric.FabricClientImpl"
+      "com.yuyuto.infinitymaxapi."
     ]
   },
   "depends": {

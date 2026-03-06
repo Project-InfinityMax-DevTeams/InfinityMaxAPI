@@ -20,16 +20,6 @@ public interface ModRegistries {
 
     <T, B> void registerBlockEntity(String id, T template, B[] blocks, BlockEntitySettings settings);
 
-    /**
-    * データ生成に関する登録情報を追加する。
-    *
-    * 登録された情報は直ちに適用されず、commit() 呼び出し時にローダー固有の登録処理に反映される。
-    *
-    * @param id 登録対象を一意に識別する識別子
-    * @param template データ生成のテンプレートまたはファクトリとして使われるオブジェクト
-    * @param settings データ生成の挙動（出力先、対象リソース、オプション等）を指定する設定
-    */
-    <T> void registerDataGen(String id, T template, DataGenSettings settings);
 
     /**
     * ネットワークパケットの登録情報を追加する。

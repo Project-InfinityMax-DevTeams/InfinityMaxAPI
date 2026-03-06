@@ -32,7 +32,7 @@ public final class ModEventBus {
 
         // priority鬆・↓繧ｽ繝ｼ繝・
         LISTENERS.get(type).sort(
-                Comparator.comparingInt(l -> -l.priority.level)
+                Comparator.comparingInt(l -> -l.priority().level)
         );
     }
 
@@ -44,10 +44,10 @@ public final class ModEventBus {
         for (EventListener<?> listener : listeners) {
             EventListener<T> l = (EventListener<T>) listener;
 
-            if (l.async) {
-                ASYNC_EXECUTOR.submit(() -> l.consumer.accept(event));
+            if (l.async()) {
+                ASYNC_EXECUTOR.submit(() -> l.consumer().accept(event));
             } else {
-                l.consumer.accept(event);
+                l.consumer().accept(event);
             }
         }
     }

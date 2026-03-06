@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.behavior;
+package com.yuyuto.infinitymaxapi.api.behavior;
 
 import com.yuyuto.infinitymaxapi.api.libs.Phase;
 

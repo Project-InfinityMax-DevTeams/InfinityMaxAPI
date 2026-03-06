@@ -3,9 +3,9 @@ package com.yuyuto.infinitymaxapi.api.libs
 import com.yuyuto.infinitymaxapi.api.event.EventPriority
 import com.yuyuto.infinitymaxapi.api.event.ModEvent
 import com.yuyuto.infinitymaxapi.api.event.ModEventBus
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorBindingType
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorContext
-import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorContext
+import com.yuyuto.infinitymaxapi.api.logic.LogicRegistry
 import kotlin.reflect.KClass
 
 /**

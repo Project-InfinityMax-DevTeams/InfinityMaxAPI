@@ -1,12 +1,12 @@
 package com.yuyuto.infinitymaxapi.api.libs
 
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorBinding
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorBindingType
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorConnector
-import com.yuyuto.infinitymaxapi.api.libs.behavior.BehaviorRegistry
-import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorBinding
-import com.yuyuto.infinitymaxapi.api.libs.behavior.PacketBehaviorConnector
-import com.yuyuto.infinitymaxapi.api.libs.logic.LogicRegistry
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBinding
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorConnector
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorRegistry
+import com.yuyuto.infinitymaxapi.api.behavior.PacketBehaviorBinding
+import com.yuyuto.infinitymaxapi.api.behavior.PacketBehaviorConnector
+import com.yuyuto.infinitymaxapi.api.logic.LogicRegistry
 
 /**
  * 振る舞い接続 DSL のエントリポイント。
@@ -38,7 +38,8 @@ object BehaviorApi {
 class BehaviorScope {
 
     // 検証用のプライベート関数を追加
-    @PublishedApi internal fun requireTargetId(id: String) {
+    @PublishedApi
+    internal fun requireTargetId(id: String) {
         require(id.isNotBlank()) { "target id must not be blank" }
     }
 
@@ -98,7 +99,8 @@ class BehaviorScope {
         requireTargetId(id)  // ← ここで検証
         val definition = BehaviorBindingScope().apply(block)
         val connector = requireNotNull(definition.connector) { "$type connector is required" }
-        val resolvedLogicId = definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
+        val resolvedLogicId =
+            definition.logicId.ifBlank { "${type.name.lowercase()}:${id}:${definition.phase.name.lowercase()}" }
 
         BehaviorRegistry.register(
             BehaviorBinding(

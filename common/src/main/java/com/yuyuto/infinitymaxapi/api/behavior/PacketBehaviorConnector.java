@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.behavior;
+package com.yuyuto.infinitymaxapi.api.behavior;
 
 /**
  * パケット用の振る舞い接続インターフェース。

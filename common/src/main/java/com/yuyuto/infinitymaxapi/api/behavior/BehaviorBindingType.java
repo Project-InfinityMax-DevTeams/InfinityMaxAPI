@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.behavior;
+package com.yuyuto.infinitymaxapi.api.behavior;
 
 /**
  * 振る舞い接続DSLで扱う接続対象の種類。

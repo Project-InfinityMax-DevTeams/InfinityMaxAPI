@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.behavior;
+package com.yuyuto.infinitymaxapi.api.behavior;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Collections;

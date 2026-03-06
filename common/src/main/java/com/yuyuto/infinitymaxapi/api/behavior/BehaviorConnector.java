@@ -1,4 +1,4 @@
-package com.yuyuto.infinitymaxapi.api.libs.behavior;
+package com.yuyuto.infinitymaxapi.api.behavior;
 
 /**
  * 振る舞い接続DSLで使う Java 側ロジック参照のための関数型インターフェース。
