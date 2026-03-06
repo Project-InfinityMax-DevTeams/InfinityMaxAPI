@@ -6,6 +6,7 @@ import com.yuyuto.infinitymaxapi.api.behavior.BehaviorConnector
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorRegistry
 import com.yuyuto.infinitymaxapi.api.behavior.PacketBehaviorBinding
 import com.yuyuto.infinitymaxapi.api.behavior.PacketBehaviorConnector
+import com.yuyuto.infinitymaxapi.api.behavior.Phase
 import com.yuyuto.infinitymaxapi.api.logic.LogicRegistry
 
 /**
