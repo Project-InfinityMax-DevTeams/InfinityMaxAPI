@@ -9,6 +9,9 @@ public class BlockDefinition {
     /* BlockID*/
     private final String id;
 
+    /* Block Template */
+    private final T template;
+
     /* 硬さ */
     private float hardness = 1.0f;
 
@@ -17,11 +20,12 @@ public class BlockDefinition {
 
     /* DataGenコード */
     private ModelDefinition model;
-    private LootDifinition loot;
+    private LootDefinition loot;
     private List<String> tags = new ArrayList<>();
 
-    public BlockDefinition(String id){
+    public BlockDefinition(String id,T template){
         this.id = Objects.requireNonNull(id);
+        this.template = template;
     }
 
     public String getId() {
@@ -44,11 +48,31 @@ public class BlockDefinition {
         this.resistance = resistance;
     }
 
+    public ModelDefinition getModel() {
+        return model;
+    }
+
+    public void setModel(ModelDefinition model){
+        this.model = model;
+    }
+
+    public LootDefinition getLoot() {
+        return loot;
+    }
+
+    public void setLoot(LootDefinition loot) {
+        this.loot = loot;
+    }
+
     public List<String> getTags() {
         return tags;
     }
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public T getTemplate() {
+        return template;
     }
 }

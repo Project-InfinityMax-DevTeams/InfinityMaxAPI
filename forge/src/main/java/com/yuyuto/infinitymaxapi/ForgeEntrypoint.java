@@ -2,8 +2,6 @@ package com.yuyuto.infinitymaxapi;
 
 import com.yuyuto.infinitymaxapi.InfinityMaxAPI;
 import com.yuyuto.infinitymaxapi.loader.Platform;
-import com.yuyuto.infinitymaxapi.api.libs.registry.ModRegistriesProvider;
-import com.yuyuto.infinitymaxapi.forgeimpl.ForgePlatform;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("infinitymaxapi")

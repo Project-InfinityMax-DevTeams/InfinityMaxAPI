@@ -33,11 +33,14 @@ class RegistryScope(
         template:T,
         block: BlockSetting.() -> Unit = {}
     ) {
-        def.blocks[id] = BlockDefinition(
-            id,
-            template,
-            BlockSettings().apply(block)
-        )
+        val settings = BlockSettings().apply(block)
+        val d = BlockDefinition(id, template)
+        d.hardness = settings.hardness
+        d.resistance = settings.resisitance
+        d.model = settings.model
+        d.loot = settings.loot
+
+        def.addBlock(d)
     }
 
     fun <T:Any> dataGen(
