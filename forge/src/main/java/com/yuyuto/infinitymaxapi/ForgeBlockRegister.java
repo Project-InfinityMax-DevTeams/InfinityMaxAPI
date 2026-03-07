@@ -25,7 +25,7 @@ public class ForgeBlockRegister implements BlockRegister {
 
     @Override
     public void register(BlockDefinition def){
-        BLOCKS.register(def.getId(),() -> new Block(BlockBehaviour.Properties.of().strength(def.getHardness(), def.getResistance())));
+        var block = BLOCKS.register(def.getId(),() -> new Block(BlockBehaviour.Properties.of().strength(def.getHardness(), def.getResistance())));
         ITEMS.register(def.getId(),() -> new BlockItem(block.get(), new Item.Properties()));
     }
 }
