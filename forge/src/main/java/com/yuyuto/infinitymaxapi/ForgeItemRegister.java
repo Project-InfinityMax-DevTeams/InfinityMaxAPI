@@ -18,6 +18,12 @@ public class ForgeItemRegister implements ItemRegister {
 
     @Override
     public void register(ItemDefinition def){
-        ITEMS.register(def.getId(), () -> new Item(ItemBehavior.Properties.of().maxStack()));
+        ITEMS.register(def.getId(), () -> {
+            Item.Properties props = new Item.Properties().stacksTo(def.maxStack);
+            if(def.durability > 0){
+                props.durability(def.durability);
+            }
+            return new Item(props);
+        });
     }
 }
