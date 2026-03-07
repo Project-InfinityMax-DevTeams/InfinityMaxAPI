@@ -8,6 +8,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 java { withSourcesJar() }
@@ -41,3 +42,9 @@ publishing {
 }
 
 tasks.named("build") { dependsOn("jar") }
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvmToolchain(8)
+}

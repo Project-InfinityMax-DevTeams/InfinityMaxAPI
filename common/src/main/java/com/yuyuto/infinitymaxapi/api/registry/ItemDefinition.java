@@ -9,13 +9,16 @@ public class ItemDefinition {
     private final String id;
 
     /* Item Template */
-    private final T template;
+    private final Object template;
+
+    public int maxStack = 64;
+    public int durability = 0;
 
     /* DataGen */
     private ModelDefinition model;
     private final List<String> tags = new ArrayList<>();
 
-    public ItemDefinition(String id, T template){
+    public ItemDefinition(String id, Object template){
         this.id = id;
         this.template = template;
     }
@@ -24,7 +27,7 @@ public class ItemDefinition {
         return id;
     }
 
-    public T getTemplate() {
+    public Object getTemplate() {
         return template;
     }
 

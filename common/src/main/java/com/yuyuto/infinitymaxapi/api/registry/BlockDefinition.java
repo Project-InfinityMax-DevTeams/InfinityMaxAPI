@@ -10,7 +10,7 @@ public class BlockDefinition {
     private final String id;
 
     /* Block Template */
-    private final T template;
+    private final Object template;
 
     /* 硬さ */
     private float hardness = 1.0f;
@@ -24,7 +24,7 @@ public class BlockDefinition {
     private List<String> tags = new ArrayList<>();
     private final List<BehaviorDefinition> behaviors = new ArrayList<>();
 
-    public BlockDefinition(String id,T template){
+    public BlockDefinition(String id,Object template){
         this.id = Objects.requireNonNull(id);
         this.template = template;
     }
@@ -33,7 +33,7 @@ public class BlockDefinition {
         return id;
     }
 
-    public T getTemplate() {
+    public Object getTemplate() {
         return template;
     }
 

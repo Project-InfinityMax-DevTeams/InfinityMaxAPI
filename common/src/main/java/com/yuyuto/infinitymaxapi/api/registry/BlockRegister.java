@@ -1,5 +1,5 @@
 package com.yuyuto.infinitymaxapi.api.registry;
 
-public interface BlockRegistrar {
+public interface BlockRegister {
     void register(BlockDefinition def);
 }

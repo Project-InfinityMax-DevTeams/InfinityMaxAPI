@@ -1,5 +1,5 @@
 package com.yuyuto.infinitymaxapi.api.registry;
 
-public interface ItemRegistrar {
+public interface ItemRegister {
     void registrar(ItemDefinition def);
 }
