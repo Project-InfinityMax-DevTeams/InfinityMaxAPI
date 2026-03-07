@@ -6,32 +6,23 @@ public class RegistryLoader {
 
         var provider = ModRegistryProvider.get();
 
-        for(BlockDefinition<?> block : def.getBlocks().values()){
-            provider.registerBlock(
-                    block.getId(),
-                    block.getTemplate(),
-                    block.getHardness(),
-                    block.getResistance()
-            );
+        //blocks
+        for (BlockDefinition block : def.getBlocks().values()) {
+            provider.blockRegister().register(block);
 
             if(block.getModel() != null){
-                modelProvider.add(block);
+                modelProvider().add(block);
             }
             if(block.getLoot() != null){
-                lootProvider.add(block);
+                lootProvider().add(block);
             }
         }
 
-        for(ItemDefinition<?> item : def.getItems().values()){
-            provider.registerItem(
-                    item.getId(),
-                    item.getTemplate(),
-                    item.getMaxStack(),
-                    item.getDurability()
-            );
+        for(ItemDefinition item : def.getItems().values()){
+            provider.itemRegister().register(item);
 
             if(item.getModel() != null){
-                modelprovider.add(item);
+                provider.modelProvider().add(item);
             }
         }
     }
