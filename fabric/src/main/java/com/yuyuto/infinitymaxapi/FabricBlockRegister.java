@@ -22,6 +22,6 @@ public class FabricBlockRegister implements BlockRegister {
     public void register(BlockDefinition def){
         Block block = new Block(FabricBlockSettings.create().strength(def.getHardness(), def.getResistance()));
         Registry.register(Registries.BLOCK, new Identifier(modid, def.getId()),block);
-        Registry.register(Registries.ITEM,def.getId(),new BlockItem(block,new Item.Settings()));
+        Registry.register(Registries.ITEM,new Identifier(modid, def.getId()),new BlockItem(block,new Item.Settings()));
     }
 }
