@@ -11,8 +11,9 @@ public class ItemDefinition {
     /* Item Template */
     private final Object template;
 
-    public int maxStack = 64;
-    public int durability = 0;
+    /*Value*/
+    private int maxStack = 64;
+    private int durability = 0;
 
     /* DataGen */
     private ModelDefinition model;
@@ -29,6 +30,22 @@ public class ItemDefinition {
 
     public Object getTemplate() {
         return template;
+    }
+
+    public void setDurability(int durability) {
+        this.durability = durability;
+    }
+
+    public void setMaxStack(int maxStack) {
+        this.maxStack = maxStack;
+    }
+
+    public int getDurability() {
+        return durability;
+    }
+
+    public int getMaxStack() {
+        return maxStack;
     }
 
     public ModelDefinition getModel() {

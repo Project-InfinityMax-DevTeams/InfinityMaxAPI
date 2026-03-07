@@ -25,7 +25,9 @@ public class RegistryLoader {
         for(ItemDefinition<?> item : def.getItems().values()){
             provider.registerItem(
                     item.getId(),
-                    item.getTemplate()
+                    item.getTemplate(),
+                    item.getMaxStack(),
+                    item.getDurability()
             );
 
             if(item.getModel() != null){

@@ -43,7 +43,7 @@ class RegistryScope(private val def: RegistryDefinition) {
     fun <T:Any> block(
         id: String,
         template:T,
-        block: BlockSettings.() -> Unit = {},
+        block: BlockSettings.() -> Unit = {}
     ) {
         val settings = BlockSettings().apply(block)
 
@@ -58,6 +58,24 @@ class RegistryScope(private val def: RegistryDefinition) {
 
         settings.behaviors.forEach{
             def.addBehavior(id, BehaviorBindingType.BLOCK, it)
+        }
+    }
+
+    fun <T:Any> entity(
+        id:String,
+        template:T,
+        entity: EntitySettings.() -> Unit = {}
+    ){
+        val settings = EntitySettings().apply(block)
+
+        val d = EntityDefinition(id, template)
+
+        //value
+
+        def.addEntity(d)
+
+        settings.behaviors.forEach{
+            def.addBehavior(id, BehaviorBindingType.ENTITY, it)
         }
     }
 

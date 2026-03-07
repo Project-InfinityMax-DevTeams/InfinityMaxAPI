@@ -17,10 +17,10 @@ public class FabricItemRegister implements ItemRegister {
 
     @Override
     public void register(ItemDefinition def){
-        Item.Settings props = new Item.Settings().maxCount(def.maxStack);
+        Item.Settings props = new Item.Settings().maxCount(def.getMaxStack());
 
-        if (def.durability > 0){
-            props.maxDamage(def.durability);
+        if (def.getDurability() > 0){
+            props.maxDamage(def.getDurability());
         }
 
         Item item = new Item(props);

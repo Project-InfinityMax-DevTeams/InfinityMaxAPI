@@ -21,7 +21,7 @@ public class BlockDefinition {
     /* DataGenコード */
     private ModelDefinition model;
     private LootDefinition loot;
-    private List<String> tags = new ArrayList<>();
+    private final List<String> tags = new ArrayList<>();
     private final List<BehaviorDefinition> behaviors = new ArrayList<>();
 
     public BlockDefinition(String id,Object template){
