@@ -5,10 +5,7 @@ import com.yuyuto.infinitymaxapi.api.registry.BlockRegistrar;
 
 public class FabricBlockRegistrar implements BlockRegistrar {
 
-    private final String modid;
-
     public FabricBlockRegistrar(String modid){
-        this.modid = modid;
     }
 
     @Override

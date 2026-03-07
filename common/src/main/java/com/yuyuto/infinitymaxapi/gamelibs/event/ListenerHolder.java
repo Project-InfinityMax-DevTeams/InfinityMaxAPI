@@ -1,22 +1,6 @@
 package com.yuyuto.infinitymaxapi.gamelibs.event;
 
-public class ListenerHolder<T extends InfinityEvent>implements Comparable<ListenerHolder<?>> {
-
-    private final EventPriority priority;
-    private final InfinityEventListener<T> listener;
-
-    public ListenerHolder(EventPriority priority,InfinityEventListener<T> listener) {
-        this.priority = priority;
-        this.listener = listener;
-    }
-
-    public EventPriority getPriority() {
-        return priority;
-    }
-
-    public InfinityEventListener<T> getListener() {
-        return listener;
-    }
+public record ListenerHolder<T extends InfinityEvent>(EventPriority priority, InfinityEventListener<T> listener) implements Comparable<ListenerHolder<?>> {
 
     @Override
     public int compareTo(ListenerHolder<?> o) {

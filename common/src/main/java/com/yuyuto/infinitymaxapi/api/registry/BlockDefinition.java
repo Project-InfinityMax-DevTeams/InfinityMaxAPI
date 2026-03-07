@@ -22,6 +22,7 @@ public class BlockDefinition {
     private ModelDefinition model;
     private LootDefinition loot;
     private List<String> tags = new ArrayList<>();
+    private final List<BehaviorDefinition> behaviors = new ArrayList<>();
 
     public BlockDefinition(String id,T template){
         this.id = Objects.requireNonNull(id);
@@ -70,5 +71,13 @@ public class BlockDefinition {
 
     public List<String> getTags() {
         return tags;
+    }
+
+    public void addBehavior(BehaviorDefinition behavior){
+        behaviors.add(behavior);
+    }
+
+    public List<BehaviorDefinition> getBehaviors() {
+        return behaviors;
     }
 }

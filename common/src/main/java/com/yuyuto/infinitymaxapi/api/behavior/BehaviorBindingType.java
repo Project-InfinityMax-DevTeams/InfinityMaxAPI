@@ -1,10 +1,10 @@
 package com.yuyuto.infinitymaxapi.api.behavior;
 
 /**
- * 振る舞い接続DSLで扱う接続対象の種類。
+ * Behavior接続DSLで扱う接続対象の種類。
  *
  * <p>登録済みオブジェクトそのものではなく、
- * オブジェクトに紐づく「振る舞い接続」の分類に利用する。</p>
+ * オブジェクトに紐づく「Behavior接続」の分類に利用する。</p>
  */
 public enum BehaviorBindingType {
     BLOCK,

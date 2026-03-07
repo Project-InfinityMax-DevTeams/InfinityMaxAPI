@@ -1,5 +1,7 @@
 package com.yuyuto.infinitymaxapi.api.libs
 
+import com.yuyuto.infinitymaxapi.api.logic.Logic
+import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition
 import com.yuyuto.infinitymaxapi.api.registry.ItemDefinition
 import com.yuyuto.infinitymaxapi.api.registry.RegistryDefinition
@@ -30,7 +32,9 @@ class RegistryScope(private val def: RegistryDefinition) {
     fun <T:Any> block(
         id: String,
         template:T,
-        block: BlockSetting.() -> Unit = {}
+        block: BlockSetting.() -> Unit = {},
+        trigger: String,
+        logic: Logic
     ) {
         val settings = BlockSettings().apply(block)
         val d = BlockDefinition(id, template)
@@ -40,6 +44,7 @@ class RegistryScope(private val def: RegistryDefinition) {
         d.loot = settings.loot
 
         def.addBlock(d)
+        addBehavior(BehaviorDefinition(trigger,logic))
     }
 
     fun <T:Any> dataGen(
