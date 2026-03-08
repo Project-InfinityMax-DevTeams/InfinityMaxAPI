@@ -12,7 +12,7 @@ public class EntityDefinition {
     private final Object template;
 
     /* Value */
-    private final MobCategory category = MobCategory.AMBIENT;
+    private MobCategory category = MobCategory.AMBIENT;
     private float height = 2.8f;
     private float width = 1.0f;
     private int updateInterval = 1;
@@ -38,6 +38,14 @@ public class EntityDefinition {
 
     public Object getTemplate() {
         return template;
+    }
+
+    public MobCategory getCategory(){
+        return category;
+    }
+
+    public void setCategory(MobCategory category){
+        this.category = category;
     }
 
     public float getHeight(){
