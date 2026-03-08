@@ -22,10 +22,10 @@ class RegistryScope(private val def: RegistryDefinition) {
     fun item(
         id:String,
         template:ItemTemplate,
-        block: ItemSettings.() -> Unit = {}
+        item: ItemSettings.() -> Unit = {}
     ){
 
-        val settings = ItemSettings().apply(block)
+        val settings = ItemSettings().apply(item)
 
         val d = ItemDefinition(id, template)
 
@@ -66,7 +66,7 @@ class RegistryScope(private val def: RegistryDefinition) {
         template:ItemTemplate,
         entity: EntitySettings.() -> Unit = {}
     ){
-        val settings = EntitySettings().apply(item)
+        val settings = EntitySettings().apply(entity)
 
         val d = EntityDefinition(id, template)
 
