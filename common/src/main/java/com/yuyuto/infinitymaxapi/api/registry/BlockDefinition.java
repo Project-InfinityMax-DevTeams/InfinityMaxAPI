@@ -80,4 +80,8 @@ public class BlockDefinition {
     public List<BehaviorDefinition> getBehaviors() {
         return behaviors;
     }
+
+    public boolean hasBlockEntity(){
+        return !behaviors.isEmpty();
+    }
 }
