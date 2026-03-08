@@ -121,7 +121,7 @@ class ItemSettings {
 
     var model: String? = null
 
-    internal val behaviors = mutableMapOf<BehaviorDefinition>()
+    internal val behaviors = mutableListOf<BehaviorDefinition>()
 
     fun on(phase: Phase, block: BehaviorScope.() -> Unit) {
         val scope = BehaviorScope(phase)
