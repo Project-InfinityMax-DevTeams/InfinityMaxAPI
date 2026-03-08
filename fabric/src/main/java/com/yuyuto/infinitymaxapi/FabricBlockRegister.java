@@ -21,12 +21,16 @@ public class FabricBlockRegister implements BlockRegister {
     @Override
     public void register(BlockDefinition def){
 
-        Identifier templateId = new Identifier(def.getTemplate().getId());
+        Block block = new Block(FabricBlockSettings.create().strength(def.getHardness(), def.getResistance()));
+        Identifier id = new Identifier(modid, def.getId());
 
-        Block base = Registries.BLOCK.get(templateId);
-        FabricBlockSettings settings = FabricBlockSettings.copyOf(base).strength(def.getHardness(), def.getResistance());
-        Block block = new Block(settings);
-        Registry.register(Registries.BLOCK,new Identifier(modid, def.getId()),block);
-        Registry.register(Registries.ITEM,new Identifier(modid, def.getId()),new BlockItem(block,new Item.Settings()));
+        Registry.register(Registries.BLOCK, id, block);
+        Registry.register(Registries.ITEM,id,new BlockItem(block,new Item.Settings()));
+
+        // BehaviorあるならBlockEntity作る
+        if(!def.getBehaviors().isEmpty()){
+            BlockEntityType<FabricBlockEntity> type =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE,id,FabricBlockEntityTypeBuilder.create((pos,state)->new FabricBlockEntity(null,pos,state,def.getBehaviors()),block).build());
+        }
     }
 }
