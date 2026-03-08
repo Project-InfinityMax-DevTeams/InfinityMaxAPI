@@ -19,9 +19,9 @@ fun  registry(block: RegistryScope.() ->  Unit): RegistryDefinition {
 
 @RegistryDsl
 class RegistryScope(private val def: RegistryDefinition) {
-    fun <T:Any> item(
+    fun item(
         id:String,
-        template:T,
+        template:ItemTemplate,
         block: ItemSettings.() -> Unit = {}
     ){
 
@@ -40,9 +40,9 @@ class RegistryScope(private val def: RegistryDefinition) {
         }
     }
 
-    fun <T:Any> block(
+    fun block(
         id: String,
-        template:T,
+        template: BlockTemplate,
         block: BlockSettings.() -> Unit = {}
     ) {
         val settings = BlockSettings().apply(block)
@@ -61,12 +61,12 @@ class RegistryScope(private val def: RegistryDefinition) {
         }
     }
 
-    fun <T:Any> entity(
+    fun entity(
         id:String,
-        template:T,
+        template:ItemTemplate,
         entity: EntitySettings.() -> Unit = {}
     ){
-        val settings = EntitySettings().apply(block)
+        val settings = EntitySettings().apply(item)
 
         val d = EntityDefinition(id, template)
 
@@ -78,31 +78,23 @@ class RegistryScope(private val def: RegistryDefinition) {
             def.addBehavior(id, BehaviorBindingType.ENTITY, it)
         }
     }
-
-    fun <T:Any> dataGen(
-        id:String,
-        template:T,
-        block: DataGenSettings.() -> Unit = {}
-    ) {
-        def.dataGen[id] = DataGenDefinition(
-            id,
-            template,
-            DataGenSettings().apply(block)
-        )
-    }
-
-    fun <T:Any> network(
-        id: String,
-        template:T,
-        block: NetworkSettings.() -> Unit = {}
-    ) {
-        def.networks[id] = NetworkDefinition(
-            id,
-            template,
-            NetworkSettings().apply(block)
-        )
-    }
 }
+
+interface Template {
+    val id: String
+}
+
+data class BlockTemplate(
+    override val id: String
+) : Template
+
+data class ItemTemplate(
+    override val id: String
+) : Template
+
+data class EntityTemplate(
+    override val id: String
+) : Template
 
 class BlockSettings{
 
