@@ -20,8 +20,13 @@ public class FabricBlockRegister implements BlockRegister {
 
     @Override
     public void register(BlockDefinition def){
-        Block block = new Block(FabricBlockSettings.create().strength(def.getHardness(), def.getResistance()));
-        Registry.register(Registries.BLOCK, new Identifier(modid, def.getId()),block);
+
+        Identifier templateId = new Identifier(def.getTemplate().getId());
+
+        Block base = Registries.BLOCK.get(templateId);
+        FabricBlockSettings settings = FabricBlockSettings.copyOf(base).strength(def.getHardness(), def.getResistance());
+        Block block = new Block(settings);
+        Registry.register(Registries.BLOCK,new Identifier(modid, def.getId()),block);
         Registry.register(Registries.ITEM,new Identifier(modid, def.getId()),new BlockItem(block,new Item.Settings()));
     }
 }
