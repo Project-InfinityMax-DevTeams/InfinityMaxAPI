@@ -1,5 +1,6 @@
 package com.yuyuto.infinitymaxapi;
 
+import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType;
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorContext;
 import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition;
 import com.yuyuto.infinitymaxapi.api.logic.Logic;
@@ -29,7 +30,7 @@ public class FabricBlockEntity extends BlockEntity {
 
             if (b.trigger() == Phase.TICK) {
 
-                BehaviorContext ctx = new BehaviorContext(world, pos, state);
+                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.meta());
                 Logic logic = b.logic();
                 logic.execute(ctx,null);
 
@@ -43,7 +44,7 @@ public class FabricBlockEntity extends BlockEntity {
 
             if (b.trigger() == Phase.INTERACT) {
 
-                BehaviorContext ctx = new BehaviorContext(player);
+                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.meta());
                 Logic logic = b.logic();
                 logic.execute(ctx,player);
 

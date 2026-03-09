@@ -8,6 +8,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.List;
+
 public class ForgeClientRegister {
 
     private final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES;
@@ -19,7 +21,7 @@ public class ForgeClientRegister {
     }
 
     @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event){
+    public void registerRenderers(EntityRenderersEvent.RegisterRenderers event, List<BlockDefinition> definitions){
         for(BlockDefinition def : definitions){
             if (def.hasRenderer()){
                 BlockEntityType<?> type = BLOCK_ENTITY_TYPES.get(def.getId());
