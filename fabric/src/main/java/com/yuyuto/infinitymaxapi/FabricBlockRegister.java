@@ -3,7 +3,9 @@ package com.yuyuto.infinitymaxapi;
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition;
 import com.yuyuto.infinitymaxapi.api.registry.BlockRegister;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -30,7 +32,7 @@ public class FabricBlockRegister implements BlockRegister {
         // BehaviorあるならBlockEntity作る
         if(!def.getBehaviors().isEmpty()){
             BlockEntityType<FabricBlockEntity> type =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE,id,FabricBlockEntityTypeBuilder.create((pos,state)->new FabricBlockEntity(null,pos,state,def.getBehaviors()),block).build());
+            Registry.register(Registries.BLOCK_ENTITY_TYPE,id, FabricBlockEntityTypeBuilder.create((pos, state)->new FabricBlockEntity(null,pos,state,def.getBehaviors()),block).build());
         }
     }
 }

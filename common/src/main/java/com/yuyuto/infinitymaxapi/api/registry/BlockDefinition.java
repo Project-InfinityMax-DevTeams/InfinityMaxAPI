@@ -18,6 +18,9 @@ public class BlockDefinition {
     /* 爆発耐性 */
     private float resistance = 1.0f;
 
+    /* レンダリング */
+    private String renderer;
+
     /* DataGenコード */
     private ModelDefinition model;
     private LootDefinition loot;
@@ -27,6 +30,10 @@ public class BlockDefinition {
     public BlockDefinition(String id,BlockTemplate template){
         this.id = Objects.requireNonNull(id);
         this.template = template;
+    }
+
+    public void setRenderer(String renderer){
+        this.renderer = renderer;
     }
 
     public String getId() {
@@ -81,7 +88,11 @@ public class BlockDefinition {
         return behaviors;
     }
 
-    public boolean hasBlockEntity(){
-        return !behaviors.isEmpty();
+    public String getRenderer(){
+        return renderer;
+    }
+
+    public boolean hasRenderer(){
+        return renderer != null;
     }
 }

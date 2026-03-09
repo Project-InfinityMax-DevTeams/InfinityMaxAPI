@@ -33,7 +33,7 @@ class RegistryScope(private val def: RegistryDefinition) {
         d.durability = settings.durability
         d.model = settings.model
 
-        def.items[id] = d
+        def.addItem(d)
 
         settings.behaviors.forEach{
             def.addBehavior(id, BehaviorBindingType.ITEM, it)
@@ -123,10 +123,11 @@ class BlockSettings{
         behaviors += scope.build()
     }
 }
+
 class ItemSettings {
 
-    var maxStack: Int = 64;
-    var durability: Int = 0;
+    var maxStack: Int = 64
+    var durability: Int = 0
 
     var model: String? = null
 
