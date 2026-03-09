@@ -5,10 +5,12 @@ import com.yuyuto.infinitymaxapi.api.registry.*;
 public class RegistryProcessor {
     private final ItemRegister itemRegister;
     private final BlockRegister blockRegister;
+    private final EntityRegister entityRegister;
 
-    public RegistryProcessor(ItemRegister itemRegister,BlockRegister blockRegister){
+    public RegistryProcessor(ItemRegister itemRegister,BlockRegister blockRegister,EntityRegister entityRegister){
         this.itemRegister = itemRegister;
         this.blockRegister = blockRegister;
+        this.entityRegister = entityRegister;
     }
 
     public void registerAll(RegistryDefinition def){
