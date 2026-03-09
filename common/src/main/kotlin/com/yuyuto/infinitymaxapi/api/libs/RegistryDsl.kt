@@ -40,26 +40,30 @@ class RegistryScope(private val def: RegistryDefinition) {
         }
     }
 
-    fun block(
-        id: String,
-        template: BlockTemplate,
-        block: BlockSettings.() -> Unit = {}
-    ) {
-        val settings = BlockSettings().apply(block)
+		fun block(
+		    id: String,
+		    template: BlockTemplate,
+		    block: BlockSettings.() -> Unit = {}
+		) {
+		    val settings = BlockSettings().apply(block)
 
-        val d = BlockDefinition(id, template)
+		    val d = BlockDefinition(id, template)
 
-        d.hardness = settings.hardness
-        d.resistance = settings.resistance
-        d.model = settings.model
-        d.loot = settings.loot
+		    d.hardness = settings.hardness
+		    d.resistance = settings.resistance
+		    d.model = settings.model
+		    d.loot = settings.loot
 
-        def.addBlock(d)
+		    def.addBlock(d)
 
-        settings.behaviors.forEach{
-            def.addBehavior(id, BehaviorBindingType.BLOCK, it)
-        }
-    }
+		    settings.behaviors.forEach{
+		        def.addBehavior(id, BehaviorBindingType.BLOCK, it)
+		    }
+
+		    settings.renderer?.let {
+		        def.addRenderer(id, it)
+		    }
+		}
 
     fun entity(
         id:String,
@@ -103,7 +107,13 @@ class BlockSettings{
     var model: String? = null
     var loot: String? = null
 
+    var renderer: String? = null
+
     internal var behaviors = mutableListOf<BehaviorDefinition>()
+
+    fun renderer(id: String){
+        renderer = id
+    }
 
     fun on(phase: Phase, block: BehaviorScope.() -> Unit) {
 
@@ -113,7 +123,6 @@ class BlockSettings{
         behaviors += scope.build()
     }
 }
-
 class ItemSettings {
 
     var maxStack: Int = 64;
