@@ -16,8 +16,8 @@ registry{
             meta("redius", 5)
         }
         
-        on(TICK){
-            logic("smoke")
+        on(Phase.TICK){
+            logic(RotateLogic())
         }
     }
 }
@@ -30,5 +30,5 @@ registry{
 |hardness|Blockの固さ|float|DataGenに記載する「ブロックの固さ」を記述します。デフォルトは`1f`です。Templateを指定した場合、この数値が優先されます。|
 |resistance|Blockが持つ爆発耐性|float|Blockが爆発を受けた際に耐える値です。デフォルトは`1f`です。Templateを指定した場合、この数値が優先されます。|
 |on(Phase)|ロジック定義ブロック|Phase|Blockが持つロジックを定義します。Phaseごとに様々なロジックを持つことができます。ここでいうロジックは、MDK利用者が作ったロジックです。|
-|logic("LogicID")|ロジックを定義|logicId|MDK使用者が制作したロジックを定義します。logicIdはLogicクラスで定義したものです。|
+|logic(Logic_execute_method())|ロジックを定義|logic execute method|MDK使用者が制作したロジックを定義します。直接ロジックの実行関数を定義してください。|
 |meta("type", value)|Logicの引数|"type", value|Logicが必要とする引数を指定します。この引数は、meta関数を下に増やしていくことで、必要数の引数を渡すことができます。|

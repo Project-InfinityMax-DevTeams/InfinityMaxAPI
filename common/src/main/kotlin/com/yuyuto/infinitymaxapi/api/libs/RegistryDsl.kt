@@ -42,7 +42,7 @@ class RegistryScope(private val def: RegistryDefinition) {
         def.addItem(d)
 
         settings.behaviors.forEach{
-            d.addBehavior(id, BehaviorBindingType.ITEM, it)
+            d.addBehavior(it)
         }
     }
 
@@ -63,14 +63,15 @@ class RegistryScope(private val def: RegistryDefinition) {
 		    def.addBlock(d)
 
 		    settings.behaviors.forEach{
-		        behavior -> d.addBehavior(id, BehaviorBindingType.BLOCK)
+		        behavior -> d.addBehavior(behavior)
 		    }
 
 		    settings.renderer?.let {
-		        d.addRenderer(id)
+		        d.addRenderer(it)
 		    }
 		}
 
+    /**
     fun entity(
         id:String,
         template: EntityTemplate,
@@ -88,6 +89,8 @@ class RegistryScope(private val def: RegistryDefinition) {
             def.addBehavior(id, BehaviorBindingType.ENTITY, it)
         }
     }
+    */
+
 }
 
 class BlockSettings{
@@ -136,10 +139,11 @@ class BehaviorScope(
 ){
 
     private var logicId: String? = null
+    private var logic: Logic? = null
     private val metadata = mutableMapOf<String, Any>()
 
-    fun logic(id: String){
-        logicId = id
+    fun logic(l: String){
+        logic = l
     }
 
     fun meta(key: String, value: Any){
@@ -147,7 +151,7 @@ class BehaviorScope(
     }
 
     fun build(): BehaviorDefinition {
-        val id = logicId ?: error("Behavior Logic ID not defined")
-        return BehaviorDefinition(phase,id)
+        val l = logic ?: error("Behavior Logic not defined")
+        return BehaviorDefinition(phase,l, metadata)
     }
 }
