@@ -1,8 +1,6 @@
 package com.yuyuto.infinitymaxapi.api.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class BlockDefinition {
 
@@ -18,14 +16,14 @@ public class BlockDefinition {
     /* 爆発耐性 */
     private float resistance = 1.0f;
 
-    /* レンダリング */
-    private String renderer;
-
     /* DataGenコード */
     private ModelDefinition model;
     private LootDefinition loot;
     private final List<String> tags = new ArrayList<>();
     private final List<BehaviorDefinition> behaviors = new ArrayList<>();
+
+    /* レンダリング */
+    private String renderer;
 
     public BlockDefinition(String id,BlockTemplate template){
         this.id = Objects.requireNonNull(id);
@@ -86,6 +84,10 @@ public class BlockDefinition {
 
     public List<BehaviorDefinition> getBehaviors() {
         return behaviors;
+    }
+
+    public void addRenderer(String id){
+        this.renderer = id;
     }
 
     public String getRenderer(){

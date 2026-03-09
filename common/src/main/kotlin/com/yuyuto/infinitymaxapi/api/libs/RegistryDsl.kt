@@ -2,6 +2,7 @@ package com.yuyuto.infinitymaxapi.api.libs
 
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
 import com.yuyuto.infinitymaxapi.api.behavior.Phase
+import com.yuyuto.infinitymaxapi.api.logic.Logic
 import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockTemplate
@@ -41,7 +42,7 @@ class RegistryScope(private val def: RegistryDefinition) {
         def.addItem(d)
 
         settings.behaviors.forEach{
-            def.addBehavior(id, BehaviorBindingType.ITEM, it)
+            d.addBehavior(id, BehaviorBindingType.ITEM, it)
         }
     }
 
@@ -62,11 +63,11 @@ class RegistryScope(private val def: RegistryDefinition) {
 		    def.addBlock(d)
 
 		    settings.behaviors.forEach{
-		        def.addBehavior(id, BehaviorBindingType.BLOCK,it)
+		        behavior -> d.addBehavior(id, BehaviorBindingType.BLOCK)
 		    }
 
 		    settings.renderer?.let {
-		        def.addRenderer(id, it)
+		        d.addRenderer(id)
 		    }
 		}
 
@@ -147,6 +148,6 @@ class BehaviorScope(
 
     fun build(): BehaviorDefinition {
         val id = logicId ?: error("Behavior Logic ID not defined")
-        return BehaviorDefinition(phase,id,metadata.toMap())
+        return BehaviorDefinition(phase,id)
     }
 }
