@@ -6,7 +6,9 @@ import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockTemplate
 import com.yuyuto.infinitymaxapi.api.registry.EntityDefinition
+import com.yuyuto.infinitymaxapi.api.registry.EntityTemplate
 import com.yuyuto.infinitymaxapi.api.registry.ItemDefinition
+import com.yuyuto.infinitymaxapi.api.registry.ItemTemplate
 import com.yuyuto.infinitymaxapi.api.registry.LootDefinition
 import com.yuyuto.infinitymaxapi.api.registry.ModelDefinition
 import com.yuyuto.infinitymaxapi.api.registry.RegistryDefinition
@@ -24,7 +26,7 @@ fun  registry(block: RegistryScope.() ->  Unit): RegistryDefinition {
 class RegistryScope(private val def: RegistryDefinition) {
     fun item(
         id:String,
-        template:ItemTemplate,
+        template: ItemTemplate,
         item: ItemSettings.() -> Unit = {}
     ){
 
@@ -70,7 +72,7 @@ class RegistryScope(private val def: RegistryDefinition) {
 
     fun entity(
         id:String,
-        template:ItemTemplate,
+        template: EntityTemplate,
         entity: EntitySettings.() -> Unit = {}
     ){
         val settings = EntitySettings().apply(entity)
@@ -86,18 +88,6 @@ class RegistryScope(private val def: RegistryDefinition) {
         }
     }
 }
-
-interface Template {
-    val id: String
-}
-
-data class ItemTemplate(
-    override val id: String
-) : Template
-
-data class EntityTemplate(
-    override val id: String
-) : Template
 
 class BlockSettings{
 
@@ -154,10 +144,9 @@ class BehaviorScope(
     fun meta(key: String, value: Any){
         metadata[key] = value
     }
-}
 
-data class BehaviorDefinition(
-    val phase: Phase,
-    val logicId: String,
-    val metadata: Map<String, Any>
-)
+    fun build(): BehaviorDefinition {
+        val id = logicId ?: error("Behavior Logic ID not defined")
+        return BehaviorDefinition(phase,id,metadata.toMap())
+    }
+}
