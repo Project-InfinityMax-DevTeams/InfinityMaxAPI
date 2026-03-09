@@ -38,7 +38,7 @@ public class BlockDefinition {
         return id;
     }
 
-    public Object getTemplate() {
+    public BlockTemplate getTemplate() {
         return template;
     }
 

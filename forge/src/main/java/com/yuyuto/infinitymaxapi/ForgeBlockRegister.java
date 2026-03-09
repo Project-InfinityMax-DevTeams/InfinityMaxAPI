@@ -42,7 +42,7 @@ public class ForgeBlockRegister implements BlockRegister {
 
         // BehaviorあるならBlockEntity登録
         if(!def.getBehaviors().isEmpty()){
-            BLOCK_ENTITIES.register(def.getId(), () ->BlockEntityType.Builder.of((pos,state) -> new ForgeBlockEntity(pos,state,def.getBehaviors()),block.get()).build(null));
+            BLOCK_ENTITIES.register(def.getId(), () -> BlockEntityType.Builder.of((pos,state) -> new ForgeBlockEntity(def.getId(),pos,state,def.getBehaviors())));
         }
     }
 }

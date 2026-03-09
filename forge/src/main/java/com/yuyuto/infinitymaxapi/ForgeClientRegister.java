@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ForgeClientRegister {
 
-    private final DeferredRegister<BlockEntityType> BLOCK_ENTITY_TYPES;
+    private final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES;
     public ForgeClientRegister(String modid, IEventBus bus){
 
         BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, modid);

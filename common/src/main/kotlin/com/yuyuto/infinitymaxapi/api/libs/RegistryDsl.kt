@@ -136,8 +136,6 @@ class ItemSettings {
 class BehaviorScope(
     private val phase: Phase
 ){
-
-    private var logicId: String? = null
     private var logic: Logic? = null
     private val metadata = mutableMapOf<String, Any>()
 
@@ -149,6 +147,7 @@ class BehaviorScope(
         metadata[key] = value
     }
 
+    @Suppress("MISSING_DEPENDENCY_SUPERCLASS_WARNING")
     fun build(): BehaviorDefinition {
         val l = logic ?: error("Behavior Logic not defined")
         return BehaviorDefinition(phase,l, metadata)

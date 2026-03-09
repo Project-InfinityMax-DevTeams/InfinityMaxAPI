@@ -26,7 +26,7 @@ public class FabricEntityRegister implements EntityRegister {
             .setDimensions(def.getWidth(), def.getHeight())
             .maxTrackingRange(32)
             .trackingTickInterval(def.getUpdateInterval())
-            .build();
+            .build(def.getId());
 
         Registry.register(Registries.ENTITY_TYPE,new Identifier(modid, def.getId()), type);
     }
