@@ -4,9 +4,12 @@ import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
 import com.yuyuto.infinitymaxapi.api.behavior.Phase
 import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition
+import com.yuyuto.infinitymaxapi.api.registry.BlockTemplate
+import com.yuyuto.infinitymaxapi.api.registry.EntityDefinition
 import com.yuyuto.infinitymaxapi.api.registry.ItemDefinition
+import com.yuyuto.infinitymaxapi.api.registry.LootDefinition
+import com.yuyuto.infinitymaxapi.api.registry.ModelDefinition
 import com.yuyuto.infinitymaxapi.api.registry.RegistryDefinition
-import com.yuyuto.infinitymaxapi.api.util.LogUtil.error
 
 @DslMarker
 annotation class RegistryDsl
@@ -41,9 +44,9 @@ class RegistryScope(private val def: RegistryDefinition) {
     }
 
 		fun block(
-		    id: String,
-		    template: BlockTemplate,
-		    block: BlockSettings.() -> Unit = {}
+            id: String,
+            template: BlockTemplate,
+            block: BlockSettings.() -> Unit = {}
 		) {
 		    val settings = BlockSettings().apply(block)
 
@@ -57,7 +60,7 @@ class RegistryScope(private val def: RegistryDefinition) {
 		    def.addBlock(d)
 
 		    settings.behaviors.forEach{
-		        def.addBehavior(id, BehaviorBindingType.BLOCK, it)
+		        def.addBehavior(id, BehaviorBindingType.BLOCK,it)
 		    }
 
 		    settings.renderer?.let {
@@ -88,10 +91,6 @@ interface Template {
     val id: String
 }
 
-data class BlockTemplate(
-    override val id: String
-) : Template
-
 data class ItemTemplate(
     override val id: String
 ) : Template
@@ -104,8 +103,8 @@ class BlockSettings{
 
     var hardness: Float = 1f
     var resistance: Float = 1f
-    var model: String? = null
-    var loot: String? = null
+    var model: ModelDefinition? = null
+    var loot: LootDefinition? = null
 
     var renderer: String? = null
 
@@ -129,7 +128,7 @@ class ItemSettings {
     var maxStack: Int = 64
     var durability: Int = 0
 
-    var model: String? = null
+    var model: ModelDefinition? = null
 
     internal val behaviors = mutableListOf<BehaviorDefinition>()
 
@@ -154,15 +153,6 @@ class BehaviorScope(
 
     fun meta(key: String, value: Any){
         metadata[key] = value
-    }
-
-    fun build(): BehaviorDefinition {
-
-        return BehaviorDefinition(
-            phase,
-            logicId ?: error("logic not defined"),
-            metadata
-        )
     }
 }
 
