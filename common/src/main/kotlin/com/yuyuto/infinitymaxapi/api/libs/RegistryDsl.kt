@@ -142,7 +142,7 @@ class BehaviorScope(
     private var logic: Logic? = null
     private val metadata = mutableMapOf<String, Any>()
 
-    fun logic(l: String){
+    fun logic(l: Logic){
         logic = l
     }
 

@@ -19,6 +19,9 @@ public class ItemDefinition {
     private ModelDefinition model;
     private final List<String> tags = new ArrayList<>();
 
+    /* Behavior */
+    private final List<BehaviorDefinition> behaviors = new ArrayList<>();
+
     public ItemDefinition(String id, Object template){
         this.id = id;
         this.template = template;
@@ -58,5 +61,13 @@ public class ItemDefinition {
 
     public List<String> getTags(){
         return tags;
+    }
+
+    public void addBehavior(BehaviorDefinition behavior){
+        behaviors.add(behavior);
+    }
+
+    public List<BehaviorDefinition> getBehaviors(){
+        return behaviors;
     }
 }
