@@ -1,6 +1,5 @@
 package com.yuyuto.infinitymaxapi.api.libs
 
-import com.yuyuto.infinitymaxapi.api.behavior.BehaviorBindingType
 import com.yuyuto.infinitymaxapi.api.behavior.Phase
 import com.yuyuto.infinitymaxapi.api.logic.Logic
 import com.yuyuto.infinitymaxapi.api.registry.BehaviorDefinition
