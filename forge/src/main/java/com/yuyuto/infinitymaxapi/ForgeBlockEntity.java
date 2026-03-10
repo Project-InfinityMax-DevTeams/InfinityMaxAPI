@@ -31,14 +31,17 @@ public class ForgeBlockEntity extends BlockEntity {
 
     public static void tick(Level level, BlockPos pos, BlockState state, ForgeBlockEntity be) {
 
+        public String getBlockId() {
+            return blockId;
+        }
+
         for (BehaviorDefinition b : be.behaviors) {
 
             if (b.trigger() == Phase.TICK) {
 
                 BehaviorContext ctx = new BehaviorContext(
                         BehaviorBindingType.BLOCK,
-                        be.blockId,
-                        b.logic().id(),
+                        be.getBlockId(),
                         b.trigger(),
                         b.meta()
                 );
@@ -57,8 +60,7 @@ public class ForgeBlockEntity extends BlockEntity {
 
                 BehaviorContext ctx = new BehaviorContext(
                         BehaviorBindingType.BLOCK,
-                        blockId,
-                        b.logic().id(),
+                        getBlockId(),
                         b.trigger(),
                         b.meta()
                 );
