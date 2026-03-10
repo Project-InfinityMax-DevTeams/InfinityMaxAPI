@@ -1,4 +1,4 @@
-com.yuyuto.infinitymaxapi.api.logic;
+package com.yuyuto.infinitymaxapi.api.logic;
 
 import com.yuyuto.infinitymaxapi.api.behavior.BehaviorContext;
 
