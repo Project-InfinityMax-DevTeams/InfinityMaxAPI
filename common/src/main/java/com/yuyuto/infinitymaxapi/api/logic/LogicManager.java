@@ -6,11 +6,11 @@ public class LogicManager {
 
     private LogicManager(){}
 
-    public static void run(String logicId, BehaviorContext ctx){
-        LogicRegistry.execute(logicId, ctx, null);
+    public static void run(Logic logic, BehaviorContext ctx){
+        LogicRegistry.execute(logic, ctx, null);
     }
 
-    public static void run(String logicId,BehaviorContext ctx, Object payload){
-        LogicRegistry.execute(logicId, ctx ,payload);
+    public static void run(Logic logic,BehaviorContext ctx, Object payload){
+        LogicRegistry.execute(logic, ctx ,payload);
     }
 }
