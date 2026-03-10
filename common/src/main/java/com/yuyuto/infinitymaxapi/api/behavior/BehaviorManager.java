@@ -20,12 +20,11 @@ public final class BehaviorManager {
             BehaviorContext context = new BehaviorContext(
                     type,
                     targetId,
-                    behavior.logicId(),
                     phase,
                     behavior.metadata()
             );
 
-            LogicManager.run(behavior.logicId(), context);
+            LogicManager.run(behavior.logic(), context);
         }
     }
 }
