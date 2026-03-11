@@ -32,7 +32,7 @@ public class FabricBlockEntity extends BlockEntity {
 
             if (b.trigger() == Phase.TICK) {
 
-                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.meta());
+                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.metadata());
                 Logic logic = b.logic();
                 logic.execute(ctx,null);
 
@@ -46,7 +46,7 @@ public class FabricBlockEntity extends BlockEntity {
 
             if (b.trigger() == Phase.INTERACT) {
 
-                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.meta());
+                BehaviorContext ctx = new BehaviorContext(BehaviorBindingType.BLOCK,blockId,b.logic().id(),b.trigger(),b.metadata());
                 Logic logic = b.logic();
                 logic.execute(ctx,player);
 
