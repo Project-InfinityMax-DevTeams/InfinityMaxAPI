@@ -43,7 +43,7 @@ public class ForgeBlockEntity extends BlockEntity {
                         BehaviorBindingType.BLOCK,
                         be.getBlockId(),
                         b.trigger(),
-                        b.meta()
+                        b.metadata()
                 );
 
                 Logic logic = b.logic();
@@ -62,7 +62,7 @@ public class ForgeBlockEntity extends BlockEntity {
                         BehaviorBindingType.BLOCK,
                         getBlockId(),
                         b.trigger(),
-                        b.meta()
+                        b.metadata()
                 );
 
                 Logic logic = b.logic();
