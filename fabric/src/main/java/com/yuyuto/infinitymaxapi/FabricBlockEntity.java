@@ -18,10 +18,12 @@ import java.util.List;
 public class FabricBlockEntity extends BlockEntity {
 
     private final List<BehaviorDefinition> behaviors;
+    private final String blockId;
 
     public FabricBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, List<BehaviorDefinition> behaviors) {
         super(type, pos, state);
         this.behaviors = behaviors;
+        this.blockId = blockId;
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
