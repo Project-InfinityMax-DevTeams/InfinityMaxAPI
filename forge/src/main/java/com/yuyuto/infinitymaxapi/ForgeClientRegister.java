@@ -32,7 +32,7 @@ public class ForgeClientRegister {
 
             if (def.hasRenderer()){
 
-                BlockEntityType<?> type = ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(def.getId());
+                BlockEntityType<?> type = ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(new ResourceLocation(def.getId()));
 
                 var factory = RendererRegistry.get(def.getRenderer());
 
