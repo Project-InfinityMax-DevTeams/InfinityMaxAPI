@@ -2,7 +2,7 @@ package com.yuyuto.infinitymaxapi;
 
 import com.yuyuto.infinitymaxapi.api.registry.BlockDefinition;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.block.entity.BlockEntityType;
 
 import java.util.List;
 
