@@ -13,7 +13,7 @@ public class LogicRegistry {
 
     // Logic登録
     public static void register(Logic logic){
-        LOGICS.put(logic, logic);
+        LOGICS.put(logic.id(), logic);
     }
 
     // Logic取得
