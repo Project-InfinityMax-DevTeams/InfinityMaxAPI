@@ -10,7 +10,7 @@ public class LogicManager {
         LogicRegistry.execute(id, ctx, null);
     }
 
-    public static void run(Logic logic,BehaviorContext ctx, Object payload){
+    public static void run(String id,BehaviorContext ctx, Object payload){
         LogicRegistry.execute(id, ctx ,payload);
     }
 }
