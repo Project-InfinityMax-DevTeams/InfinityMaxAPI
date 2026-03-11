@@ -29,11 +29,11 @@ public class ForgeBlockEntity extends BlockEntity {
         this.behaviors = behaviors;
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, ForgeBlockEntity be) {
+    public String getBlockId() {
+        return blockId;
+    }
 
-        public String getBlockId() {
-            return blockId;
-        }
+    public static void tick(Level level, BlockPos pos, BlockState state, ForgeBlockEntity be) {
 
         for (BehaviorDefinition b : be.behaviors) {
 
