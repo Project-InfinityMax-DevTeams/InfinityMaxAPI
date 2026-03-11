@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LogicRegistry {
 
-    private static final Map<Logic, Logic> LOGICS = new ConcurrentHashMap<>();
+    private static final Map<String, Logic> LOGICS = new ConcurrentHashMap<>();
 
     private LogicRegistry(){}
 
@@ -17,14 +17,14 @@ public class LogicRegistry {
     }
 
     // Logic取得
-    public static Logic get(Logic logic){
-        return LOGICS.get(logic);
+    public static Logic get(String id){
+        return LOGICS.get(id);
     }
 
     // Logic実行
-    public static void execute(Logic logic, BehaviorContext ctx, Object payload){
+    public static void execute(String id, BehaviorContext ctx, Object payload){
 
-        Logic l = LOGICS.get(logic);
+        Logic l = LOGICS.get(id);
 
         if(l != null){
             l.execute(ctx, payload);
