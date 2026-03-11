@@ -9,6 +9,7 @@ public record Behavior(
         String targetId,
         Phase phase,
         Logic logic,
+        String logicID
         Map<String, Object> metadata
 ) {
 
@@ -17,12 +18,14 @@ public record Behavior(
             String targetId,
             Phase phase,
             Logic logic,
+            String logicID,
             Map<String, Object> metadata
     ) {
         this.type = type;
         this.targetId = targetId;
         this.phase = phase;
         this.logic = logic;
+        this.logicId = logicId;
         this.metadata = metadata == null ? Map.of() : Map.copyOf(metadata);
     }
 }
