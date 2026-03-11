@@ -9,7 +9,7 @@ public record Behavior(
         String targetId,
         Phase phase,
         Logic logic,
-        String logicID
+        String logicID,
         Map<String, Object> metadata
 ) {
 
