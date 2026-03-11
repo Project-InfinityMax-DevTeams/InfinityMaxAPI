@@ -24,7 +24,7 @@ public final class BehaviorManager {
                     behavior.metadata()
             );
 
-            LogicManager.run(behavior.logic(), context);
+            LogicManager.run(behavior.logicId(), context);
         }
     }
 }
