@@ -9,7 +9,7 @@ public record Behavior(
         String targetId,
         Phase phase,
         Logic logic,
-        String logicID,
+        String logicId,
         Map<String, Object> metadata
 ) {
 
@@ -18,7 +18,7 @@ public record Behavior(
             String targetId,
             Phase phase,
             Logic logic,
-            String logicID,
+            String logicId,
             Map<String, Object> metadata
     ) {
         this.type = type;
